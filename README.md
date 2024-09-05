@@ -9,4 +9,4 @@
 
 Go implementation of the library [MPOST Linux](https://github.com/eighthave/MPOST_Linux)
 
-Doc [PROTOCOL SPECIFICATION](RETAIL EBDS PROTOCOL SPECIFICATION with MPOST G2.pdf)
+Doc [PROTOCOL SPECIFICATION](RETAIL_EBDS_PROTOCOL_SPECIFICATION_with_MPOST_G2.pdf)
