@@ -94,12 +94,59 @@ func (a *CAcceptor) BuildHardCodedBillTable() {
 		a.billTypes = append(a.billTypes, CBill{"USD", 20, '*', '*', '*', '*'})
 
 	case 'G':
+		a.billTypes = append(a.billTypes, CBill{})
 		a.billTypes = append(a.billTypes, CBill{"ARS", 2, '*', '*', '*', '*'})
 		a.billTypes = append(a.billTypes, CBill{"ARS", 5, '*', '*', '*', '*'})
 		a.billTypes = append(a.billTypes, CBill{"ARS", 10, '*', '*', '*', '*'})
 		a.billTypes = append(a.billTypes, CBill{"ARS", 20, '*', '*', '*', '*'})
 		a.billTypes = append(a.billTypes, CBill{"ARS", 50, '*', '*', '*', '*'})
 		a.billTypes = append(a.billTypes, CBill{"ARS", 100, '*', '*', '*', '*'})
+
+	case 'A':
+		a.billTypes = append(a.billTypes, CBill{"AUD", 5, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"AUD", 10, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"AUD", 100, '*', '*', '*', '*'})
+
+	case 15:
+		a.billTypes = append(a.billTypes, CBill{})
+		a.billTypes = append(a.billTypes, CBill{})
+		a.billTypes = append(a.billTypes, CBill{"AUD", 5, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"AUD", 10, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"AUD", 20, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"AUD", 50, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"AUD", 100, '*', '*', '*', '*'})
+
+	case 'W':
+		a.billTypes = append(a.billTypes, CBill{"BRL", 1, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"BRL", 2, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"BRL", 5, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"BRL", 10, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"BRL", 20, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"BRL", 50, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"BRL", 100, '*', '*', '*', '*'})
+
+	case 'C':
+		a.billTypes = append(a.billTypes, CBill{})
+		a.billTypes = append(a.billTypes, CBill{})
+		a.billTypes = append(a.billTypes, CBill{"CAD", 5, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"CAD", 10, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"CAD", 20, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"CAD", 50, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"CAD", 100, '*', '*', '*', '*'})
+
+	case 'D':
+		a.billTypes = append(a.billTypes, CBill{"EUR", 5, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"EUR", 10, '*', '*', '*', '*'})
+
+	case 'M':
+		a.billTypes = append(a.billTypes, CBill{"MXP", 20, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"MXP", 50, '*', '*', '*', '*'})
+
+	case 'B':
+		a.billTypes = append(a.billTypes, CBill{"RUR", 10, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"RUR", 50, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"RUR", 100, '*', '*', '*', '*'})
+		a.billTypes = append(a.billTypes, CBill{"RUR", 500, '*', '*', '*', '*'})
 
 	default:
 		a.billTypes = append(a.billTypes, CBill{"USD", 1, '*', '*', '*', '*'})
