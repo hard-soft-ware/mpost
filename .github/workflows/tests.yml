@@ -4,14 +4,14 @@ on:
   push:
     paths-ignore:
       - '**/*.yml'
-      - 'const.go'
+      - 'verControl.go'
       - '**/*.txt'
       - '*.md'
       - '*.pdf'
   pull_request:
     paths-ignore:
       - '**/*.yml'
-      - 'const.go'
+      - 'verControl.go'
       - '**/*.txt'
       - '*.md'
       - '*.pdf'
