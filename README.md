@@ -7,6 +7,6 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/hard-soft-ware/mpost?color=green)
 ![GitHub repo size](https://img.shields.io/github/repo-size/hard-soft-ware/mpost)
 
-Go implementation of the library https://github.com/eighthave/MPOST_Linux
+Go implementation of the library [MPOST Linux](https://github.com/eighthave/MPOST_Linux)
 
-Doc: [PROTOCOL SPECIFICATION](RETAIL EBDS PROTOCOL SPECIFICATION with MPOST G2.pdf)
+Doc [PROTOCOL SPECIFICATION](RETAIL EBDS PROTOCOL SPECIFICATION with MPOST G2.pdf)
