@@ -1,6 +1,6 @@
 module mpost
 
-go 1.22
+go 1.22.5
 
 require (
 	github.com/rs/zerolog v1.33.0
