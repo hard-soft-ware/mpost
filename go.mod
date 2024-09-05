@@ -1,4 +1,4 @@
-module mpost
+module github.com/hard-soft-ware/mpost
 
 go 1.22.5
 
