@@ -2,6 +2,7 @@ package mpost
 
 import (
 	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 )
@@ -15,7 +16,7 @@ func (dl *CDataLinkLayer) escrowXX(b byte) {
 	}
 
 	payload := make([]byte, 4)
-	acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, dl.Acceptor.billTypeEnables)
+	acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, bill.TypeEnables)
 
 	payload[2] |= b
 

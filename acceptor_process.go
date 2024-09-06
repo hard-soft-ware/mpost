@@ -2,6 +2,7 @@ package mpost
 
 import (
 	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/enum"
 )
 
@@ -45,7 +46,7 @@ func (a *CAcceptor) processData0(data0 byte) {
 
 	if (data0 & 0x40) != 0 {
 		acceptor.Device.State = enum.StateReturned
-		a.bill = CBill{} // Resetting the bill
+		bill.Reset() // Resetting the bill
 	} else {
 		acceptor.ShouldRaise.ReturnedEvent = true
 	}
@@ -113,24 +114,24 @@ func (a *CAcceptor) processData2(data2 byte) {
 		billTypeIndex := (data2 & 0x38) >> 3
 		if billTypeIndex > 0 {
 			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !a.wasDocTypeSetOnEscrow) {
-				a.bill = a.billTypes[billTypeIndex-1]
+				bill.Bill = bill.Types[billTypeIndex-1]
 				a.docType = enum.DocumentBill
 				a.wasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 			}
 		} else {
 			if acceptor.Device.State == enum.StateStacked || acceptor.Device.State == enum.StateEscrow {
-				a.bill = CBill{}
+				bill.Reset()
 				a.docType = enum.DocumentNoValue
 				a.wasDocTypeSetOnEscrow = false
 			}
 		}
 	} else {
 		if acceptor.Device.State == enum.StateStacked {
-			if a.docType == enum.DocumentBill && a.bill.Value == 0.0 {
+			if a.docType == enum.DocumentBill && bill.Bill.Value == 0.0 {
 				a.docType = enum.DocumentNoValue
 			}
 		} else if acceptor.Device.State == enum.StateEscrow {
-			a.bill = CBill{}
+			bill.Reset()
 			a.docType = enum.DocumentNoValue
 		}
 	}

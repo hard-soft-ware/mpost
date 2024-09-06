@@ -1,27 +1,19 @@
 package mpost
 
 import (
-	"fmt"
 	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
+	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 	"strconv"
 	"strings"
+	"time"
 )
 
 ////////////////////////////////////
 
-// представление купюры
-type CBill struct {
-	Country       string
-	Value         float64
-	Type          rune
-	Series        rune
-	Compatibility rune
-	Version       rune
-}
-
-func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) CBill {
-	var bill CBill
+func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) bill.BillStruct {
+	var bill bill.BillStruct
 
 	if len(reply) < extDataIndex+15 {
 		return bill
@@ -77,32 +69,54 @@ func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) CBill {
 	return bill
 }
 
-////
+////////
 
-func (b *CBill) ToString() string {
-	return fmt.Sprintf("%s %.2f %c %c %c %c", b.Country, b.Value, b.Series, b.Type, b.Compatibility, b.Version)
+func (a *CAcceptor) RetrieveBillTable() {
+	index := 1
+	for {
+		payload := make([]byte, 6)
+		acceptor.ConstructOmnibusCommand(payload, consts.CmdExpanded, 2, bill.TypeEnables)
+		payload[1] = 0x02
+		payload[5] = byte(index)
+
+		var reply []byte
+		var err error
+		for {
+			reply, err = a.SendSynchronousCommand(payload)
+			if err != nil || len(reply) == 30 {
+				break
+			}
+			time.Sleep(100 * time.Millisecond)
+		}
+
+		if err != nil || len(reply) != 30 {
+			a.log.Err("Error sending command", err)
+			break
+		}
+
+		ctl := reply[2]
+		if (ctl&0x70) != 0x70 || reply[3] != 0x02 {
+			break
+		}
+
+		if reply[10] == 0 {
+			break
+		}
+
+		billFromTable := a.ParseBillData(reply, 10)
+		bill.Types = append(bill.Types, billFromTable)
+		index++
+	}
+
+	for range bill.Types {
+		bill.TypeEnables = append(bill.TypeEnables, true)
+	}
+
+	a.log.Msg("Bill table retrieved")
 }
 
-func (b *CBill) GetCountry() string {
-	return b.Country
-}
-
-func (b *CBill) GetValue() float64 {
-	return b.Value
-}
-
-func (b *CBill) GetSeries() rune {
-	return b.Series
-}
-
-func (b *CBill) GetType() rune {
-	return b.Type
-}
-
-func (b *CBill) GetCompatibility() rune {
-	return b.Compatibility
-}
-
-func (b *CBill) GetVersion() rune {
-	return b.Version
+func (a *CAcceptor) SetUpBillTable() {
+	bill.SetUpTable(a.expandedNoteReporting, func() {
+		a.RetrieveBillTable()
+	})
 }

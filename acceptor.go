@@ -22,12 +22,6 @@ type CAcceptor struct {
 	autoStack           bool
 	barCode             string
 
-	bill             CBill
-	billTypes        []CBill
-	billTypeEnables  []bool
-	billValues       []CBill
-	billValueEnables []bool
-
 	bnfStatus enum.BNFStatusType
 	bootPN    string
 
