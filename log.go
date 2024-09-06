@@ -59,7 +59,7 @@ func (obj *LogStruct) Bytes(msg string, data []byte) {
 		fmt.Fprintf(&sb, "%02X", byteVal)
 	}
 
-	obj.log.Debug().Str("data", sb.String()).Msg(msg)
+	obj.log.Debug().Str("data", sb.String()).Int("len", len(data)).Msg(msg)
 }
 
 //

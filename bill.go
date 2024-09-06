@@ -81,16 +81,21 @@ func (a *CAcceptor) RetrieveBillTable() {
 
 		var reply []byte
 		var err error
-		for {
-			reply, err = a.SendSynchronousCommand(payload)
-			if err != nil || len(reply) == 30 {
-				break
+		{
+			for {
+				reply, err = a.SendSynchronousCommand(payload)
+				if err != nil {
+					a.log.Err("Error sending command", err)
+					break
+				}
+				if len(reply) == 30 {
+					break
+				}
+				time.Sleep(100 * time.Millisecond)
 			}
-			time.Sleep(100 * time.Millisecond)
 		}
 
 		if err != nil || len(reply) != 30 {
-			a.log.Err("Error sending command", err)
 			break
 		}
 

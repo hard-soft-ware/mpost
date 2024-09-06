@@ -16,4 +16,6 @@ func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
 	case <-time.After(30 * time.Second):
 		return nil, errors.New("timeout waiting for response")
 	}
+
+	return nil, errors.New("invalid response")
 }
