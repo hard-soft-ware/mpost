@@ -36,14 +36,14 @@ func (obj *LogStruct) Msg(msg string) {
 	if !obj.isEnable {
 		return
 	}
-	obj.log.Debug().Msg(msg)
+	obj.log.Debug().Str("index", obj.index).Msg(msg)
 }
 
 func (obj *LogStruct) Err(msg string, err error) {
 	if !obj.isEnable {
 		return
 	}
-	obj.log.Debug().Err(err).Msg(msg)
+	obj.log.Debug().Str("index", obj.index).Err(err).Msg(msg)
 }
 
 func (obj *LogStruct) Bytes(msg string, data []byte) {
@@ -59,11 +59,11 @@ func (obj *LogStruct) Bytes(msg string, data []byte) {
 		fmt.Fprintf(&sb, "%02X", byteVal)
 	}
 
-	obj.log.Debug().Str("data", sb.String()).Int("len", len(data)).Msg(msg)
+	obj.log.Debug().Str("index", obj.index).Str("data", sb.String()).Int("len", len(data)).Msg(msg)
 }
 
 //
 
 func (obj *LogStruct) Event(event enum.EventType) {
-	obj.log.Debug().Str("event", event.String()).Msg("Event")
+	obj.log.Debug().Str("index", obj.index).Str("event", event.String()).Msg("Event")
 }

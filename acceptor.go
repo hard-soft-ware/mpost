@@ -3,9 +3,9 @@ package mpost
 import (
 	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/serial"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"go.bug.st/serial"
 	"os"
 	"sync"
 	"time"
@@ -16,7 +16,7 @@ import (
 type EventHandler func(*CAcceptor, int)
 
 type CAcceptor struct {
-	port                serial.Port
+	port                *serial.SerialStruct
 	auditLifeTimeTotals []int
 	auditPerformance    []int
 	auditQP             []int

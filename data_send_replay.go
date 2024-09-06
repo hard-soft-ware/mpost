@@ -4,51 +4,27 @@ import (
 	"bufio"
 	"errors"
 	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/command"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 	"io"
-	"time"
 )
 
 ////////////////////////////////////
 
 func (dl *CDataLinkLayer) SendPacket(payload []byte) {
-	payloadLength := len(payload)
-	commandLength := payloadLength + 4 // STX + Length char + ETX + Checksum
+	send := command.Create(payload)
 
-	command := make([]byte, 0, commandLength)
-	command = append(command, consts.DataSTX.Byte())
-	command = append(command, byte(commandLength))
+	dl.CurrentCommand = send
+	dl.EchoDetect = send
 
-	command = append(command, payload...)
-	command[2] |= dl.AckToggleBit
-
-	command = append(command, consts.DataETX.Byte())
-	command = append(command, dl.ComputeCheckSum(command))
-
-	dl.CurrentCommand = command
-	dl.EchoDetect = command
-
-	dl.log.Bytes("SERIAL SEND >>> ", command)
-	n, err := dl.Acceptor.port.Write(command)
+	dl.log.Bytes("SERIAL SEND >>> ", send)
+	n, err := dl.Acceptor.port.Write(send)
 	if err != nil || n == 0 {
 		dl.log.Err("Failed to write to port", err)
-
-		dl.Acceptor.port.Close()
-		dl.Acceptor.OpenPort(dl.log)
-	}
-}
-
-func (dl *CDataLinkLayer) WaitForQuiet() {
-	for {
-		buf := make([]byte, 1)
-		timeout := 20 * time.Millisecond
-
-		dl.Acceptor.port.SetReadTimeout(timeout)
-
-		_, err := dl.Acceptor.port.Read(buf)
+		err = dl.Acceptor.port.Restart()
 		if err != nil {
-			return
+			dl.log.Err("Failed restart to port", err)
 		}
 	}
 }
@@ -63,9 +39,9 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 		timeout = acceptor.Timeout.Download
 	}
 
-	dl.Acceptor.port.SetReadTimeout(timeout)
+	dl.Acceptor.port.SetTimeout(timeout)
 
-	reader := bufio.NewReader(dl.Acceptor.port)
+	reader := bufio.NewReader(dl.Acceptor.port.Port())
 	stxAndLength := make([]byte, 2)
 	bytesRead, err := io.ReadFull(reader, stxAndLength)
 	if err != nil {
@@ -107,30 +83,6 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 }
 
 ////
-
-func (dl *CDataLinkLayer) ReplyAcked(reply []byte) bool {
-	if len(reply) < 3 {
-		return false
-	}
-
-	if (reply[2] & consts.DataACKMask.Byte()) == dl.AckToggleBit {
-		dl.AckToggleBit ^= 0x01 // Переключаем бит подтверждения
-
-		dl.NakCount = 0
-
-		return true
-	} else {
-		dl.NakCount++
-
-		// Если получено 8 последовательных NAK, принудительно переключаем бит
-		if dl.NakCount == 8 {
-			dl.AckToggleBit ^= 0x01
-			dl.NakCount = 0
-		}
-
-		return false
-	}
-}
 
 func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 	if len(reply) < 3 {
