@@ -58,9 +58,9 @@ func (dl *CDataLinkLayer) WaitForQuiet() {
 func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 	reply := []byte{}
 
-	timeout := dl.Acceptor.transactionTimeout
+	timeout := acceptor.Timeout.Transaction
 	if acceptor.Device.State == enum.StateDownloadStart || acceptor.Device.State == enum.StateDownloading {
-		timeout = dl.Acceptor.downloadTimeout
+		timeout = acceptor.Timeout.Download
 	}
 
 	dl.Acceptor.port.SetReadTimeout(timeout)
@@ -154,7 +154,7 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 			dl.ProcessExtendedOmnibusBarCodeReply(reply)
 		case 0x02:
 			dl.ProcessExtendedOmnibusExpandedNoteReply(reply)
-			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !dl.Acceptor.wasDocTypeSetOnEscrow) {
+			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !acceptor.WasDocTypeSetOnEscrow) {
 				if acceptor.Cap.OrientationExt {
 					switch acceptor.OrientationCtlExt {
 					case enum.OrientationControlOneWay:
@@ -176,12 +176,12 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 		dl.RaiseEvents()
 	}
 
-	if acceptor.Device.State == enum.StateEscrow && dl.Acceptor.autoStack {
+	if acceptor.Device.State == enum.StateEscrow && acceptor.AutoStack {
 		dl.EscrowStack()
 		acceptor.ShouldRaise.EscrowEvent = false
 	}
 
 	if acceptor.Device.State != enum.StateEscrow && acceptor.Device.State != enum.StateStacking {
-		dl.Acceptor.wasDocTypeSetOnEscrow = false
+		acceptor.WasDocTypeSetOnEscrow = false
 	}
 }

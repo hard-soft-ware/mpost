@@ -13,7 +13,7 @@ func (a *CAcceptor) OpenThread() {
 
 	replay := a.PollingLoop(lg)
 
-	if a.wasStopped {
+	if acceptor.WasStopped {
 		lg.Msg("thread is stopped")
 		return
 	}
@@ -41,7 +41,7 @@ func (a *CAcceptor) MessageLoopThread() {
 	timeoutStart := time.Now()
 
 	for {
-		if !a.inSoftResetWaitForReply {
+		if !acceptor.InSoftResetWaitForReply {
 			time.Sleep(10 * time.Millisecond)
 		} else {
 			time.Sleep(1000 * time.Millisecond)
@@ -53,13 +53,13 @@ func (a *CAcceptor) MessageLoopThread() {
 				if acceptor.ShouldRaise.DisconnectedEvent {
 					a.RaiseDisconnectedEvent()
 				}
-				a.wasDisconnected = true
+				acceptor.WasDisconnected = true
 				timeoutStart = time.Now()
 			}
 		}
 
-		if a.stopWorkerThread {
-			a.stopWorkerThread = false
+		if acceptor.StopWorkerThread {
+			acceptor.StopWorkerThread = false
 			lg.Msg("thread is stopped")
 			return
 		}
@@ -76,8 +76,8 @@ func (a *CAcceptor) MessageLoopThread() {
 
 			if len(reply) > 0 {
 				timeoutStart = time.Now()
-				if a.wasDisconnected {
-					a.wasDisconnected = false
+				if acceptor.WasDisconnected {
+					acceptor.WasDisconnected = false
 					a.RaiseConnectedEvent()
 				}
 				if message.IsSynchronous {

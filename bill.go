@@ -47,7 +47,7 @@ func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) bill.BillStruc
 
 	bill.Value = billValue
 	a.docType = enum.DocumentBill
-	a.wasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
+	acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 
 	orientation := reply[extDataIndex+10]
 	switch orientation {
@@ -116,7 +116,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 }
 
 func (a *CAcceptor) SetUpBillTable() {
-	bill.SetUpTable(a.expandedNoteReporting, func() {
+	bill.SetUpTable(acceptor.ExpandedNoteReporting, func() {
 		a.RetrieveBillTable()
 	})
 }

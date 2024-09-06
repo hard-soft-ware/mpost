@@ -8,14 +8,34 @@ import (
 ////////////////////////////////////
 
 var Connected bool
+var AutoStack bool
 
 var EscrowOrientation enum.OrientationType
 var HighSecurity bool
 var OrientationCtl enum.OrientationControlType
 var OrientationCtlExt enum.OrientationControlType
-var Version string
 
+var Version string
+var BarCode string
+var BootPN string
+
+var InSoftResetOneSecondIgnore bool
+var InSoftResetWaitForReply bool
 var ExpandedNoteReporting bool
+var IsQueryDeviceCapabilitiesSupported bool
+var IsDeviceJammed bool
+var IsCheated bool
+var IsPoweredUp bool
+var IsInvalidCommand bool
+var WasDocTypeSetOnEscrow bool
+var WasDisconnected bool
+var IsVeryFirstPoll bool
+
+var StopWorkerThread bool
+var StopOpenThread bool
+var StopFlashDownloadThread bool
+var SuppressStandardPoll bool
+var WasStopped bool
 
 ////
 

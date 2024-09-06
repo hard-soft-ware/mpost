@@ -34,19 +34,19 @@ func (dl *CDataLinkLayer) EscrowStack() {
 ////
 
 func (dl *CDataLinkLayer) RaiseEvents() {
-	if dl.Acceptor.isPoweredUp && acceptor.ShouldRaise.PowerUpEvent {
+	if acceptor.IsPoweredUp && acceptor.ShouldRaise.PowerUpEvent {
 		dl.log.Msg("Power Up Event Raised")
 		acceptor.ShouldRaise.PowerUpEvent = false
 	}
 
-	if dl.Acceptor.isVeryFirstPoll {
-		dl.Acceptor.isVeryFirstPoll = false
+	if acceptor.IsVeryFirstPoll {
+		acceptor.IsVeryFirstPoll = false
 		return
 	}
 
 	switch acceptor.Device.State {
 	case enum.StateEscrow:
-		if dl.Acceptor.isPoweredUp && acceptor.ShouldRaise.PUPEscrowEvent {
+		if acceptor.IsPoweredUp && acceptor.ShouldRaise.PUPEscrowEvent {
 			dl.log.Msg("PUP Escrow Event Raised")
 			acceptor.ShouldRaise.PUPEscrowEvent = false
 		} else if acceptor.ShouldRaise.EscrowEvent {
@@ -85,7 +85,7 @@ func (dl *CDataLinkLayer) RaiseEvents() {
 		acceptor.ShouldRaise.StackerFullEvent = false
 	}
 
-	if dl.Acceptor.isCheated && acceptor.ShouldRaise.CheatedEvent {
+	if acceptor.IsCheated && acceptor.ShouldRaise.CheatedEvent {
 		dl.log.Msg("Cheated Event Raised")
 		acceptor.ShouldRaise.CheatedEvent = false
 	}
@@ -112,17 +112,17 @@ func (dl *CDataLinkLayer) RaiseEvents() {
 		acceptor.ShouldRaise.PauseClearedEvent = false
 	}
 
-	if dl.Acceptor.isDeviceJammed && acceptor.ShouldRaise.JamDetectedEvent {
+	if acceptor.IsDeviceJammed && acceptor.ShouldRaise.JamDetectedEvent {
 		dl.log.Msg("Jam Detected Event Raised")
 		acceptor.ShouldRaise.JamDetectedEvent = false
 	}
 
-	if !dl.Acceptor.isDeviceJammed && acceptor.ShouldRaise.JamClearedEvent {
+	if !acceptor.IsDeviceJammed && acceptor.ShouldRaise.JamClearedEvent {
 		dl.log.Msg("Jam Cleared Event Raised")
 		acceptor.ShouldRaise.JamClearedEvent = false
 	}
 
-	if dl.Acceptor.isInvalidCommand && acceptor.ShouldRaise.InvalidCommandEvent {
+	if acceptor.IsInvalidCommand && acceptor.ShouldRaise.InvalidCommandEvent {
 		dl.log.Msg("Invalid Command Event Raised")
 		acceptor.ShouldRaise.InvalidCommandEvent = false
 	}

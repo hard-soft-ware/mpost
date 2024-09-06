@@ -1,6 +1,7 @@
 package mpost
 
 import (
+	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/enum"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -19,58 +20,31 @@ type CAcceptor struct {
 	auditLifeTimeTotals []int
 	auditPerformance    []int
 	auditQP             []int
-	autoStack           bool
-	barCode             string
-
-	bnfStatus enum.BNFStatusType
-	bootPN    string
 
 	coupon *CCoupon
 
 	docType enum.DocumentType
 
-	transactionTimeout                 time.Duration
-	downloadTimeout                    time.Duration
-	inSoftResetOneSecondIgnore         bool
-	inSoftResetWaitForReply            bool
-	expandedNoteReporting              bool
-	isQueryDeviceCapabilitiesSupported bool
-	isDeviceJammed                     bool
-	isCheated                          bool
-	isPoweredUp                        bool
-	isInvalidCommand                   bool
-	wasDocTypeSetOnEscrow              bool
-	wasDisconnected                    bool
-	isVeryFirstPoll                    bool
-
-	compressLog             bool
-	workerThread            sync.WaitGroup
-	openThread              chan bool
-	flashDownloadThread     chan bool
-	dataLinkLayer           *CDataLinkLayer
-	replyQueuedEvent        int
-	notInProcessReplyEvent  int
-	stopWorkerThread        bool
-	stopOpenThread          bool
-	stopFlashDownloadThread bool
-	suppressStandardPoll    bool
+	workerThread        sync.WaitGroup
+	openThread          chan bool
+	flashDownloadThread chan bool
+	dataLinkLayer       *CDataLinkLayer
 
 	messageQueue chan *CMessage
 	replyQueue   chan []byte
-	wasStopped   bool
 
-	isReplyAcked          bool
-	signalMainThreadEvent int
-	eventHandlers         map[enum.EventType]EventHandler
+	eventHandlers map[enum.EventType]EventHandler
 
 	log LogStruct
 }
 
 func NewCAcceptor(transactionTimeout, downloadTimeout time.Duration) *CAcceptor {
+
+	acceptor.Timeout.Transaction = transactionTimeout
+	acceptor.Timeout.Download = downloadTimeout
+
 	a := &CAcceptor{
-		transactionTimeout: transactionTimeout,
-		downloadTimeout:    downloadTimeout,
-		eventHandlers:      make(map[enum.EventType]EventHandler, enum.Event_End),
+		eventHandlers: make(map[enum.EventType]EventHandler, enum.Event_End),
 
 		messageQueue:        make(chan *CMessage, 1),
 		replyQueue:          make(chan []byte, 1),

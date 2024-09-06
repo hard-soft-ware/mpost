@@ -28,21 +28,21 @@ func (a *CAcceptor) PollingLoop(lg *LogStruct) []byte {
 		}
 
 		if a.flashDownloadThread != nil {
-			if a.stopFlashDownloadThread {
-				a.stopFlashDownloadThread = true
+			if acceptor.StopFlashDownloadThread {
+				acceptor.StopFlashDownloadThread = true
 				<-a.flashDownloadThread
 				acceptor.Device.State = enum.StateIdling
-				a.wasStopped = true
+				acceptor.WasStopped = true
 				return nil
 			}
 		} else if a.openThread != nil {
-			if a.stopOpenThread {
-				a.stopOpenThread = false
-				a.stopWorkerThread = true
+			if acceptor.StopOpenThread {
+				acceptor.StopOpenThread = false
+				acceptor.StopWorkerThread = true
 
 				<-a.openThread
 
-				a.wasStopped = true
+				acceptor.WasStopped = true
 				a.Close()
 				return nil
 			}

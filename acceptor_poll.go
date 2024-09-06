@@ -1,19 +1,22 @@
 package mpost
 
+import "github.com/hard-soft-ware/mpost/acceptor"
+
 ////////////////////////////////////
 
 type CSuppressStandardPoll struct {
 	acceptor *CAcceptor
 }
 
-func NewCSuppressStandardPoll(acceptor *CAcceptor) *CSuppressStandardPoll {
+func NewCSuppressStandardPoll(a *CAcceptor) *CSuppressStandardPoll {
 	s := &CSuppressStandardPoll{
-		acceptor: acceptor,
+		acceptor: a,
 	}
-	s.acceptor.suppressStandardPoll = true
+
+	acceptor.SuppressStandardPoll = true
 	return s
 }
 
 func (s *CSuppressStandardPoll) Release() {
-	s.acceptor.suppressStandardPoll = false
+	acceptor.SuppressStandardPoll = false
 }

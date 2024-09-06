@@ -69,7 +69,7 @@ func (a *CAcceptor) OpenPort(lg *LogStruct) error {
 func (a *CAcceptor) Close() {
 
 	if !acceptor.Connected {
-		a.stopOpenThread = true
+		acceptor.StopOpenThread = true
 		return
 	}
 
@@ -81,7 +81,7 @@ func (a *CAcceptor) Close() {
 		a.log.Msg(fmt.Sprintf("IdenticalCommandAndReplyCount: %d", a.dataLinkLayer.IdenticalCommandAndReplyCount))
 	}
 
-	a.stopWorkerThread = true
+	acceptor.StopWorkerThread = true
 	a.workerThread.Wait()
 
 	a.port.Close()
@@ -92,7 +92,7 @@ func (a *CAcceptor) Close() {
 ////
 
 func (a *CAcceptor) QueryDeviceCapabilities(lg *LogStruct) {
-	if !a.isQueryDeviceCapabilitiesSupported {
+	if !acceptor.IsQueryDeviceCapabilitiesSupported {
 		return
 	}
 

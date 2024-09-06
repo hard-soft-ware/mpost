@@ -35,10 +35,10 @@ func (dl *CDataLinkLayer) ProcessExtendedOmnibusBarCodeReply(reply []byte) {
 	dl.Acceptor.processData5(reply[9])
 
 	if acceptor.Device.State == enum.StateEscrow {
-		dl.Acceptor.barCode = ""
+		acceptor.BarCode = ""
 		for i := 10; i < 38; i++ {
 			if reply[i] != '(' {
-				dl.Acceptor.barCode += string(reply[i])
+				acceptor.BarCode += string(reply[i])
 			} else {
 				break
 			}
@@ -72,7 +72,7 @@ func (dl *CDataLinkLayer) ProcessExtendedOmnibusExpandedCouponReply(reply []byte
 	dl.Acceptor.processData3(reply[7])
 	dl.Acceptor.processData5(reply[9])
 
-	if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !dl.Acceptor.wasDocTypeSetOnEscrow) {
+	if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !acceptor.WasDocTypeSetOnEscrow) {
 		couponData := ((int(reply[10]) & 0x0F) << 12) +
 			((int(reply[11]) & 0x0F) << 8) +
 			((int(reply[12]) & 0x0F) << 4) +
@@ -88,6 +88,6 @@ func (dl *CDataLinkLayer) ProcessExtendedOmnibusExpandedCouponReply(reply []byte
 		dl.Acceptor.coupon = NewCCoupon(ownerID, value)
 
 		dl.Acceptor.docType = enum.DocumentCoupon
-		dl.Acceptor.wasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
+		acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 	}
 }

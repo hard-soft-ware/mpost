@@ -23,7 +23,7 @@ func (a *CAcceptor) processData0(data0 byte) {
 
 	if (data0 & 0x04) != 0 {
 		acceptor.Device.State = enum.StateEscrow
-		if a.autoStack {
+		if acceptor.AutoStack {
 			acceptor.ShouldRaise.EscrowEvent = false
 		}
 	} else {
@@ -54,9 +54,9 @@ func (a *CAcceptor) processData0(data0 byte) {
 
 func (a *CAcceptor) processData1(data1 byte) {
 	if (data1 & 0x01) != 0 {
-		a.isCheated = true
+		acceptor.IsCheated = true
 	} else {
-		a.isCheated = false
+		acceptor.IsCheated = false
 		acceptor.ShouldRaise.CheatedEvent = true
 	}
 
@@ -67,10 +67,10 @@ func (a *CAcceptor) processData1(data1 byte) {
 	}
 
 	if (data1 & 0x04) != 0 {
-		a.isDeviceJammed = true
+		acceptor.IsDeviceJammed = true
 		acceptor.ShouldRaise.JamDetectedEvent = true
 	} else {
-		a.isDeviceJammed = false
+		acceptor.IsDeviceJammed = false
 		acceptor.ShouldRaise.JamClearedEvent = true
 	}
 
@@ -110,19 +110,19 @@ func (a *CAcceptor) processData1(data1 byte) {
 }
 
 func (a *CAcceptor) processData2(data2 byte) {
-	if !a.expandedNoteReporting {
+	if !acceptor.ExpandedNoteReporting {
 		billTypeIndex := (data2 & 0x38) >> 3
 		if billTypeIndex > 0 {
-			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !a.wasDocTypeSetOnEscrow) {
+			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !acceptor.WasDocTypeSetOnEscrow) {
 				bill.Bill = bill.Types[billTypeIndex-1]
 				a.docType = enum.DocumentBill
-				a.wasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
+				acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 			}
 		} else {
 			if acceptor.Device.State == enum.StateStacked || acceptor.Device.State == enum.StateEscrow {
 				bill.Reset()
 				a.docType = enum.DocumentNoValue
-				a.wasDocTypeSetOnEscrow = false
+				acceptor.WasDocTypeSetOnEscrow = false
 			}
 		}
 	} else {
@@ -137,19 +137,19 @@ func (a *CAcceptor) processData2(data2 byte) {
 	}
 
 	if (data2 & 0x01) != 0 {
-		a.isPoweredUp = true
+		acceptor.IsPoweredUp = true
 		a.docType = enum.DocumentNoValue
 	} else {
 		acceptor.ShouldRaise.PowerUpEvent = true
-		if !a.isVeryFirstPoll {
-			a.isPoweredUp = false
+		if !acceptor.IsVeryFirstPoll {
+			acceptor.IsPoweredUp = false
 		}
 	}
 
 	if (data2 & 0x02) != 0 {
-		a.isInvalidCommand = true
+		acceptor.IsInvalidCommand = true
 	} else {
-		a.isInvalidCommand = false
+		acceptor.IsInvalidCommand = false
 		acceptor.ShouldRaise.InvalidCommandEvent = true
 	}
 
@@ -175,7 +175,7 @@ func (a *CAcceptor) processData3(data3 byte) {
 	}
 
 	if (data3 & 0x10) != 0 {
-		a.isQueryDeviceCapabilitiesSupported = true
+		acceptor.IsQueryDeviceCapabilitiesSupported = true
 	}
 }
 
@@ -202,7 +202,7 @@ func (a *CAcceptor) processData4(data4 byte) {
 	acceptor.Cap.EscrowTimeout = m == 'T' || m == 'U'
 	acceptor.Cap.NoPush = m == 'P' || m == 'X' || d == 31 || d == 23
 	acceptor.Cap.VariantPN = m == 'T' || m == 'U'
-	a.expandedNoteReporting = m == 'T' || m == 'U' // This setting might be toggled in debug or production builds
+	acceptor.ExpandedNoteReporting = m == 'T' || m == 'U' // This setting might be toggled in debug or production builds
 }
 
 func (a *CAcceptor) processData5(data5 byte) {

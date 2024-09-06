@@ -27,7 +27,43 @@ func (a *CAcceptor) verifyPropertyIsAllowed(capabilityFlag bool, propertyName st
 	return nil
 }
 
+////
+
+func (a *CAcceptor) GetBNFStatus() enum.BNFStatusType {
+	a.log.Msg("Getting BNF status")
+	err := a.verifyPropertyIsAllowed(acceptor.Cap.BNFStatus, "BNFStatus")
+
+	if err != nil {
+		a.log.Err("GetBNFStatus", err)
+		return enum.BNFStatusUnknown
+	}
+
+	payload := []byte{0x02, 0x00, 0x00, 0x03} // Assuming CmdAuxiliary is 0x02 and CmdAuxQueryBNFStatus is 0x03
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetBNFStatus", err)
+		return enum.BNFStatusUnknown
+	}
+
+	if len(reply) == 9 {
+		if reply[3] == 0 {
+			return enum.BNFStatusNotAttached
+		} else {
+			if reply[4] == 0 {
+				return enum.BNFStatusOK
+			} else {
+				return enum.BNFStatusError
+			}
+		}
+	}
+
+	return enum.BNFStatusUnknown
+}
+
 func (a *CAcceptor) GetDeviceSerialNumber() string {
+	a.log.Msg("GetDeviceSerialNumber")
+
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceSerialNumber, "DeviceSerialNumber")
 	if err != nil {
 		a.log.Err("GetDeviceSerialNumber", err)

@@ -3,10 +3,10 @@ package mpost
 const (
 	GlobalName       string = "mpost"
 	GlobalDateUpdate string = "09-06-2024"
-	GlobalHash       string = "94579e8d4b10f02c4ad5d857a71764f0333511af"
+	GlobalHash       string = "9c0c999735c186d1c9d4e5020ab952678354eb94"
 
-	GlobalVersion      string = "v0.1.9"
+	GlobalVersion      string = "v0.1.10"
 	GlobalVersionMajor string = "v0"
 	GlobalVersionMinor uint16 = 1
-	GlobalVersionPatch uint16 = 9
+	GlobalVersionPatch uint16 = 10
 )
