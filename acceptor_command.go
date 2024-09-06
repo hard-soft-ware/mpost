@@ -2,6 +2,7 @@ package mpost
 
 import (
 	"errors"
+	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/enum"
 	"time"
 )
@@ -11,13 +12,13 @@ import (
 func (a *CAcceptor) ConstructOmnibusCommand(payload []byte, controlCode byte, data0Index int) {
 	payload[0] = controlCode
 
-	if a.enableBookmarks && a.enableAcceptance && a.deviceState != enum.StateCalibrating {
+	if acceptor.Enable.Bookmarks && acceptor.Enable.Acceptance && acceptor.Device.State != enum.StateCalibrating {
 		payload[0] |= 0x20
 	}
 
 	data0 := byte(0)
 
-	if a.enableAcceptance && a.deviceState != enum.StateCalibrating {
+	if acceptor.Enable.Acceptance && acceptor.Device.State != enum.StateCalibrating {
 		if a.expandedNoteReporting {
 			data0 |= 0x7F
 		} else {
@@ -50,15 +51,15 @@ func (a *CAcceptor) ConstructOmnibusCommand(payload []byte, controlCode byte, da
 
 	data2 := byte(0)
 
-	if a.enableNoPush {
+	if acceptor.Enable.NoPush {
 		data2 |= 0x01
 	}
 
-	if a.enableBarCodes && a.enableAcceptance && a.deviceState != enum.StateCalibrating {
+	if acceptor.Enable.BarCodes && acceptor.Enable.Acceptance && acceptor.Device.State != enum.StateCalibrating {
 		data2 |= 0x02
 	}
 
-	switch a.devicePowerUp {
+	switch acceptor.Device.PowerUp {
 	case enum.PowerUpB:
 		data2 |= 0x04
 	case enum.PowerUpC:
@@ -69,7 +70,7 @@ func (a *CAcceptor) ConstructOmnibusCommand(payload []byte, controlCode byte, da
 		data2 |= 0x10
 	}
 
-	if a.enableCouponExt && a.capCouponExt {
+	if acceptor.Enable.CouponExt && acceptor.Cap.CouponExt {
 		data2 |= 0x20
 	}
 

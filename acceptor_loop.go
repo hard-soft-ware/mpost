@@ -1,6 +1,7 @@
 package mpost
 
 import (
+	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 	"time"
@@ -20,7 +21,7 @@ func (a *CAcceptor) PollingLoop(lg *LogGlobalStruct) []byte {
 		}
 
 		if time.Since(startTickCount) > PollingDisconnectTimeout {
-			if a.shouldRaiseDisconnectedEvent {
+			if acceptor.ShouldRaise.DisconnectedEvent {
 				a.RaiseDisconnectedEvent()
 			}
 			startTickCount = time.Now()
@@ -30,7 +31,7 @@ func (a *CAcceptor) PollingLoop(lg *LogGlobalStruct) []byte {
 			if a.stopFlashDownloadThread {
 				a.stopFlashDownloadThread = true
 				<-a.flashDownloadThread
-				a.deviceState = enum.StateIdling
+				acceptor.Device.State = enum.StateIdling
 				a.wasStopped = true
 				return nil
 			}

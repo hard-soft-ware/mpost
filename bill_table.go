@@ -1,6 +1,7 @@
 package mpost
 
 import (
+	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/consts"
 	"time"
 )
@@ -77,7 +78,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 func (a *CAcceptor) BuildHardCodedBillTable() {
 	a.billTypes = []CBill{}
 
-	switch a.deviceModel {
+	switch acceptor.Device.Model {
 	case 1, 12, 23, 30, 31, 'J', 'X', 'T':
 		a.billTypes = append(a.billTypes, CBill{"USD", 1, '*', '*', '*', '*'})
 		a.billTypes = append(a.billTypes, CBill{"USD", 2, '*', '*', '*', '*'})

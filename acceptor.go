@@ -28,55 +28,13 @@ type CAcceptor struct {
 	billValues       []CBill
 	billValueEnables []bool
 
-	bnfStatus                          enum.BNFStatusType
-	bootPN                             string
-	capApplicationID                   bool
-	capApplicationPN                   bool
-	capAssetNumber                     bool
-	capAudit                           bool
-	capBarCodes                        bool
-	capBarCodesExt                     bool
-	capBNFStatus                       bool
-	capBookmark                        bool
-	capBootPN                          bool
-	capCalibrate                       bool
-	capCashBoxTotal                    bool
-	capCouponExt                       bool
-	capDevicePaused                    bool
-	capDeviceSoftReset                 bool
-	capDeviceType                      bool
-	capDeviceResets                    bool
-	capDeviceSerialNumber              bool
-	capEscrowTimeout                   bool
-	capFlashDownload                   bool
-	capNoPush                          bool
-	capOrientationExt                  bool
-	capPupExt                          bool
-	capTestDoc                         bool
-	capVariantID                       bool
-	capVariantPN                       bool
-	cashBoxAttached                    bool
-	cashBoxFull                        bool
-	cashBoxTotal                       int
-	connected                          bool
-	coupon                             *CCoupon
-	deviceFailure                      bool
-	deviceModel                        int
-	devicePaused                       bool
-	devicePortName                     string
-	devicePowerUp                      enum.PowerUpType
-	deviceResets                       int
-	deviceRevision                     int
-	deviceSerialNumber                 string
-	deviceStalled                      bool
-	deviceState                        enum.StateType
-	deviceType                         string
-	docType                            enum.DocumentType
-	enableAcceptance                   bool
-	enableBarCodes                     bool
-	enableBookmarks                    bool
-	enableCouponExt                    bool
-	enableNoPush                       bool
+	bnfStatus enum.BNFStatusType
+	bootPN    string
+
+	coupon *CCoupon
+
+	docType enum.DocumentType
+
 	escrowOrientation                  enum.OrientationType
 	highSecurity                       bool
 	orientationCtl                     enum.OrientationControlType
@@ -95,43 +53,18 @@ type CAcceptor struct {
 	wasDocTypeSetOnEscrow              bool
 	wasDisconnected                    bool
 	isVeryFirstPoll                    bool
-	shouldRaiseConnectedEvent          bool
-	shouldRaiseEscrowEvent             bool
-	shouldRaisePUPEscrowEvent          bool
-	shouldRaiseStackedEvent            bool
-	shouldRaiseReturnedEvent           bool
-	shouldRaiseRejectedEvent           bool
-	shouldRaiseCheatedEvent            bool
-	shouldRaiseStackerFullEvent        bool
-	shouldRaiseCalibrateStartEvent     bool
-	shouldRaiseCalibrateProgressEvent  bool
-	shouldRaiseCalibrateFinishEvent    bool
-	shouldRaiseDownloadStartEvent      bool
-	shouldRaiseDownloadRestartEvent    bool
-	shouldRaiseDownloadProgressEvent   bool
-	shouldRaiseDownloadFinishEvent     bool
-	shouldRaisePauseDetectedEvent      bool
-	shouldRaisePauseClearedEvent       bool
-	shouldRaiseStallDetectedEvent      bool
-	shouldRaiseStallClearedEvent       bool
-	shouldRaiseJamDetectedEvent        bool
-	shouldRaiseJamClearedEvent         bool
-	shouldRaisePowerUpEvent            bool
-	shouldRaiseInvalidCommandEvent     bool
-	shouldRaiseCashBoxAttachedEvent    bool
-	shouldRaiseCashBoxRemovedEvent     bool
-	shouldRaiseDisconnectedEvent       bool
-	compressLog                        bool
-	workerThread                       sync.WaitGroup
-	openThread                         chan bool
-	flashDownloadThread                chan bool
-	dataLinkLayer                      *CDataLinkLayer
-	replyQueuedEvent                   int
-	notInProcessReplyEvent             int
-	stopWorkerThread                   bool
-	stopOpenThread                     bool
-	stopFlashDownloadThread            bool
-	suppressStandardPoll               bool
+
+	compressLog             bool
+	workerThread            sync.WaitGroup
+	openThread              chan bool
+	flashDownloadThread     chan bool
+	dataLinkLayer           *CDataLinkLayer
+	replyQueuedEvent        int
+	notInProcessReplyEvent  int
+	stopWorkerThread        bool
+	stopOpenThread          bool
+	stopFlashDownloadThread bool
+	suppressStandardPoll    bool
 
 	messageQueue chan *CMessage
 	replyQueue   chan []byte

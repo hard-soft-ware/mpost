@@ -2,6 +2,7 @@ package mpost
 
 import (
 	"fmt"
+	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 	"go.bug.st/serial"
@@ -25,13 +26,13 @@ func byteSliceToString(b []byte) string {
 func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 	lg := a.log.NewLog("OpenSerial")
 
-	if a.connected {
+	if acceptor.Connected {
 		lg.Debug().Msg("already connected")
 		return nil
 	}
 
-	a.devicePortName = portName
-	a.devicePowerUp = powerUp
+	acceptor.Device.PortName = portName
+	acceptor.Device.PowerUp = powerUp
 
 	err := a.OpenPort(lg)
 	if err != nil {
@@ -53,7 +54,7 @@ func (a *CAcceptor) OpenPort(lg *LogGlobalStruct) error {
 		StopBits: serial.OneStopBit,
 	}
 
-	port, err := serial.Open(a.devicePortName, mode)
+	port, err := serial.Open(acceptor.Device.PortName, mode)
 	if err != nil {
 		lg.Debug().Err(err).Msg("failed to open serial port")
 		return err
@@ -73,20 +74,20 @@ func (a *CAcceptor) OpenPort(lg *LogGlobalStruct) error {
 	port.ResetInputBuffer()
 	a.port = port
 
-	a.connected = true
+	acceptor.Connected = true
 	lg.Debug().Msg("Connected")
 	return nil
 }
 
 func (a *CAcceptor) Close() {
 
-	if !a.connected {
+	if !acceptor.Connected {
 		a.stopOpenThread = true
 		return
 	}
 
-	if a.enableAcceptance {
-		a.enableAcceptance = false
+	if acceptor.Enable.Acceptance {
+		acceptor.Enable.Acceptance = false
 	}
 
 	if a.dataLinkLayer != nil {
@@ -98,7 +99,7 @@ func (a *CAcceptor) Close() {
 
 	a.port.Close()
 	a.port = nil
-	a.connected = false
+	acceptor.Connected = false
 }
 
 ////
@@ -117,19 +118,19 @@ func (a *CAcceptor) QueryDeviceCapabilities(lg *LogGlobalStruct) {
 	}
 
 	if reply[3]&0x01 != 0 {
-		a.capPupExt = true
+		acceptor.Cap.PupExt = true
 	}
 	if reply[3]&0x02 != 0 {
-		a.capOrientationExt = true
+		acceptor.Cap.OrientationExt = true
 	}
 	if reply[3]&0x04 != 0 {
-		a.capApplicationID = true
-		a.capVariantID = true
+		acceptor.Cap.ApplicationID = true
+		acceptor.Cap.VariantID = true
 	}
 	if reply[3]&0x08 != 0 {
-		a.capBNFStatus = true
+		acceptor.Cap.BNFStatus = true
 	}
 	if reply[3]&0x10 != 0 {
-		a.capTestDoc = true
+		acceptor.Cap.TestDoc = true
 	}
 }

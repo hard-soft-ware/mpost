@@ -2,6 +2,7 @@ package mpost
 
 import (
 	"fmt"
+	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/enum"
 	"strconv"
 	"strings"
@@ -54,7 +55,7 @@ func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) CBill {
 
 	bill.Value = billValue
 	a.docType = enum.DocumentBill
-	a.wasDocTypeSetOnEscrow = a.deviceState == enum.StateEscrow
+	a.wasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 
 	orientation := reply[extDataIndex+10]
 	switch orientation {

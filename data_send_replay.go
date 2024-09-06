@@ -3,6 +3,7 @@ package mpost
 import (
 	"bufio"
 	"errors"
+	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 	"io"
@@ -58,7 +59,7 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 	reply := []byte{}
 
 	timeout := dl.Acceptor.transactionTimeout
-	if dl.Acceptor.deviceState == enum.StateDownloadStart || dl.Acceptor.deviceState == enum.StateDownloading {
+	if acceptor.Device.State == enum.StateDownloadStart || acceptor.Device.State == enum.StateDownloading {
 		timeout = dl.Acceptor.downloadTimeout
 	}
 
@@ -143,7 +144,7 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 	}
 
 	if (ctl & 0x70) == 0x50 {
-		dl.Acceptor.deviceState = enum.StateDownloadRestart
+		acceptor.Device.State = enum.StateDownloadRestart
 	}
 
 	if (ctl & 0x70) == 0x70 {
@@ -153,8 +154,8 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 			dl.ProcessExtendedOmnibusBarCodeReply(reply)
 		case 0x02:
 			dl.ProcessExtendedOmnibusExpandedNoteReply(reply)
-			if dl.Acceptor.deviceState == enum.StateEscrow || (dl.Acceptor.deviceState == enum.StateStacked && !dl.Acceptor.wasDocTypeSetOnEscrow) {
-				if dl.Acceptor.capOrientationExt {
+			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !dl.Acceptor.wasDocTypeSetOnEscrow) {
+				if acceptor.Cap.OrientationExt {
 					switch dl.Acceptor.orientationCtlExt {
 					case enum.OrientationControlOneWay:
 						if dl.Acceptor.escrowOrientation != enum.OrientationRightUp {
@@ -175,12 +176,12 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 		dl.RaiseEvents()
 	}
 
-	if dl.Acceptor.deviceState == enum.StateEscrow && dl.Acceptor.autoStack {
+	if acceptor.Device.State == enum.StateEscrow && dl.Acceptor.autoStack {
 		dl.EscrowStack()
-		dl.Acceptor.shouldRaiseEscrowEvent = false
+		acceptor.ShouldRaise.EscrowEvent = false
 	}
 
-	if dl.Acceptor.deviceState != enum.StateEscrow && dl.Acceptor.deviceState != enum.StateStacking {
+	if acceptor.Device.State != enum.StateEscrow && acceptor.Device.State != enum.StateStacking {
 		dl.Acceptor.wasDocTypeSetOnEscrow = false
 	}
 }

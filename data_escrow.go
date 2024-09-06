@@ -1,6 +1,7 @@
 package mpost
 
 import (
+	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 )
@@ -8,7 +9,7 @@ import (
 ////////////////////////////////////
 
 func (dl *CDataLinkLayer) escrowXX(b byte) {
-	if !dl.Acceptor.connected {
+	if !acceptor.Connected {
 		dl.log.Debug().Msg("serial not connected")
 		return
 	}
@@ -32,9 +33,9 @@ func (dl *CDataLinkLayer) EscrowStack() {
 ////
 
 func (dl *CDataLinkLayer) RaiseEvents() {
-	if dl.Acceptor.isPoweredUp && dl.Acceptor.shouldRaisePowerUpEvent {
+	if dl.Acceptor.isPoweredUp && acceptor.ShouldRaise.PowerUpEvent {
 		dl.log.Debug().Msg("Power Up Event Raised")
-		dl.Acceptor.shouldRaisePowerUpEvent = false
+		acceptor.ShouldRaise.PowerUpEvent = false
 	}
 
 	if dl.Acceptor.isVeryFirstPoll {
@@ -42,91 +43,91 @@ func (dl *CDataLinkLayer) RaiseEvents() {
 		return
 	}
 
-	switch dl.Acceptor.deviceState {
+	switch acceptor.Device.State {
 	case enum.StateEscrow:
-		if dl.Acceptor.isPoweredUp && dl.Acceptor.shouldRaisePUPEscrowEvent {
+		if dl.Acceptor.isPoweredUp && acceptor.ShouldRaise.PUPEscrowEvent {
 			dl.log.Debug().Msg("PUP Escrow Event Raised")
-			dl.Acceptor.shouldRaisePUPEscrowEvent = false
-		} else if dl.Acceptor.shouldRaiseEscrowEvent {
+			acceptor.ShouldRaise.PUPEscrowEvent = false
+		} else if acceptor.ShouldRaise.EscrowEvent {
 			dl.log.Debug().Msg("Escrow Event Raised")
-			dl.Acceptor.shouldRaiseEscrowEvent = false
+			acceptor.ShouldRaise.EscrowEvent = false
 		}
 	case enum.StateStacked:
-		if dl.Acceptor.shouldRaiseStackedEvent {
+		if acceptor.ShouldRaise.StackedEvent {
 			dl.log.Debug().Msg("Stacked Event Raised")
-			dl.Acceptor.shouldRaiseStackedEvent = false
+			acceptor.ShouldRaise.StackedEvent = false
 		}
 	case enum.StateReturned:
-		if dl.Acceptor.shouldRaiseReturnedEvent {
+		if acceptor.ShouldRaise.ReturnedEvent {
 			dl.log.Debug().Msg("Returned Event Raised")
-			dl.Acceptor.shouldRaiseReturnedEvent = false
+			acceptor.ShouldRaise.ReturnedEvent = false
 		}
 	case enum.StateRejected:
-		if dl.Acceptor.shouldRaiseRejectedEvent {
+		if acceptor.ShouldRaise.RejectedEvent {
 			dl.log.Debug().Msg("Rejected Event Raised")
-			dl.Acceptor.shouldRaiseRejectedEvent = false
+			acceptor.ShouldRaise.RejectedEvent = false
 		}
 	case enum.StateStalled:
-		if dl.Acceptor.shouldRaiseStallDetectedEvent {
+		if acceptor.ShouldRaise.StallDetectedEvent {
 			dl.log.Debug().Msg("Stall Detected Event Raised")
-			dl.Acceptor.shouldRaiseStallDetectedEvent = false
+			acceptor.ShouldRaise.StallDetectedEvent = false
 		}
 	}
 
-	if dl.Acceptor.deviceState != enum.StateStalled && dl.Acceptor.shouldRaiseStallClearedEvent {
+	if acceptor.Device.State != enum.StateStalled && acceptor.ShouldRaise.StallClearedEvent {
 		dl.log.Debug().Msg("Stall Cleared Event Raised")
-		dl.Acceptor.shouldRaiseStallClearedEvent = false
+		acceptor.ShouldRaise.StallClearedEvent = false
 	}
 
-	if dl.Acceptor.cashBoxFull && dl.Acceptor.shouldRaiseStackerFullEvent {
+	if acceptor.Cash.BoxFull && acceptor.ShouldRaise.StackerFullEvent {
 		dl.log.Debug().Msg("Stacker Full Event Raised")
-		dl.Acceptor.shouldRaiseStackerFullEvent = false
+		acceptor.ShouldRaise.StackerFullEvent = false
 	}
 
-	if dl.Acceptor.isCheated && dl.Acceptor.shouldRaiseCheatedEvent {
+	if dl.Acceptor.isCheated && acceptor.ShouldRaise.CheatedEvent {
 		dl.log.Debug().Msg("Cheated Event Raised")
-		dl.Acceptor.shouldRaiseCheatedEvent = false
+		acceptor.ShouldRaise.CheatedEvent = false
 	}
 
-	if dl.Acceptor.cashBoxAttached && dl.Acceptor.shouldRaiseCashBoxAttachedEvent {
+	if acceptor.Cash.BoxAttached && acceptor.ShouldRaise.CashBoxAttachedEvent {
 		dl.log.Debug().Msg("Cash Box Attached Event Raised")
-		dl.Acceptor.shouldRaiseCashBoxAttachedEvent = false
-		dl.Acceptor.shouldRaiseCashBoxRemovedEvent = true
+		acceptor.ShouldRaise.CashBoxAttachedEvent = false
+		acceptor.ShouldRaise.CashBoxRemovedEvent = true
 	}
 
-	if !dl.Acceptor.cashBoxAttached && dl.Acceptor.shouldRaiseCashBoxRemovedEvent {
+	if !acceptor.Cash.BoxAttached && acceptor.ShouldRaise.CashBoxRemovedEvent {
 		dl.log.Debug().Msg("Cash Box Removed Event Raised")
-		dl.Acceptor.shouldRaiseCashBoxRemovedEvent = false
-		dl.Acceptor.shouldRaiseCashBoxAttachedEvent = true
+		acceptor.ShouldRaise.CashBoxRemovedEvent = false
+		acceptor.ShouldRaise.CashBoxAttachedEvent = true
 	}
 
-	if dl.Acceptor.devicePaused && dl.Acceptor.shouldRaisePauseDetectedEvent {
+	if acceptor.Device.Paused && acceptor.ShouldRaise.PauseDetectedEvent {
 		dl.log.Debug().Msg("Pause Detected Event Raised")
-		dl.Acceptor.shouldRaisePauseDetectedEvent = false
+		acceptor.ShouldRaise.PauseDetectedEvent = false
 	}
 
-	if !dl.Acceptor.devicePaused && dl.Acceptor.shouldRaisePauseClearedEvent {
+	if !acceptor.Device.Paused && acceptor.ShouldRaise.PauseClearedEvent {
 		dl.log.Debug().Msg("Pause Cleared Event Raised")
-		dl.Acceptor.shouldRaisePauseClearedEvent = false
+		acceptor.ShouldRaise.PauseClearedEvent = false
 	}
 
-	if dl.Acceptor.isDeviceJammed && dl.Acceptor.shouldRaiseJamDetectedEvent {
+	if dl.Acceptor.isDeviceJammed && acceptor.ShouldRaise.JamDetectedEvent {
 		dl.log.Debug().Msg("Jam Detected Event Raised")
-		dl.Acceptor.shouldRaiseJamDetectedEvent = false
+		acceptor.ShouldRaise.JamDetectedEvent = false
 	}
 
-	if !dl.Acceptor.isDeviceJammed && dl.Acceptor.shouldRaiseJamClearedEvent {
+	if !dl.Acceptor.isDeviceJammed && acceptor.ShouldRaise.JamClearedEvent {
 		dl.log.Debug().Msg("Jam Cleared Event Raised")
-		dl.Acceptor.shouldRaiseJamClearedEvent = false
+		acceptor.ShouldRaise.JamClearedEvent = false
 	}
 
-	if dl.Acceptor.isInvalidCommand && dl.Acceptor.shouldRaiseInvalidCommandEvent {
+	if dl.Acceptor.isInvalidCommand && acceptor.ShouldRaise.InvalidCommandEvent {
 		dl.log.Debug().Msg("Invalid Command Event Raised")
-		dl.Acceptor.shouldRaiseInvalidCommandEvent = false
+		acceptor.ShouldRaise.InvalidCommandEvent = false
 	}
 
-	if dl.Acceptor.shouldRaiseCalibrateFinishEvent {
+	if acceptor.ShouldRaise.CalibrateFinishEvent {
 		dl.log.Debug().Msg("Calibrate Finish Event Raised")
-		dl.Acceptor.shouldRaiseCalibrateFinishEvent = false
+		acceptor.ShouldRaise.CalibrateFinishEvent = false
 	}
 }

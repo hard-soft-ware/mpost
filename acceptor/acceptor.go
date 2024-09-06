@@ -1,0 +1,5 @@
+package acceptor
+
+////////////////////////////////////
+
+var Connected bool
