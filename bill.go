@@ -60,13 +60,13 @@ func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) CBill {
 	orientation := reply[extDataIndex+10]
 	switch orientation {
 	case 0x00:
-		a.escrowOrientation = enum.OrientationRightUp
+		acceptor.EscrowOrientation = enum.OrientationRightUp
 	case 0x01:
-		a.escrowOrientation = enum.OrientationRightDown
+		acceptor.EscrowOrientation = enum.OrientationRightDown
 	case 0x02:
-		a.escrowOrientation = enum.OrientationLeftUp
+		acceptor.EscrowOrientation = enum.OrientationLeftUp
 	case 0x03:
-		a.escrowOrientation = enum.OrientationLeftDown
+		acceptor.EscrowOrientation = enum.OrientationLeftDown
 	}
 
 	bill.Type = rune(reply[extDataIndex+11])

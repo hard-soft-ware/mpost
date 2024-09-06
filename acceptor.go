@@ -35,11 +35,6 @@ type CAcceptor struct {
 
 	docType enum.DocumentType
 
-	escrowOrientation                  enum.OrientationType
-	highSecurity                       bool
-	orientationCtl                     enum.OrientationControlType
-	orientationCtlExt                  enum.OrientationControlType
-	version                            string
 	transactionTimeout                 time.Duration
 	downloadTimeout                    time.Duration
 	inSoftResetOneSecondIgnore         bool

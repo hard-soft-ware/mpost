@@ -15,7 +15,7 @@ func (dl *CDataLinkLayer) escrowXX(b byte) {
 	}
 
 	payload := make([]byte, 4)
-	dl.Acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus.Byte(), 1)
+	acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, dl.Acceptor.billTypeEnables)
 
 	payload[2] |= b
 

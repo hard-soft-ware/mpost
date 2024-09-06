@@ -156,13 +156,13 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 			dl.ProcessExtendedOmnibusExpandedNoteReply(reply)
 			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !dl.Acceptor.wasDocTypeSetOnEscrow) {
 				if acceptor.Cap.OrientationExt {
-					switch dl.Acceptor.orientationCtlExt {
+					switch acceptor.OrientationCtlExt {
 					case enum.OrientationControlOneWay:
-						if dl.Acceptor.escrowOrientation != enum.OrientationRightUp {
+						if acceptor.EscrowOrientation != enum.OrientationRightUp {
 							dl.EscrowReturn()
 						}
 					case enum.OrientationControlTwoWay:
-						if dl.Acceptor.escrowOrientation != enum.OrientationRightUp && dl.Acceptor.escrowOrientation != enum.OrientationLeftUp {
+						if acceptor.EscrowOrientation != enum.OrientationRightUp && acceptor.EscrowOrientation != enum.OrientationLeftUp {
 							dl.EscrowReturn()
 						}
 					case enum.OrientationControlFourWay:

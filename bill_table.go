@@ -35,7 +35,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 	index := 1
 	for {
 		payload := make([]byte, 6)
-		a.ConstructOmnibusCommand(payload, consts.CmdExpanded.Byte(), 2)
+		acceptor.ConstructOmnibusCommand(payload, consts.CmdExpanded, 2, a.billTypeEnables)
 		payload[1] = 0x02
 		payload[5] = byte(index)
 
