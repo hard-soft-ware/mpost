@@ -48,7 +48,7 @@ func enumGenerator(obj *generator.GeneratorObj, val []string) {
 }
 
 func constGenerator(obj *generator.GeneratorObj, val *generator.GeneratorValueObj) {
-	obj.Print("type ").Name.Type().PrintLN(" int").LN()
+	obj.Print("type ").Name.Type().PrintLN(" byte").LN()
 
 	obj.PrintLN("const (")
 	for _, code := range val.Get.Ints() {
@@ -94,6 +94,10 @@ func constGenerator(obj *generator.GeneratorObj, val *generator.GeneratorValueOb
 	obj.Offset(1).Print("val, ok := ").Name.Map().PrintLN("[obj]")
 	obj.Offset(1).PrintLN("if ok {").Offset(2).PrintLN("return val").Offset(1).PrintLN("}")
 	obj.Offset(1).Print("return \"Unknown ").Name.Type().PrintLN("\"")
+	obj.PrintLN("}").LN()
+
+	obj.Print("func (obj ").Name.Type().PrintLN(") Byte() byte {")
+	obj.Offset(1).PrintLN("return byte(obj)")
 	obj.PrintLN("}")
 
 }
@@ -113,4 +117,5 @@ func main() {
 
 	Cmd()
 	CmdAux()
+	Data()
 }

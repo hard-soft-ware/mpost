@@ -1,6 +1,10 @@
 package mpost
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/hard-soft-ware/mpost/consts"
+	"github.com/hard-soft-ware/mpost/enum"
+)
 
 // //////////////////////////////////
 func (a *CAcceptor) verifyPropertyIsAllowed(capabilityFlag bool, propertyName string) error {
@@ -13,9 +17,9 @@ func (a *CAcceptor) verifyPropertyIsAllowed(capabilityFlag bool, propertyName st
 	}
 
 	switch a.deviceState {
-	case DownloadStart, Downloading:
+	case enum.StateDownloadStart, enum.StateDownloading:
 		return fmt.Errorf("Calling %s not allowed during flash download.", propertyName)
-	case CalibrateStart, Calibrating:
+	case enum.StateCalibrateStart, enum.StateCalibrating:
 		return fmt.Errorf("Calling %s not allowed during calibration.", propertyName)
 	}
 
@@ -29,7 +33,7 @@ func (a *CAcceptor) GetDeviceSerialNumber() string {
 		return ""
 	}
 
-	payload := []byte{CmdAuxiliary, 0, 0, CmdAuxQueryAcceptorSerialNumber}
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorSerialNumber.Byte()}
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
 		a.log.Debug().Err(err).Msg("GetDeviceSerialNumber")

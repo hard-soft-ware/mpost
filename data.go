@@ -13,12 +13,6 @@ type CDataLinkLayer struct {
 	IdenticalCommandAndReplyCount  int
 }
 
-const (
-	STX     = 0x02 // Начало текста
-	ETX     = 0x03 // Конец текста
-	ACKMask = 0x06 // Маска подтверждения
-)
-
 func (a *CAcceptor) NewCDataLinkLayer(lg *LogGlobalStruct) *CDataLinkLayer {
 	return &CDataLinkLayer{
 		Acceptor: a,

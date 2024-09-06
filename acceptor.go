@@ -1,6 +1,7 @@
 package mpost
 
 import (
+	"github.com/hard-soft-ware/mpost/enum"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"go.bug.st/serial"
@@ -10,6 +11,8 @@ import (
 )
 
 ////////////////////////////////////
+
+type EventHandler func(*CAcceptor, int)
 
 type CAcceptor struct {
 	port                serial.Port
@@ -25,7 +28,7 @@ type CAcceptor struct {
 	billValues       []CBill
 	billValueEnables []bool
 
-	bnfStatus                          BNFStatus
+	bnfStatus                          enum.BNFStatusType
 	bootPN                             string
 	capApplicationID                   bool
 	capApplicationPN                   bool
@@ -61,23 +64,23 @@ type CAcceptor struct {
 	deviceModel                        int
 	devicePaused                       bool
 	devicePortName                     string
-	devicePowerUp                      PowerUp
+	devicePowerUp                      enum.PowerUpType
 	deviceResets                       int
 	deviceRevision                     int
 	deviceSerialNumber                 string
 	deviceStalled                      bool
-	deviceState                        State
+	deviceState                        enum.StateType
 	deviceType                         string
-	docType                            DocumentType
+	docType                            enum.DocumentType
 	enableAcceptance                   bool
 	enableBarCodes                     bool
 	enableBookmarks                    bool
 	enableCouponExt                    bool
 	enableNoPush                       bool
-	escrowOrientation                  Orientation
+	escrowOrientation                  enum.OrientationType
 	highSecurity                       bool
-	orientationCtl                     OrientationControl
-	orientationCtlExt                  OrientationControl
+	orientationCtl                     enum.OrientationControlType
+	orientationCtlExt                  enum.OrientationControlType
 	version                            string
 	transactionTimeout                 time.Duration
 	downloadTimeout                    time.Duration
@@ -136,7 +139,7 @@ type CAcceptor struct {
 
 	isReplyAcked          bool
 	signalMainThreadEvent int
-	eventHandlers         map[Event]EventHandler
+	eventHandlers         map[enum.EventType]EventHandler
 
 	log *LogGlobalStruct
 }
@@ -145,7 +148,7 @@ func NewCAcceptor(transactionTimeout, downloadTimeout time.Duration) *CAcceptor 
 	a := &CAcceptor{
 		transactionTimeout: transactionTimeout,
 		downloadTimeout:    downloadTimeout,
-		eventHandlers:      make(map[Event]EventHandler, Events_End),
+		eventHandlers:      make(map[enum.EventType]EventHandler, enum.Event_End),
 
 		messageQueue:        make(chan *CMessage, 1),
 		replyQueue:          make(chan []byte, 1),
@@ -171,6 +174,6 @@ func (a *CAcceptor) getTickCount() int64 {
 	return time.Now().UnixNano() / int64(time.Millisecond)
 }
 
-func (a *CAcceptor) SetEventHandler(event Event, eventHandler func(*CAcceptor, int)) {
+func (a *CAcceptor) SetEventHandler(event enum.EventType, eventHandler func(*CAcceptor, int)) {
 	a.eventHandlers[event] = eventHandler
 }

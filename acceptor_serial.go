@@ -2,6 +2,8 @@ package mpost
 
 import (
 	"fmt"
+	"github.com/hard-soft-ware/mpost/consts"
+	"github.com/hard-soft-ware/mpost/enum"
 	"go.bug.st/serial"
 	"strings"
 	"time"
@@ -20,7 +22,7 @@ func byteSliceToString(b []byte) string {
 
 ////////////////////////////////////
 
-func (a *CAcceptor) Open(portName string, powerUp PowerUp) error {
+func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 	lg := a.log.NewLog("OpenSerial")
 
 	if a.connected {
@@ -106,7 +108,7 @@ func (a *CAcceptor) QueryDeviceCapabilities(lg *LogGlobalStruct) {
 		return
 	}
 
-	payload := []byte{CmdAuxiliary, 0x00, 0x00, CmdAuxQueryDeviceCapabilities}
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0x00, 0x00, consts.CmdAuxDeviceCapabilities.Byte()}
 	reply, err := a.SendSynchronousCommand(payload)
 
 	if len(reply) < 4 {

@@ -1,6 +1,9 @@
 package mpost
 
-import "time"
+import (
+	"github.com/hard-soft-ware/mpost/enum"
+	"time"
+)
 
 ////////////////////////////////////
 
@@ -17,7 +20,7 @@ func (a *CAcceptor) OpenThread() {
 	a.dataLinkLayer.ProcessReply(replay)
 	a.QueryDeviceCapabilities(lg)
 
-	if a.deviceState != DownloadRestart {
+	if a.deviceState != enum.StateDownloadRestart {
 		a.SetUpBillTable()
 		a.connected = true
 		if a.shouldRaiseConnectedEvent {
@@ -44,7 +47,7 @@ func (a *CAcceptor) MessageLoopThread() {
 		}
 
 		if time.Since(timeoutStart) > 30*time.Second {
-			if a.deviceState != Downloading && a.deviceState != DownloadRestart {
+			if a.deviceState != enum.StateDownloading && a.deviceState != enum.StateDownloadRestart {
 				a.connected = false
 				if a.shouldRaiseDisconnectedEvent {
 					a.RaiseDisconnectedEvent()

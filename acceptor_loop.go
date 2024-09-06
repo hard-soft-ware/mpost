@@ -1,6 +1,10 @@
 package mpost
 
-import "time"
+import (
+	"github.com/hard-soft-ware/mpost/consts"
+	"github.com/hard-soft-ware/mpost/enum"
+	"time"
+)
 
 ////////////////////////////////////
 
@@ -8,7 +12,7 @@ func (a *CAcceptor) PollingLoop(lg *LogGlobalStruct) []byte {
 	startTickCount := time.Now()
 
 	for {
-		payload := []byte{CmdOmnibus, 0x00, 0x10, 0x00}
+		payload := []byte{consts.CmdOmnibus.Byte(), 0x00, 0x10, 0x00}
 
 		reply, err := a.SendSynchronousCommand(payload)
 		if err != nil {
@@ -26,7 +30,7 @@ func (a *CAcceptor) PollingLoop(lg *LogGlobalStruct) []byte {
 			if a.stopFlashDownloadThread {
 				a.stopFlashDownloadThread = true
 				<-a.flashDownloadThread
-				a.deviceState = Idling
+				a.deviceState = enum.StateIdling
 				a.wasStopped = true
 				return nil
 			}

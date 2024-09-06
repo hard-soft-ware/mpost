@@ -1,22 +1,24 @@
 package mpost
 
+import "github.com/hard-soft-ware/mpost/enum"
+
 ////////////////////////////////////
 
 func (a *CAcceptor) processData0(data0 byte) {
 	if (data0 & 0x01) != 0 {
-		if a.deviceState != Calibrating && a.deviceState != CalibrateStart {
-			a.deviceState = Idling
+		if a.deviceState != enum.StateCalibrating && a.deviceState != enum.StateCalibrateStart {
+			a.deviceState = enum.StateIdling
 		}
 	}
 
 	if (data0 & 0x02) != 0 {
-		if a.deviceState != Calibrating && a.deviceState != CalibrateStart {
-			a.deviceState = Accepting
+		if a.deviceState != enum.StateCalibrating && a.deviceState != enum.StateCalibrateStart {
+			a.deviceState = enum.StateAccepting
 		}
 	}
 
 	if (data0 & 0x04) != 0 {
-		a.deviceState = Escrow
+		a.deviceState = enum.StateEscrow
 		if a.autoStack {
 			a.shouldRaiseEscrowEvent = false
 		}
@@ -25,21 +27,21 @@ func (a *CAcceptor) processData0(data0 byte) {
 	}
 
 	if (data0 & 0x08) != 0 {
-		a.deviceState = Stacking
+		a.deviceState = enum.StateStacking
 	}
 
 	if (data0 & 0x10) != 0 {
-		a.deviceState = Stacked
+		a.deviceState = enum.StateStacked
 	} else {
 		a.shouldRaiseStackedEvent = true
 	}
 
 	if (data0 & 0x20) != 0 {
-		a.deviceState = Returning
+		a.deviceState = enum.StateReturning
 	}
 
 	if (data0 & 0x40) != 0 {
-		a.deviceState = Returned
+		a.deviceState = enum.StateReturned
 		a.bill = CBill{} // Resetting the bill
 	} else {
 		a.shouldRaiseReturnedEvent = true
@@ -55,7 +57,7 @@ func (a *CAcceptor) processData1(data1 byte) {
 	}
 
 	if (data1 & 0x02) != 0 {
-		a.deviceState = Rejected
+		a.deviceState = enum.StateRejected
 	} else {
 		a.shouldRaiseRejectedEvent = true
 	}
@@ -91,14 +93,14 @@ func (a *CAcceptor) processData1(data1 byte) {
 	}
 
 	if (data1 & 0x40) != 0 {
-		a.deviceState = Calibrating
+		a.deviceState = enum.StateCalibrating
 		if a.shouldRaiseCalibrateProgressEvent {
 			a.RaiseCalibrateProgressEvent()
 		}
 	} else {
-		if a.deviceState == Calibrating {
+		if a.deviceState == enum.StateCalibrating {
 			a.shouldRaiseCalibrateFinishEvent = true
-			a.deviceState = Idling
+			a.deviceState = enum.StateIdling
 		}
 	}
 }
@@ -107,32 +109,32 @@ func (a *CAcceptor) processData2(data2 byte) {
 	if !a.expandedNoteReporting {
 		billTypeIndex := (data2 & 0x38) >> 3
 		if billTypeIndex > 0 {
-			if a.deviceState == Escrow || (a.deviceState == Stacked && !a.wasDocTypeSetOnEscrow) {
+			if a.deviceState == enum.StateEscrow || (a.deviceState == enum.StateStacked && !a.wasDocTypeSetOnEscrow) {
 				a.bill = a.billTypes[billTypeIndex-1]
-				a.docType = Bill
-				a.wasDocTypeSetOnEscrow = a.deviceState == Escrow
+				a.docType = enum.DocumentBill
+				a.wasDocTypeSetOnEscrow = a.deviceState == enum.StateEscrow
 			}
 		} else {
-			if a.deviceState == Stacked || a.deviceState == Escrow {
+			if a.deviceState == enum.StateStacked || a.deviceState == enum.StateEscrow {
 				a.bill = CBill{}
-				a.docType = NoValue
+				a.docType = enum.DocumentNoValue
 				a.wasDocTypeSetOnEscrow = false
 			}
 		}
 	} else {
-		if a.deviceState == Stacked {
-			if a.docType == Bill && a.bill.Value == 0.0 {
-				a.docType = NoValue
+		if a.deviceState == enum.StateStacked {
+			if a.docType == enum.DocumentBill && a.bill.Value == 0.0 {
+				a.docType = enum.DocumentNoValue
 			}
-		} else if a.deviceState == Escrow {
+		} else if a.deviceState == enum.StateEscrow {
 			a.bill = CBill{}
-			a.docType = NoValue
+			a.docType = enum.DocumentNoValue
 		}
 	}
 
 	if (data2 & 0x01) != 0 {
 		a.isPoweredUp = true
-		a.docType = NoValue
+		a.docType = enum.DocumentNoValue
 	} else {
 		a.shouldRaisePowerUpEvent = true
 		if !a.isVeryFirstPoll {
@@ -148,20 +150,20 @@ func (a *CAcceptor) processData2(data2 byte) {
 	}
 
 	if (data2 & 0x04) != 0 {
-		a.deviceState = Failed
+		a.deviceState = enum.StateFailed
 	}
 }
 
 func (a *CAcceptor) processData3(data3 byte) {
 	if (data3 & 0x01) != 0 {
-		a.deviceState = Stalled
+		a.deviceState = enum.StateStalled
 		a.shouldRaiseStallClearedEvent = true
 	} else {
 		a.shouldRaiseStallDetectedEvent = true
 	}
 
 	if (data3 & 0x02) != 0 {
-		a.deviceState = DownloadRestart
+		a.deviceState = enum.StateDownloadRestart
 	}
 
 	if (data3 & 0x08) != 0 {

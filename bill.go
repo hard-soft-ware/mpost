@@ -2,6 +2,7 @@ package mpost
 
 import (
 	"fmt"
+	"github.com/hard-soft-ware/mpost/enum"
 	"strconv"
 	"strings"
 )
@@ -52,19 +53,19 @@ func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) CBill {
 	}
 
 	bill.Value = billValue
-	a.docType = Bill
-	a.wasDocTypeSetOnEscrow = a.deviceState == Escrow
+	a.docType = enum.DocumentBill
+	a.wasDocTypeSetOnEscrow = a.deviceState == enum.StateEscrow
 
 	orientation := reply[extDataIndex+10]
 	switch orientation {
 	case 0x00:
-		a.escrowOrientation = RightUp
+		a.escrowOrientation = enum.OrientationRightUp
 	case 0x01:
-		a.escrowOrientation = RightDown
+		a.escrowOrientation = enum.OrientationRightDown
 	case 0x02:
-		a.escrowOrientation = LeftUp
+		a.escrowOrientation = enum.OrientationLeftUp
 	case 0x03:
-		a.escrowOrientation = LeftDown
+		a.escrowOrientation = enum.OrientationLeftDown
 	}
 
 	bill.Type = rune(reply[extDataIndex+11])

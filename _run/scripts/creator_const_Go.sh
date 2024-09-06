@@ -2,7 +2,7 @@
 # Original source: https://github.com/Bookshelf-Writer/scripts-for-integration/blob/main/_run/scripts/creator_const_Go.sh
 
 dir_path=""
-file_name="verControl.go"
+file_name="const.go"
 package_name="mpost"
 
 #############################################################################

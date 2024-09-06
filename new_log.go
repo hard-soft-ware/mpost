@@ -2,6 +2,7 @@ package mpost
 
 import (
 	"fmt"
+	"github.com/hard-soft-ware/mpost/enum"
 	"github.com/rs/zerolog"
 	"strings"
 )
@@ -47,6 +48,6 @@ func (obj *LogStruct) Bytes(msg string, data []byte) {
 
 //
 
-func (obj *LogStruct) Event(event Event) {
+func (obj *LogStruct) Event(event enum.EventType) {
 	obj.log.Debug().Str("event", "lool").Msg("Event")
 }

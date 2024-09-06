@@ -2,6 +2,7 @@ package mpost
 
 import (
 	"errors"
+	"github.com/hard-soft-ware/mpost/enum"
 	"time"
 )
 
@@ -10,13 +11,13 @@ import (
 func (a *CAcceptor) ConstructOmnibusCommand(payload []byte, controlCode byte, data0Index int) {
 	payload[0] = controlCode
 
-	if a.enableBookmarks && a.enableAcceptance && a.deviceState != Calibrating {
+	if a.enableBookmarks && a.enableAcceptance && a.deviceState != enum.StateCalibrating {
 		payload[0] |= 0x20
 	}
 
 	data0 := byte(0)
 
-	if a.enableAcceptance && a.deviceState != Calibrating {
+	if a.enableAcceptance && a.deviceState != enum.StateCalibrating {
 		if a.expandedNoteReporting {
 			data0 |= 0x7F
 		} else {
@@ -39,9 +40,9 @@ func (a *CAcceptor) ConstructOmnibusCommand(payload []byte, controlCode byte, da
 	}
 
 	switch a.orientationCtl {
-	case TwoWay:
+	case enum.OrientationControlTwoWay:
 		data1 |= 0x04
-	case FourWay:
+	case enum.OrientationControlFourWay:
 		data1 |= 0x0C
 	}
 
@@ -53,14 +54,14 @@ func (a *CAcceptor) ConstructOmnibusCommand(payload []byte, controlCode byte, da
 		data2 |= 0x01
 	}
 
-	if a.enableBarCodes && a.enableAcceptance && a.deviceState != Calibrating {
+	if a.enableBarCodes && a.enableAcceptance && a.deviceState != enum.StateCalibrating {
 		data2 |= 0x02
 	}
 
 	switch a.devicePowerUp {
-	case B:
+	case enum.PowerUpB:
 		data2 |= 0x04
-	case C:
+	case enum.PowerUpC:
 		data2 |= 0x0C
 	}
 

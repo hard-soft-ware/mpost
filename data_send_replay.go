@@ -3,6 +3,8 @@ package mpost
 import (
 	"bufio"
 	"errors"
+	"github.com/hard-soft-ware/mpost/consts"
+	"github.com/hard-soft-ware/mpost/enum"
 	"io"
 	"time"
 )
@@ -14,13 +16,13 @@ func (dl *CDataLinkLayer) SendPacket(payload []byte) {
 	commandLength := payloadLength + 4 // STX + Length char + ETX + Checksum
 
 	command := make([]byte, 0, commandLength)
-	command = append(command, STX)
+	command = append(command, consts.DataSTX.Byte())
 	command = append(command, byte(commandLength))
 
 	command = append(command, payload...)
 	command[2] |= dl.AckToggleBit
 
-	command = append(command, ETX)
+	command = append(command, consts.DataETX.Byte())
 	command = append(command, dl.ComputeCheckSum(command))
 
 	dl.CurrentCommand = command
@@ -56,7 +58,7 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 	reply := []byte{}
 
 	timeout := dl.Acceptor.transactionTimeout
-	if dl.Acceptor.deviceState == DownloadStart || dl.Acceptor.deviceState == Downloading {
+	if dl.Acceptor.deviceState == enum.StateDownloadStart || dl.Acceptor.deviceState == enum.StateDownloading {
 		timeout = dl.Acceptor.downloadTimeout
 	}
 
@@ -71,7 +73,7 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 	if bytesRead < 2 {
 		return nil, errors.New("received insufficient bytes")
 	}
-	if stxAndLength[0] != STX {
+	if stxAndLength[0] != consts.DataSTX.Byte() {
 		return nil, errors.New("invalid STX received")
 	}
 
@@ -110,7 +112,7 @@ func (dl *CDataLinkLayer) ReplyAcked(reply []byte) bool {
 		return false
 	}
 
-	if (reply[2] & ACKMask) == dl.AckToggleBit {
+	if (reply[2] & consts.DataACKMask.Byte()) == dl.AckToggleBit {
 		dl.AckToggleBit ^= 0x01 // Переключаем бит подтверждения
 
 		dl.NakCount = 0
@@ -141,7 +143,7 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 	}
 
 	if (ctl & 0x70) == 0x50 {
-		dl.Acceptor.deviceState = DownloadRestart
+		dl.Acceptor.deviceState = enum.StateDownloadRestart
 	}
 
 	if (ctl & 0x70) == 0x70 {
@@ -151,18 +153,18 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 			dl.ProcessExtendedOmnibusBarCodeReply(reply)
 		case 0x02:
 			dl.ProcessExtendedOmnibusExpandedNoteReply(reply)
-			if dl.Acceptor.deviceState == Escrow || (dl.Acceptor.deviceState == Stacked && !dl.Acceptor.wasDocTypeSetOnEscrow) {
+			if dl.Acceptor.deviceState == enum.StateEscrow || (dl.Acceptor.deviceState == enum.StateStacked && !dl.Acceptor.wasDocTypeSetOnEscrow) {
 				if dl.Acceptor.capOrientationExt {
 					switch dl.Acceptor.orientationCtlExt {
-					case OneWay:
-						if dl.Acceptor.escrowOrientation != RightUp {
+					case enum.OrientationControlOneWay:
+						if dl.Acceptor.escrowOrientation != enum.OrientationRightUp {
 							dl.EscrowReturn()
 						}
-					case TwoWay:
-						if dl.Acceptor.escrowOrientation != RightUp && dl.Acceptor.escrowOrientation != LeftUp {
+					case enum.OrientationControlTwoWay:
+						if dl.Acceptor.escrowOrientation != enum.OrientationRightUp && dl.Acceptor.escrowOrientation != enum.OrientationLeftUp {
 							dl.EscrowReturn()
 						}
-					case FourWay:
+					case enum.OrientationControlFourWay:
 						// Accept all orientations.
 					}
 				}
@@ -173,12 +175,12 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 		dl.RaiseEvents()
 	}
 
-	if dl.Acceptor.deviceState == Escrow && dl.Acceptor.autoStack {
+	if dl.Acceptor.deviceState == enum.StateEscrow && dl.Acceptor.autoStack {
 		dl.EscrowStack()
 		dl.Acceptor.shouldRaiseEscrowEvent = false
 	}
 
-	if dl.Acceptor.deviceState != Escrow && dl.Acceptor.deviceState != Stacking {
+	if dl.Acceptor.deviceState != enum.StateEscrow && dl.Acceptor.deviceState != enum.StateStacking {
 		dl.Acceptor.wasDocTypeSetOnEscrow = false
 	}
 }

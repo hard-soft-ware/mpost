@@ -1,5 +1,10 @@
 package mpost
 
+import (
+	"github.com/hard-soft-ware/mpost/consts"
+	"github.com/hard-soft-ware/mpost/enum"
+)
+
 ////////////////////////////////////
 
 func (dl *CDataLinkLayer) escrowXX(b byte) {
@@ -9,7 +14,7 @@ func (dl *CDataLinkLayer) escrowXX(b byte) {
 	}
 
 	payload := make([]byte, 4)
-	dl.Acceptor.ConstructOmnibusCommand(payload, CmdOmnibus, 1)
+	dl.Acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus.Byte(), 1)
 
 	payload[2] |= b
 
@@ -38,7 +43,7 @@ func (dl *CDataLinkLayer) RaiseEvents() {
 	}
 
 	switch dl.Acceptor.deviceState {
-	case Escrow:
+	case enum.StateEscrow:
 		if dl.Acceptor.isPoweredUp && dl.Acceptor.shouldRaisePUPEscrowEvent {
 			dl.log.Debug().Msg("PUP Escrow Event Raised")
 			dl.Acceptor.shouldRaisePUPEscrowEvent = false
@@ -46,29 +51,29 @@ func (dl *CDataLinkLayer) RaiseEvents() {
 			dl.log.Debug().Msg("Escrow Event Raised")
 			dl.Acceptor.shouldRaiseEscrowEvent = false
 		}
-	case Stacked:
+	case enum.StateStacked:
 		if dl.Acceptor.shouldRaiseStackedEvent {
 			dl.log.Debug().Msg("Stacked Event Raised")
 			dl.Acceptor.shouldRaiseStackedEvent = false
 		}
-	case Returned:
+	case enum.StateReturned:
 		if dl.Acceptor.shouldRaiseReturnedEvent {
 			dl.log.Debug().Msg("Returned Event Raised")
 			dl.Acceptor.shouldRaiseReturnedEvent = false
 		}
-	case Rejected:
+	case enum.StateRejected:
 		if dl.Acceptor.shouldRaiseRejectedEvent {
 			dl.log.Debug().Msg("Rejected Event Raised")
 			dl.Acceptor.shouldRaiseRejectedEvent = false
 		}
-	case Stalled:
+	case enum.StateStalled:
 		if dl.Acceptor.shouldRaiseStallDetectedEvent {
 			dl.log.Debug().Msg("Stall Detected Event Raised")
 			dl.Acceptor.shouldRaiseStallDetectedEvent = false
 		}
 	}
 
-	if dl.Acceptor.deviceState != Stalled && dl.Acceptor.shouldRaiseStallClearedEvent {
+	if dl.Acceptor.deviceState != enum.StateStalled && dl.Acceptor.shouldRaiseStallClearedEvent {
 		dl.log.Debug().Msg("Stall Cleared Event Raised")
 		dl.Acceptor.shouldRaiseStallClearedEvent = false
 	}

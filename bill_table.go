@@ -1,6 +1,7 @@
 package mpost
 
 import (
+	"github.com/hard-soft-ware/mpost/consts"
 	"time"
 )
 
@@ -33,7 +34,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 	index := 1
 	for {
 		payload := make([]byte, 6)
-		a.ConstructOmnibusCommand(payload, CmdExpanded, 2)
+		a.ConstructOmnibusCommand(payload, consts.CmdExpanded.Byte(), 2)
 		payload[1] = 0x02
 		payload[5] = byte(index)
 

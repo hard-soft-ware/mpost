@@ -49,3 +49,15 @@ func CmdAux() {
 	constGenerator(obj, val)
 	obj.Save(constDir).End()
 }
+
+func Data() {
+	obj := generator.Init("Data", constDir+"/data.go")
+	val := obj.NewVal()
+
+	val.Add(0x02, "STX")     // Начало текста
+	val.Add(0x03, "ETX")     // Конец текста
+	val.Add(0x06, "ACKMask") // Маска подтверждения
+
+	constGenerator(obj, val)
+	obj.Save(constDir).End()
+}
