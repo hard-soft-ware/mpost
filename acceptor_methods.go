@@ -38,7 +38,7 @@ func (a *CAcceptor) GetBNFStatus() enum.BNFStatusType {
 		return enum.BNFStatusUnknown
 	}
 
-	payload := []byte{0x02, 0x00, 0x00, 0x03} // Assuming CmdAuxiliary is 0x02 and CmdAuxQueryBNFStatus is 0x03
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxBNFStatus.Byte()}
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {

@@ -12,6 +12,7 @@ func TestName(t *testing.T) {
 
 	time.Sleep(5 * time.Second)
 	t.Log(a.GetDeviceSerialNumber())
+	t.Log(a.GetBNFStatus().String())
 
 	a.Close()
 }
