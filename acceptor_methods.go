@@ -30,14 +30,14 @@ func (a *CAcceptor) verifyPropertyIsAllowed(capabilityFlag bool, propertyName st
 func (a *CAcceptor) GetDeviceSerialNumber() string {
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceSerialNumber, "DeviceSerialNumber")
 	if err != nil {
-		a.log.Debug().Err(err).Msg("GetDeviceSerialNumber")
+		a.log.Err("GetDeviceSerialNumber", err)
 		return ""
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorSerialNumber.Byte()}
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Debug().Err(err).Msg("GetDeviceSerialNumber")
+		a.log.Err("GetDeviceSerialNumber", err)
 		return ""
 	}
 

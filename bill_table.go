@@ -28,7 +28,7 @@ func (a *CAcceptor) ClearBillTable() {
 	a.billValues = []CBill{}
 	a.billValueEnables = []bool{}
 
-	a.log.Debug().Msg("Bill table cleared")
+	a.log.Msg("Bill table cleared")
 }
 
 func (a *CAcceptor) RetrieveBillTable() {
@@ -50,7 +50,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 		}
 
 		if err != nil || len(reply) != 30 {
-			a.log.Debug().Err(err).Msg("Error sending command")
+			a.log.Err("Error sending command", err)
 			break
 		}
 
@@ -72,7 +72,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 		a.billTypeEnables = append(a.billTypeEnables, true)
 	}
 
-	a.log.Debug().Msg("Bill table retrieved")
+	a.log.Msg("Bill table retrieved")
 }
 
 func (a *CAcceptor) BuildHardCodedBillTable() {
@@ -169,7 +169,7 @@ func (a *CAcceptor) BuildHardCodedBillTable() {
 		}
 	}
 
-	a.log.Debug().Msg("Hardcoded bill table built")
+	a.log.Msg("Hardcoded bill table built")
 }
 
 func (a *CAcceptor) BuildBillValues() {
@@ -199,5 +199,5 @@ func (a *CAcceptor) BuildBillValues() {
 		}
 	}
 
-	a.log.Debug().Msg("Bill values built")
+	a.log.Msg("Bill values built")
 }

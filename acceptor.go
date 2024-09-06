@@ -69,7 +69,7 @@ type CAcceptor struct {
 	signalMainThreadEvent int
 	eventHandlers         map[enum.EventType]EventHandler
 
-	log *LogGlobalStruct
+	log LogStruct
 }
 
 func NewCAcceptor(transactionTimeout, downloadTimeout time.Duration) *CAcceptor {

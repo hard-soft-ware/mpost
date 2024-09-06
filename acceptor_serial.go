@@ -6,28 +6,16 @@ import (
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 	"go.bug.st/serial"
-	"strings"
 	"time"
 )
-
-func byteSliceToString(b []byte) string {
-	var sb strings.Builder
-	for i, byteVal := range b {
-		if i > 0 {
-			sb.WriteString(" ")
-		}
-		fmt.Fprintf(&sb, "%02X", byteVal)
-	}
-	return sb.String()
-}
 
 ////////////////////////////////////
 
 func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
-	lg := a.log.NewLog("OpenSerial")
+	lg := a.log.New("OpenSerial")
 
 	if acceptor.Connected {
-		lg.Debug().Msg("already connected")
+		lg.Msg("already connected")
 		return nil
 	}
 
@@ -36,7 +24,7 @@ func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 
 	err := a.OpenPort(lg)
 	if err != nil {
-		lg.Debug().Err(err).Msg("failed to open serial port")
+		a.log.Err("failed to open serial port", err)
 		return err
 	}
 
@@ -46,7 +34,7 @@ func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 	return nil
 }
 
-func (a *CAcceptor) OpenPort(lg *LogGlobalStruct) error {
+func (a *CAcceptor) OpenPort(lg *LogStruct) error {
 	mode := &serial.Mode{
 		BaudRate: 9600,
 		DataBits: 7,
@@ -56,7 +44,6 @@ func (a *CAcceptor) OpenPort(lg *LogGlobalStruct) error {
 
 	port, err := serial.Open(acceptor.Device.PortName, mode)
 	if err != nil {
-		lg.Debug().Err(err).Msg("failed to open serial port")
 		return err
 	}
 
@@ -75,7 +62,7 @@ func (a *CAcceptor) OpenPort(lg *LogGlobalStruct) error {
 	a.port = port
 
 	acceptor.Connected = true
-	lg.Debug().Msg("Connected")
+	lg.Msg("Connected")
 	return nil
 }
 
@@ -91,7 +78,7 @@ func (a *CAcceptor) Close() {
 	}
 
 	if a.dataLinkLayer != nil {
-		a.dataLinkLayer.FlushIdenticalTransactionsToLog()
+		a.log.Msg(fmt.Sprintf("IdenticalCommandAndReplyCount: %d", a.dataLinkLayer.IdenticalCommandAndReplyCount))
 	}
 
 	a.stopWorkerThread = true
@@ -104,7 +91,7 @@ func (a *CAcceptor) Close() {
 
 ////
 
-func (a *CAcceptor) QueryDeviceCapabilities(lg *LogGlobalStruct) {
+func (a *CAcceptor) QueryDeviceCapabilities(lg *LogStruct) {
 	if !a.isQueryDeviceCapabilitiesSupported {
 		return
 	}
@@ -113,7 +100,7 @@ func (a *CAcceptor) QueryDeviceCapabilities(lg *LogGlobalStruct) {
 	reply, err := a.SendSynchronousCommand(payload)
 
 	if len(reply) < 4 {
-		lg.Debug().Err(err).Msg("Reply too short, unable to process.")
+		a.log.Err("Reply too short, unable to process.", err)
 		return
 	}
 

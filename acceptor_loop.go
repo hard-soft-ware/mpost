@@ -9,7 +9,7 @@ import (
 
 ////////////////////////////////////
 
-func (a *CAcceptor) PollingLoop(lg *LogGlobalStruct) []byte {
+func (a *CAcceptor) PollingLoop(lg *LogStruct) []byte {
 	startTickCount := time.Now()
 
 	for {
@@ -17,7 +17,7 @@ func (a *CAcceptor) PollingLoop(lg *LogGlobalStruct) []byte {
 
 		reply, err := a.SendSynchronousCommand(payload)
 		if err != nil {
-			lg.Debug().Err(err).Msg("PollingLoop")
+			a.log.Err("PollingLoop", err)
 		}
 
 		if time.Since(startTickCount) > PollingDisconnectTimeout {

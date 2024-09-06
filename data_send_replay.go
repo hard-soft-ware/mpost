@@ -29,10 +29,10 @@ func (dl *CDataLinkLayer) SendPacket(payload []byte) {
 	dl.CurrentCommand = command
 	dl.EchoDetect = command
 
-	dl.log.Debug().Str("data", byteSliceToString(command)).Msg("SERIAL SEND")
+	dl.log.Bytes("SERIAL SEND >>> ", command)
 	n, err := dl.Acceptor.port.Write(command)
 	if err != nil || n == 0 {
-		dl.log.Debug().Err(err).Msg("Failed to write to port")
+		dl.log.Err("Failed to write to port", err)
 
 		dl.Acceptor.port.Close()
 		dl.Acceptor.OpenPort(dl.log)
@@ -102,7 +102,7 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 		}
 	}
 
-	dl.log.Debug().Str("data", byteSliceToString(reply)).Msg("SERIAL READ")
+	dl.log.Bytes("SERIAL READ <<< ", reply)
 	return reply, nil
 }
 

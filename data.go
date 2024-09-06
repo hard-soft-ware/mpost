@@ -3,7 +3,7 @@ package mpost
 ////////////////////////////////////
 
 type CDataLinkLayer struct {
-	log *LogGlobalStruct
+	log *LogStruct
 
 	Acceptor                       *CAcceptor
 	AckToggleBit                   byte
@@ -13,10 +13,10 @@ type CDataLinkLayer struct {
 	IdenticalCommandAndReplyCount  int
 }
 
-func (a *CAcceptor) NewCDataLinkLayer(lg *LogGlobalStruct) *CDataLinkLayer {
+func (a *CAcceptor) NewCDataLinkLayer(lg *LogStruct) *CDataLinkLayer {
 	return &CDataLinkLayer{
 		Acceptor: a,
-		log:      lg.NewLog("Data"),
+		log:      lg.New("Data"),
 	}
 }
 

@@ -9,12 +9,12 @@ import (
 ////////////////////////////////////
 
 func (a *CAcceptor) OpenThread() {
-	lg := a.log.NewLog("Thread")
+	lg := a.log.New("Thread")
 
 	replay := a.PollingLoop(lg)
 
 	if a.wasStopped {
-		lg.Debug().Msg("thread is stopped")
+		lg.Msg("thread is stopped")
 		return
 	}
 
@@ -35,7 +35,7 @@ func (a *CAcceptor) OpenThread() {
 ////
 
 func (a *CAcceptor) MessageLoopThread() {
-	lg := a.log.NewLog("LoopThread")
+	lg := a.log.New("LoopThread")
 
 	a.dataLinkLayer = a.NewCDataLinkLayer(lg)
 	timeoutStart := time.Now()
@@ -60,18 +60,17 @@ func (a *CAcceptor) MessageLoopThread() {
 
 		if a.stopWorkerThread {
 			a.stopWorkerThread = false
-			lg.Debug().Msg("thread is stopped")
+			lg.Msg("thread is stopped")
 			return
 		}
 
 		select {
 		case message := <-a.messageQueue:
-			lg.Debug().Bytes("payload", message.Payload).Msg("MessageLoopThread")
 
 			a.dataLinkLayer.SendPacket(message.Payload)
 			reply, err := a.dataLinkLayer.ReceiveReply()
 			if err != nil {
-				lg.Error().Err(err).Msg("Invalid ReceiveReply")
+				a.log.Err("Invalid ReceiveReply", err)
 				continue
 			}
 
