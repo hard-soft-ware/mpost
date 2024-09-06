@@ -36,6 +36,8 @@ type CAcceptor struct {
 	eventHandlers map[enum.EventType]EventHandler
 
 	log LogStruct
+
+	ss bool
 }
 
 func NewCAcceptor(transactionTimeout, downloadTimeout time.Duration) *CAcceptor {

@@ -72,12 +72,12 @@ func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) bill.BillStruc
 ////////
 
 func (a *CAcceptor) RetrieveBillTable() {
-	index := 1
+	var index byte = 1
 	for {
 		payload := make([]byte, 6)
 		acceptor.ConstructOmnibusCommand(payload, consts.CmdExpanded, 2, bill.TypeEnables)
 		payload[1] = 0x02
-		payload[5] = byte(index)
+		payload[5] = index
 
 		var reply []byte
 		var err error

@@ -8,6 +8,15 @@ import (
 ////////////////////////////////////
 
 func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
+
+	//todo неведомая но очень нужная херня
+	if !a.ss {
+		a.ss = true
+	} else {
+		a.ss = false
+		payload[0] += 1
+	}
+
 	a.messageQueue <- NewCMessage(payload, true)
 
 	select {
