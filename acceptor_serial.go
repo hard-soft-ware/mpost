@@ -91,7 +91,7 @@ func (a *CAcceptor) Close() {
 
 ////
 
-func (a *CAcceptor) QueryDeviceCapabilities(lg *LogStruct) {
+func (a *CAcceptor) QueryDeviceCapabilities() {
 	if !acceptor.IsQueryDeviceCapabilitiesSupported {
 		return
 	}

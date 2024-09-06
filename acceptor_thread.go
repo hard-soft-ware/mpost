@@ -19,7 +19,7 @@ func (a *CAcceptor) OpenThread() {
 	}
 
 	a.dataLinkLayer.ProcessReply(replay)
-	a.QueryDeviceCapabilities(lg)
+	a.QueryDeviceCapabilities()
 
 	if acceptor.Device.State != enum.StateDownloadRestart {
 		a.SetUpBillTable()
