@@ -1,10 +1,12 @@
 package main
 
-import "github.com/hard-soft-ware/mpost/generator"
+import (
+	generator2 "github.com/hard-soft-ware/mpost/_run/fileGenerator/generator"
+)
 
 ////////////////////////////////////
 
-func enumGenerator(obj *generator.GeneratorObj, val []string) {
+func enumGenerator(obj *generator2.GeneratorObj, val []string) {
 	obj.Print("type ").Name.Type().PrintLN(" byte").LN()
 
 	obj.PrintLN("const (")
@@ -47,7 +49,7 @@ func enumGenerator(obj *generator.GeneratorObj, val []string) {
 
 }
 
-func constGenerator(obj *generator.GeneratorObj, val *generator.GeneratorValueObj) {
+func constGenerator(obj *generator2.GeneratorObj, val *generator2.GeneratorValueObj) {
 	obj.Print("type ").Name.Type().PrintLN(" byte").LN()
 
 	obj.PrintLN("const (")

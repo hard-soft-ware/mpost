@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/hard-soft-ware/mpost/generator"
+	"fmt"
+	"github.com/hard-soft-ware/mpost/_run/fileGenerator/generator"
 )
 
 ////////////////////////////////////
@@ -22,6 +23,7 @@ func Status() {
 
 	enumGenerator(obj, val)
 	obj.Save(enumDir).End()
+	fmt.Printf("Add: %s %s\n", enumDir, obj.Name.Get())
 }
 
 func Document() {
@@ -37,6 +39,7 @@ func Document() {
 
 	enumGenerator(obj, val)
 	obj.Save(enumDir).End()
+	fmt.Printf("Add: %s %s\n", enumDir, obj.Name.Get())
 }
 
 func Orientation() {
@@ -52,6 +55,7 @@ func Orientation() {
 
 	enumGenerator(obj, val)
 	obj.Save(enumDir).End()
+	fmt.Printf("Add: %s %s\n", enumDir, obj.Name.Get())
 }
 
 func OrientationControl() {
@@ -65,6 +69,7 @@ func OrientationControl() {
 
 	enumGenerator(obj, val)
 	obj.Save(enumDir).End()
+	fmt.Printf("Add: %s %s\n", enumDir, obj.Name.Get())
 }
 
 func PowerUp() {
@@ -79,6 +84,7 @@ func PowerUp() {
 
 	enumGenerator(obj, val)
 	obj.Save(enumDir).End()
+	fmt.Printf("Add: %s %s\n", enumDir, obj.Name.Get())
 }
 
 func PupExt() {
@@ -95,6 +101,7 @@ func PupExt() {
 
 	enumGenerator(obj, val)
 	obj.Save(enumDir).End()
+	fmt.Printf("Add: %s %s\n", enumDir, obj.Name.Get())
 }
 
 func State() {
@@ -123,6 +130,7 @@ func State() {
 
 	enumGenerator(obj, val)
 	obj.Save(enumDir).End()
+	fmt.Printf("Add: %s %s\n", enumDir, obj.Name.Get())
 }
 
 func Bezel() {
@@ -136,6 +144,7 @@ func Bezel() {
 
 	enumGenerator(obj, val)
 	obj.Save(enumDir).End()
+	fmt.Printf("Add: %s %s\n", enumDir, obj.Name.Get())
 }
 
 func Event() {
@@ -174,4 +183,5 @@ func Event() {
 
 	enumGenerator(obj, val)
 	obj.Save(enumDir).End()
+	fmt.Printf("Add: %s %s\n", enumDir, obj.Name.Get())
 }

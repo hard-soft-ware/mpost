@@ -1,6 +1,9 @@
 package main
 
-import "github.com/hard-soft-ware/mpost/generator"
+import (
+	"fmt"
+	"github.com/hard-soft-ware/mpost/_run/fileGenerator/generator"
+)
 
 ////////////////////////////////////
 
@@ -20,6 +23,7 @@ func Cmd() {
 
 	constGenerator(obj, val)
 	obj.Save(constDir).End()
+	fmt.Printf("Add: %s %s\n", constDir, obj.Name.Get())
 }
 
 func CmdAux() {
@@ -48,6 +52,7 @@ func CmdAux() {
 
 	constGenerator(obj, val)
 	obj.Save(constDir).End()
+	fmt.Printf("Add: %s %s\n", constDir, obj.Name.Get())
 }
 
 func Data() {
@@ -60,4 +65,5 @@ func Data() {
 
 	constGenerator(obj, val)
 	obj.Save(constDir).End()
+	fmt.Printf("Add: %s %s\n", constDir, obj.Name.Get())
 }
