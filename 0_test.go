@@ -19,6 +19,7 @@ func TestConnect(t *testing.T) {
 			TimeFormat: "15:04:05",
 		}),
 		"TEST",
+		false,
 	)
 
 	a.AddHook(enum.EventConnected, func(acceptor *CAcceptor, i int) {
@@ -30,6 +31,9 @@ func TestConnect(t *testing.T) {
 	})
 	a.AddHook(enum.EventDisconnected, func(acceptor *CAcceptor, i int) {
 		fmt.Println("Disconnect")
+	})
+	a.AddHook(enum.EventRejected, func(acceptor *CAcceptor, i int) {
+		fmt.Println("EventRejected")
 	})
 
 	a.Open("/dev/ttyUSB0", enum.PowerUpE)

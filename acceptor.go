@@ -50,8 +50,8 @@ func init() {
 
 //
 
-func (a *CAcceptor) AddLog(log zerolog.Logger, root string) {
-	a.log = NewLog(log, root)
+func (a *CAcceptor) AddLog(log zerolog.Logger, root string, printBytes bool) {
+	a.log = NewLog(log, root, printBytes)
 }
 
 func (a *CAcceptor) AddHook(ev enum.EventType, h EventHandler) {

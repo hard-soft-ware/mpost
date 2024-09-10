@@ -10,16 +10,18 @@ import (
 /////////////////////////////////////////////////////////
 
 type LogStruct struct {
-	isEnable bool
-	log      zerolog.Logger
-	index    string
+	isEnable   bool
+	log        zerolog.Logger
+	index      string
+	printBytes bool
 }
 
-func NewLog(log zerolog.Logger, root string) LogStruct {
+func NewLog(log zerolog.Logger, root string, printBytes bool) LogStruct {
 	obj := LogStruct{
-		isEnable: true,
-		index:    root,
-		log:      log,
+		isEnable:   true,
+		index:      root,
+		log:        log,
+		printBytes: printBytes,
 	}
 	return obj
 }
@@ -47,7 +49,7 @@ func (obj *LogStruct) Err(msg string, err error) {
 }
 
 func (obj *LogStruct) Bytes(msg string, data []byte) {
-	if !obj.isEnable {
+	if !obj.isEnable || !obj.printBytes {
 		return
 	}
 

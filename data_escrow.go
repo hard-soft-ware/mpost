@@ -35,8 +35,7 @@ func (dl *CDataLinkLayer) EscrowStack() {
 
 func (dl *CDataLinkLayer) RaiseEvents() {
 	if acceptor.IsPoweredUp && acceptor.ShouldRaise.PowerUpEvent {
-		dl.log.Msg("Power Up Event Raised")
-		acceptor.ShouldRaise.PowerUpEvent = false
+		dl.Acceptor.RaisePowerUpEvent()
 	}
 
 	if acceptor.IsVeryFirstPoll {
@@ -47,88 +46,69 @@ func (dl *CDataLinkLayer) RaiseEvents() {
 	switch acceptor.Device.State {
 	case enum.StateEscrow:
 		if acceptor.IsPoweredUp && acceptor.ShouldRaise.PUPEscrowEvent {
-			dl.log.Msg("PUP Escrow Event Raised")
-			acceptor.ShouldRaise.PUPEscrowEvent = false
+			dl.Acceptor.RaisePUPEscrowEvent()
 		} else if acceptor.ShouldRaise.EscrowEvent {
-			dl.log.Msg("Escrow Event Raised")
-			acceptor.ShouldRaise.EscrowEvent = false
+			dl.Acceptor.RaiseEscrowEvent()
 		}
 	case enum.StateStacked:
 		if acceptor.ShouldRaise.StackedEvent {
-			dl.log.Msg("Stacked Event Raised")
-			acceptor.ShouldRaise.StackedEvent = false
+			dl.Acceptor.RaiseStackedEvent()
 		}
 	case enum.StateReturned:
 		if acceptor.ShouldRaise.ReturnedEvent {
-			dl.log.Msg("Returned Event Raised")
-			acceptor.ShouldRaise.ReturnedEvent = false
+			dl.Acceptor.RaiseReturnedEvent()
 		}
 	case enum.StateRejected:
 		if acceptor.ShouldRaise.RejectedEvent {
-			dl.log.Msg("Rejected Event Raised")
-			acceptor.ShouldRaise.RejectedEvent = false
+			dl.Acceptor.RaiseRejectedEvent()
 		}
 	case enum.StateStalled:
 		if acceptor.ShouldRaise.StallDetectedEvent {
-			dl.log.Msg("Stall Detected Event Raised")
-			acceptor.ShouldRaise.StallDetectedEvent = false
+			dl.Acceptor.RaiseStallDetectedEvent()
 		}
 	}
 
 	if acceptor.Device.State != enum.StateStalled && acceptor.ShouldRaise.StallClearedEvent {
-		dl.log.Msg("Stall Cleared Event Raised")
-		acceptor.ShouldRaise.StallClearedEvent = false
+		dl.Acceptor.RaiseStallClearedEvent()
 	}
 
 	if acceptor.Cash.BoxFull && acceptor.ShouldRaise.StackerFullEvent {
-		dl.log.Msg("Stacker Full Event Raised")
-		acceptor.ShouldRaise.StackerFullEvent = false
+		dl.Acceptor.RaiseStackerFullEvent()
 	}
 
 	if acceptor.IsCheated && acceptor.ShouldRaise.CheatedEvent {
-		dl.log.Msg("Cheated Event Raised")
-		acceptor.ShouldRaise.CheatedEvent = false
+		dl.Acceptor.RaiseCheatedEvent()
 	}
 
 	if acceptor.Cash.BoxAttached && acceptor.ShouldRaise.CashBoxAttachedEvent {
-		dl.log.Msg("Cash Box Attached Event Raised")
-		acceptor.ShouldRaise.CashBoxAttachedEvent = false
-		acceptor.ShouldRaise.CashBoxRemovedEvent = true
+		dl.Acceptor.RaiseCashBoxAttachedEvent()
 	}
 
 	if !acceptor.Cash.BoxAttached && acceptor.ShouldRaise.CashBoxRemovedEvent {
-		dl.log.Msg("Cash Box Removed Event Raised")
-		acceptor.ShouldRaise.CashBoxRemovedEvent = false
-		acceptor.ShouldRaise.CashBoxAttachedEvent = true
+		dl.Acceptor.RaiseCashBoxRemovedEvent()
 	}
 
 	if acceptor.Device.Paused && acceptor.ShouldRaise.PauseDetectedEvent {
-		dl.log.Msg("Pause Detected Event Raised")
-		acceptor.ShouldRaise.PauseDetectedEvent = false
+		dl.Acceptor.RaisePauseDetectedEvent()
 	}
 
 	if !acceptor.Device.Paused && acceptor.ShouldRaise.PauseClearedEvent {
-		dl.log.Msg("Pause Cleared Event Raised")
-		acceptor.ShouldRaise.PauseClearedEvent = false
+		dl.Acceptor.RaisePauseClearedEvent()
 	}
 
 	if acceptor.Device.Jammed && acceptor.ShouldRaise.JamDetectedEvent {
-		dl.log.Msg("Jam Detected Event Raised")
-		acceptor.ShouldRaise.JamDetectedEvent = false
+		dl.Acceptor.RaiseJamDetectedEvent()
 	}
 
 	if !acceptor.Device.Jammed && acceptor.ShouldRaise.JamClearedEvent {
-		dl.log.Msg("Jam Cleared Event Raised")
-		acceptor.ShouldRaise.JamClearedEvent = false
+		dl.Acceptor.RaiseJamClearedEvent()
 	}
 
 	if acceptor.IsInvalidCommand && acceptor.ShouldRaise.InvalidCommandEvent {
-		dl.log.Msg("Invalid Command Event Raised")
-		acceptor.ShouldRaise.InvalidCommandEvent = false
+		dl.Acceptor.RaiseInvalidCommandEvent()
 	}
 
 	if acceptor.ShouldRaise.CalibrateFinishEvent {
-		dl.log.Msg("Calibrate Finish Event Raised")
-		acceptor.ShouldRaise.CalibrateFinishEvent = false
+		dl.Acceptor.RaiseCalibrateFinishEvent()
 	}
 }
