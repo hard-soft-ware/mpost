@@ -9,7 +9,7 @@ import (
 
 ////////////////////////////////////
 
-func (a *CAcceptor) PollingLoop(lg *LogStruct) []byte {
+func (a *CAcceptor) PollingLoop() []byte {
 	startTickCount := time.Now()
 
 	for {

@@ -68,16 +68,6 @@ func NewCAcceptor(transactionTimeout, downloadTimeout time.Duration) *CAcceptor 
 
 //
 
-func (a *CAcceptor) getTickCount() int64 {
-	return time.Now().UnixNano() / int64(time.Millisecond)
-}
-
-func (a *CAcceptor) SetEventHandler(event enum.EventType, eventHandler func(*CAcceptor, int)) {
-	a.eventHandlers[event] = eventHandler
-}
-
-//
-
 func (a *CAcceptor) AddHook(ev enum.EventType, h EventHandler) {
 	a.eventHandlers[ev] = h
 }

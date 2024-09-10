@@ -11,7 +11,7 @@ import (
 func (a *CAcceptor) OpenThread() {
 	lg := a.log.New("Thread")
 
-	replay := a.PollingLoop(lg)
+	replay := a.PollingLoop()
 
 	if acceptor.WasStopped {
 		lg.Msg("thread is stopped")

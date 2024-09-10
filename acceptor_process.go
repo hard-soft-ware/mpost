@@ -180,7 +180,7 @@ func (a *CAcceptor) processData3(data3 byte) {
 }
 
 func (a *CAcceptor) processData4(data4 byte) {
-	acceptor.Device.Model = int(data4 & 0x7F) //todo проверить валидность перевода
+	acceptor.Device.Model = int(data4 & 0x7F)
 	m := acceptor.Device.Model
 	d := m
 
