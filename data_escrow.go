@@ -20,7 +20,7 @@ func (dl *CDataLinkLayer) escrowXX(b byte) {
 
 	payload[2] |= b
 
-	dl.Acceptor.messageQueue <- NewCMessage(payload, false)
+	dl.Acceptor.SendAsynchronousCommand(payload)
 }
 
 func (dl *CDataLinkLayer) EscrowReturn() {
