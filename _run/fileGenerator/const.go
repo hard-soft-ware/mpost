@@ -36,7 +36,7 @@ func CmdAux() {
 	val.Add(0x10, "BNFStatus")
 	val.Add(0x11, "SetBezel")
 	val.Add(0x0D, "DeviceCapabilities")
-	val.Add(0x03, "CleDeviceResetsarCashBoxTotal").Delim()
+	val.Add(0x03, "ClearCashBoxTotal").Delim()
 
 	val.Add(0x04, "AcceptorType")
 	val.Add(0x0E, "AcceptorApplicationID")

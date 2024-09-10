@@ -491,7 +491,7 @@ func (a *CAcceptor) GetCashBoxFull() bool {
 	return acceptor.Cash.BoxFull
 }
 
-func (a *CAcceptor) GetCashBoxTotal() int64 {
+func (a *CAcceptor) GetCashBoxTotal() int {
 	a.log.Msg("GetCashBoxTotal")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.CashBoxTotal, "GetCashBoxTotal")
@@ -512,12 +512,12 @@ func (a *CAcceptor) GetCashBoxTotal() int64 {
 		return 0
 	}
 
-	total := int64(reply[3]&0x0F)<<20 |
-		int64(reply[4]&0x0F)<<16 |
-		int64(reply[5]&0x0F)<<12 |
-		int64(reply[6]&0x0F)<<8 |
-		int64(reply[7]&0x0F)<<4 |
-		int64(reply[8]&0x0F)
+	total := int(reply[3]&0x0F)<<20 |
+		int(reply[4]&0x0F)<<16 |
+		int(reply[5]&0x0F)<<12 |
+		int(reply[6]&0x0F)<<8 |
+		int(reply[7]&0x0F)<<4 |
+		int(reply[8]&0x0F)
 
 	return total
 }
@@ -936,8 +936,6 @@ func (a *CAcceptor) Calibrate() {
 		}
 	}
 }
-
-////
 
 func (a *CAcceptor) ClearCashBoxTotal() (err error) {
 	a.log.Msg("ClearCashBoxTotal")

@@ -5,13 +5,13 @@ package consts
 type CmdAuxType byte
 
 const (
-	CmdAuxSoftwareCRC                   CmdAuxType = 0x00
-	CmdAuxCashBoxTotal                  CmdAuxType = 0x01
-	CmdAuxDeviceResets                  CmdAuxType = 0x02
-	CmdAuxBNFStatus                     CmdAuxType = 0x10
-	CmdAuxSetBezel                      CmdAuxType = 0x11
-	CmdAuxDeviceCapabilities            CmdAuxType = 0x0d
-	CmdAuxCleDeviceResetsarCashBoxTotal CmdAuxType = 0x03
+	CmdAuxSoftwareCRC        CmdAuxType = 0x00
+	CmdAuxCashBoxTotal       CmdAuxType = 0x01
+	CmdAuxDeviceResets       CmdAuxType = 0x02
+	CmdAuxBNFStatus          CmdAuxType = 0x10
+	CmdAuxSetBezel           CmdAuxType = 0x11
+	CmdAuxDeviceCapabilities CmdAuxType = 0x0d
+	CmdAuxClearCashBoxTotal  CmdAuxType = 0x03
 
 	CmdAuxAcceptorType                     CmdAuxType = 0x04
 	CmdAuxAcceptorApplicationID            CmdAuxType = 0x0e
@@ -27,13 +27,13 @@ const (
 )
 
 const (
-	CmdAuxTextSoftwareCRC                   = "SoftwareCRC"
-	CmdAuxTextCashBoxTotal                  = "CashBoxTotal"
-	CmdAuxTextDeviceResets                  = "DeviceResets"
-	CmdAuxTextBNFStatus                     = "BNFStatus"
-	CmdAuxTextSetBezel                      = "SetBezel"
-	CmdAuxTextDeviceCapabilities            = "DeviceCapabilities"
-	CmdAuxTextCleDeviceResetsarCashBoxTotal = "CleDeviceResetsarCashBoxTotal"
+	CmdAuxTextSoftwareCRC        = "SoftwareCRC"
+	CmdAuxTextCashBoxTotal       = "CashBoxTotal"
+	CmdAuxTextDeviceResets       = "DeviceResets"
+	CmdAuxTextBNFStatus          = "BNFStatus"
+	CmdAuxTextSetBezel           = "SetBezel"
+	CmdAuxTextDeviceCapabilities = "DeviceCapabilities"
+	CmdAuxTextClearCashBoxTotal  = "ClearCashBoxTotal"
 
 	CmdAuxTextAcceptorType                     = "AcceptorType"
 	CmdAuxTextAcceptorApplicationID            = "AcceptorApplicationID"
@@ -55,7 +55,7 @@ var CmdAuxMap = map[CmdAuxType]string{
 	CmdAuxBNFStatus:                        CmdAuxTextBNFStatus,
 	CmdAuxSetBezel:                         CmdAuxTextSetBezel,
 	CmdAuxDeviceCapabilities:               CmdAuxTextDeviceCapabilities,
-	CmdAuxCleDeviceResetsarCashBoxTotal:    CmdAuxTextCleDeviceResetsarCashBoxTotal,
+	CmdAuxClearCashBoxTotal:                CmdAuxTextClearCashBoxTotal,
 	CmdAuxAcceptorType:                     CmdAuxTextAcceptorType,
 	CmdAuxAcceptorApplicationID:            CmdAuxTextAcceptorApplicationID,
 	CmdAuxAcceptorVariantID:                CmdAuxTextAcceptorVariantID,

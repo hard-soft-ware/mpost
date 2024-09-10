@@ -11,7 +11,6 @@ import (
 )
 
 func TestConnect(t *testing.T) {
-	return
 
 	a := DefAcceptor
 	a.AddLog(
@@ -24,12 +23,14 @@ func TestConnect(t *testing.T) {
 		false,
 	)
 
+	a.SetEnableAcceptance(true)
+	a.SetEnableBarCodes(true)
+	a.SetEnableBookmarks(true)
+
 	a.AddHook(enum.EventConnected, func(acceptor *CAcceptor, i int) {
 		fmt.Println("Connect")
 
-		acceptor.SetEnableAcceptance(true)
-		acceptor.SetEnableBarCodes(true)
-		acceptor.SetEnableBookmarks(true)
+		acceptor.SetUpBillTable()
 	})
 	a.AddHook(enum.EventDisconnected, func(acceptor *CAcceptor, i int) {
 		fmt.Println("Disconnect")
@@ -45,8 +46,10 @@ func TestConnect(t *testing.T) {
 	t.Log(a.GetBill())
 	t.Log(a.GetApplicationPN())
 	t.Log(a.GetBootPN())
-	t.Log(a.GetDeviceState().String())
+	t.Log(a.GetDeviceType())
 
-	time.Sleep(10 * time.Second)
+	t.Log(a.GetBillTypes())
+
+	time.Sleep(100 * time.Second)
 	a.Close()
 }
