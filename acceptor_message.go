@@ -34,7 +34,7 @@ func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
 	a.messageQueue <- NewCMessage(payload, true)
 
 	select {
-	case <-a.ctx.Done():
+	case <-a.Ctx.Done():
 		a.Close()
 		return nil, errors.New("close from context")
 	case reply := <-a.replyQueue:

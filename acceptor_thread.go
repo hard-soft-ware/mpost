@@ -61,7 +61,7 @@ func (a *CAcceptor) MessageLoopThread() {
 		}
 
 		select {
-		case <-a.ctx.Done():
+		case <-a.Ctx.Done():
 			a.Close()
 			return
 

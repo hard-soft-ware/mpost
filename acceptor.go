@@ -34,8 +34,8 @@ type CAcceptor struct {
 
 	log LogStruct
 
-	ctx       context.Context
-	ctxCancel context.CancelFunc
+	Ctx       context.Context
+	CtxCancel context.CancelFunc
 	ss        bool
 }
 
@@ -47,7 +47,7 @@ var DefAcceptor = &CAcceptor{
 }
 
 func init() {
-	DefAcceptor.ctx, DefAcceptor.ctxCancel = context.WithCancel(context.Background())
+	DefAcceptor.Ctx, DefAcceptor.CtxCancel = context.WithCancel(context.Background())
 }
 
 //
