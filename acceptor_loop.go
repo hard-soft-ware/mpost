@@ -25,21 +25,20 @@ func (a *CAcceptor) PollingLoop() []byte {
 			startTickCount = time.Now()
 		}
 
-		if a.flashDownloadThread != nil {
+		if !a.flashDownloadThread {
 			if acceptor.StopFlashDownloadThread {
 				acceptor.StopFlashDownloadThread = true
-				<-a.flashDownloadThread
+				a.flashDownloadThread = true
 				acceptor.Device.State = enum.StateIdling
 				acceptor.WasStopped = true
 				return nil
 			}
-		} else if a.openThread != nil {
+		}
+		if !a.openThread {
 			if acceptor.StopOpenThread {
 				acceptor.StopOpenThread = false
 				acceptor.StopWorkerThread = true
-
-				<-a.openThread
-
+				a.openThread = true
 				acceptor.WasStopped = true
 				a.Close()
 				return nil

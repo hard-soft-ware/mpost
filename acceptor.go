@@ -23,8 +23,8 @@ type CAcceptor struct {
 	docType enum.DocumentType
 
 	workerThread        sync.WaitGroup
-	openThread          chan bool
-	flashDownloadThread chan bool
+	openThread          bool
+	flashDownloadThread bool
 	dataLinkLayer       *CDataLinkLayer
 
 	messageQueue chan *CMessage
@@ -42,10 +42,8 @@ type CAcceptor struct {
 var DefAcceptor = &CAcceptor{
 	eventHandlers: make(map[enum.EventType]EventHandler, enum.Event_End),
 
-	messageQueue:        make(chan *CMessage, 1),
-	replyQueue:          make(chan []byte, 1),
-	flashDownloadThread: make(chan bool, 1),
-	openThread:          make(chan bool, 1),
+	messageQueue: make(chan *CMessage, 1),
+	replyQueue:   make(chan []byte, 1),
 }
 
 func init() {
