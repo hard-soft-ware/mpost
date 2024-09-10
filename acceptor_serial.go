@@ -33,6 +33,9 @@ func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 }
 
 func (a *CAcceptor) Close() {
+	a.RaiseDisconnectedEvent()
+	a.port.Close()
+
 	defer a.CtxCancel()
 
 	if !acceptor.Connected {
@@ -49,10 +52,7 @@ func (a *CAcceptor) Close() {
 	}
 
 	acceptor.StopWorkerThread = true
-	a.workerThread.Wait()
 
-	a.port.Close()
-	a.RaiseDisconnectedEvent()
 	a.port = nil
 	acceptor.Connected = false
 	a.log.Msg("Close")

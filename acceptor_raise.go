@@ -27,7 +27,7 @@ func (a *CAcceptor) RaiseConnectedEvent() {
 }
 
 func (a *CAcceptor) RaiseDisconnectedEvent() {
-	if acceptor.ShouldRaise.DisconnectedEvent {
+	if !acceptor.ShouldRaise.DisconnectedEvent {
 		return
 	}
 

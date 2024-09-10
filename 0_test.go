@@ -41,6 +41,6 @@ func TestConnect(t *testing.T) {
 	t.Log(a.GetBootPN())
 	t.Log(a.GetDeviceState().String())
 
+	time.Sleep(100 * time.Second)
 	a.Close()
-	time.Sleep(1 * time.Second)
 }

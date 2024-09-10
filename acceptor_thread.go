@@ -2,6 +2,8 @@ package mpost
 
 import (
 	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
+	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 	"time"
 )
@@ -37,6 +39,7 @@ func (a *CAcceptor) MessageLoopThread() {
 
 	a.dataLinkLayer = a.NewCDataLinkLayer(lg)
 	timeoutStart := time.Now()
+	loopCycleCounter := 0
 
 	for {
 		if !acceptor.InSoftResetWaitForReply {
@@ -48,7 +51,7 @@ func (a *CAcceptor) MessageLoopThread() {
 		if time.Since(timeoutStart) > 30*time.Second {
 			if acceptor.Device.State != enum.StateDownloading && acceptor.Device.State != enum.StateDownloadRestart {
 				acceptor.Connected = false
-				a.RaiseDisconnectedEvent()
+				a.Close()
 				acceptor.WasDisconnected = true
 				timeoutStart = time.Now()
 			}
@@ -66,6 +69,7 @@ func (a *CAcceptor) MessageLoopThread() {
 			return
 
 		case message := <-a.messageQueue:
+			loopCycleCounter = 0
 
 			a.dataLinkLayer.SendPacket(message.Payload)
 			reply, err := a.dataLinkLayer.ReceiveReply()
@@ -83,6 +87,46 @@ func (a *CAcceptor) MessageLoopThread() {
 				if message.IsSynchronous {
 					a.replyQueue <- reply
 				} else {
+					a.dataLinkLayer.ProcessReply(reply)
+				}
+			}
+
+		default:
+			loopCycleCounter++
+
+			if loopCycleCounter > 9 {
+				loopCycleCounter = 0
+
+				payload := make([]byte, 4)
+				acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, bill.TypeEnables)
+
+				a.dataLinkLayer.SendPacket(payload)
+
+				reply, err := a.dataLinkLayer.ReceiveReply()
+				if err != nil {
+					a.Close()
+					a.log.Err("Invalid loopCycleCounter", err)
+					return
+				}
+
+				if len(reply) > 0 {
+					timeoutStart = time.Now()
+
+					if acceptor.WasDisconnected {
+						acceptor.WasDisconnected = false
+
+						if reply[2]&0x70 != 0x50 {
+							acceptor.Connected = true
+							a.RaiseConnectedEvent()
+						} else {
+							a.RaiseDownloadRestartEvent()
+						}
+					}
+
+					if acceptor.InSoftResetWaitForReply {
+						acceptor.InSoftResetWaitForReply = false
+					}
+
 					a.dataLinkLayer.ProcessReply(reply)
 				}
 			}

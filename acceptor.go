@@ -5,7 +5,6 @@ import (
 	"github.com/hard-soft-ware/mpost/enum"
 	"github.com/hard-soft-ware/mpost/serial"
 	"github.com/rs/zerolog"
-	"sync"
 )
 
 ////////////////////////////////////
@@ -22,7 +21,6 @@ type CAcceptor struct {
 
 	docType enum.DocumentType
 
-	workerThread        sync.WaitGroup
 	openThread          bool
 	flashDownloadThread bool
 	dataLinkLayer       *CDataLinkLayer
