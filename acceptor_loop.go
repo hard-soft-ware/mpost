@@ -21,9 +21,7 @@ func (a *CAcceptor) PollingLoop(lg *LogStruct) []byte {
 		}
 
 		if time.Since(startTickCount) > PollingDisconnectTimeout {
-			if acceptor.ShouldRaise.DisconnectedEvent {
-				a.RaiseDisconnectedEvent()
-			}
+			a.RaiseDisconnectedEvent()
 			startTickCount = time.Now()
 		}
 

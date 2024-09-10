@@ -17,12 +17,20 @@ func (a *CAcceptor) raiseXX(e enum.EventType, b int) {
 ////
 
 func (a *CAcceptor) RaiseConnectedEvent() {
+	if acceptor.ShouldRaise.ConnectedEvent {
+		return
+	}
+
 	a.raiseXX(enum.EventConnected, 0)
 	acceptor.ShouldRaise.DisconnectedEvent = true
 	acceptor.ShouldRaise.ConnectedEvent = false
 }
 
 func (a *CAcceptor) RaiseDisconnectedEvent() {
+	if acceptor.ShouldRaise.DisconnectedEvent {
+		return
+	}
+
 	a.raiseXX(enum.EventDisconnected, 0)
 	acceptor.ShouldRaise.DisconnectedEvent = false
 	acceptor.ShouldRaise.ConnectedEvent = true

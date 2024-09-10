@@ -6,8 +6,6 @@ type CDataLinkLayer struct {
 	log *LogStruct
 
 	Acceptor                       *CAcceptor
-	AckToggleBit                   byte
-	NakCount                       uint8
 	CurrentCommand, EchoDetect     []byte
 	PreviousCommand, PreviousReply []byte
 	IdenticalCommandAndReplyCount  int

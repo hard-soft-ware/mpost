@@ -51,6 +51,7 @@ func (a *CAcceptor) Close() {
 	a.workerThread.Wait()
 
 	a.port.Close()
+	a.RaiseDisconnectedEvent()
 	a.port = nil
 	acceptor.Connected = false
 	a.log.Msg("Close")

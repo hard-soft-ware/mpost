@@ -24,9 +24,7 @@ func (a *CAcceptor) OpenThread() {
 	if acceptor.Device.State != enum.StateDownloadRestart {
 		a.SetUpBillTable()
 		acceptor.Connected = true
-		if acceptor.ShouldRaise.ConnectedEvent {
-			a.RaiseConnectedEvent()
-		}
+		a.RaiseConnectedEvent()
 	} else {
 		a.RaiseDownloadRestartEvent()
 	}
@@ -50,9 +48,7 @@ func (a *CAcceptor) MessageLoopThread() {
 		if time.Since(timeoutStart) > 30*time.Second {
 			if acceptor.Device.State != enum.StateDownloading && acceptor.Device.State != enum.StateDownloadRestart {
 				acceptor.Connected = false
-				if acceptor.ShouldRaise.DisconnectedEvent {
-					a.RaiseDisconnectedEvent()
-				}
+				a.RaiseDisconnectedEvent()
 				acceptor.WasDisconnected = true
 				timeoutStart = time.Now()
 			}
