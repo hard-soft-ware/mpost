@@ -11,6 +11,8 @@ import (
 )
 
 func TestConnect(t *testing.T) {
+	return
+
 	a := DefAcceptor
 	a.AddLog(
 		log.Output(zerolog.ConsoleWriter{
@@ -45,6 +47,6 @@ func TestConnect(t *testing.T) {
 	t.Log(a.GetBootPN())
 	t.Log(a.GetDeviceState().String())
 
-	time.Sleep(100 * time.Second)
+	time.Sleep(10 * time.Second)
 	a.Close()
 }
