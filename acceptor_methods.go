@@ -7,6 +7,7 @@ import (
 	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"time"
 )
 
 // //////////////////////////////////
@@ -627,6 +628,7 @@ func (a *CAcceptor) GetDeviceResets() int {
 }
 
 func (a *CAcceptor) GetDeviceRevision() int {
+	a.log.Msg("GetDeviceRevision")
 	return acceptor.Device.Revision
 }
 
@@ -654,4 +656,157 @@ func (a *CAcceptor) GetDeviceSerialNumber() string {
 
 	s := string(reply[3 : 3+returnedStringLength])
 	return s
+}
+
+func (a *CAcceptor) GetDeviceStalled() bool {
+	a.log.Msg("GetDeviceStalled")
+	return acceptor.Device.Stalled
+}
+
+func (a *CAcceptor) GetDeviceState() enum.StateType {
+	a.log.Msg("GetDeviceState")
+	return acceptor.Device.State
+}
+
+func (a *CAcceptor) GetDeviceType() string {
+	a.log.Msg("GetDeviceType")
+
+	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceType, "DeviceType")
+	if err != nil {
+		a.log.Err("GetDeviceType", err)
+		return ""
+	}
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorType.Byte()}
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetDeviceType", err)
+		return ""
+	}
+
+	// Specified to check for non-printable characters from 0x00 to 0x1F or 0x7F as termination.
+	validCharIndex := 3
+	for ; validCharIndex < len(reply) && reply[validCharIndex] > 0x20 && reply[validCharIndex] < 0x7F && validCharIndex <= 22; validCharIndex++ {
+	}
+
+	returnedStringLength := validCharIndex - 3
+	if returnedStringLength > 0 {
+		return string(reply[3 : 3+returnedStringLength])
+	}
+
+	return ""
+}
+
+func (a *CAcceptor) GetDocType() enum.DocumentType {
+	a.log.Msg("GetDocType")
+	return a.docType
+}
+
+func (a *CAcceptor) GetTransactionTimeout() time.Duration {
+	a.log.Msg("GetTransactionTimeout")
+	return acceptor.Timeout.Transaction
+}
+
+func (a *CAcceptor) SetTransactionTimeout(newVal time.Duration) {
+	a.log.Msg("SetTransactionTimeout")
+	acceptor.Timeout.Transaction = newVal
+}
+
+func (a *CAcceptor) GetDownloadTimeout() time.Duration {
+	a.log.Msg("GetDownloadTimeout")
+	return acceptor.Timeout.Download
+}
+
+func (a *CAcceptor) SetDownloadTimeout(newVal time.Duration) {
+	a.log.Msg("SetDownloadTimeout")
+	acceptor.Timeout.Download = newVal
+}
+
+func (a *CAcceptor) GetEnableAcceptance() bool {
+	a.log.Msg("GetEnableAcceptance")
+	return acceptor.Enable.Acceptance
+}
+
+func (a *CAcceptor) SetEnableAcceptance(newVal bool) {
+	a.log.Msg("SetEnableAcceptance")
+	acceptor.Enable.Acceptance = newVal
+}
+
+func (a *CAcceptor) GetEnableBarCodes() bool {
+	a.log.Msg("GetEnableBarCodes")
+	return acceptor.Enable.BarCodes
+}
+
+func (a *CAcceptor) SetEnableBarCodes(newVal bool) {
+	a.log.Msg("SetEnableBarCodes")
+	acceptor.Enable.BarCodes = newVal
+}
+
+func (a *CAcceptor) GetEnableBookmarks() bool {
+	a.log.Msg("GetEnableBookmarks")
+	return acceptor.Enable.Bookmarks
+}
+
+func (a *CAcceptor) SetEnableBookmarks(newVal bool) {
+	a.log.Msg("SetEnableBookmarks")
+	acceptor.Enable.Bookmarks = newVal
+}
+
+func (a *CAcceptor) GetEnableCouponExt() bool {
+	a.log.Msg("GetEnableCouponExt")
+	return acceptor.Enable.CouponExt
+}
+
+func (a *CAcceptor) SetEnableCouponExt(newVal bool) {
+	a.log.Msg("SetEnableCouponExt")
+	acceptor.Enable.CouponExt = newVal
+}
+
+func (a *CAcceptor) GetEnableNoPush() bool {
+	a.log.Msg("GetEnableNoPush")
+	return acceptor.Enable.NoPush
+}
+
+func (a *CAcceptor) SetEnableNoPush(newVal bool) {
+	a.log.Msg("SetEnableNoPush")
+	acceptor.Enable.NoPush = newVal
+}
+
+func (a *CAcceptor) GetEscrowOrientation() enum.OrientationType {
+	a.log.Msg("GetEscrowOrientation")
+	if acceptor.Cap.OrientationExt {
+		return acceptor.EscrowOrientation
+	}
+	return enum.OrientationUnknownOrientation
+}
+
+func (a *CAcceptor) GetHighSecurity() bool {
+	a.log.Msg("GetHighSecurity")
+	return acceptor.HighSecurity
+}
+
+func (a *CAcceptor) SetHighSecurity(newVal bool) {
+	a.log.Msg("SetHighSecurity")
+	acceptor.HighSecurity = newVal
+}
+
+func (a *CAcceptor) GetOrientationControl() enum.OrientationControlType {
+	a.log.Msg("GetOrientationControl")
+	return acceptor.OrientationCtl
+}
+
+func (a *CAcceptor) SetOrientationControl(newVal enum.OrientationControlType) {
+	a.log.Msg("SetOrientationControl")
+	acceptor.OrientationCtl = newVal
+}
+
+func (a *CAcceptor) GetOrientationCtlExt() enum.OrientationControlType {
+	a.log.Msg("GetOrientationCtlExt")
+	return acceptor.OrientationCtlExt
+}
+
+func (a *CAcceptor) SetOrientationCtlExt(newVal enum.OrientationControlType) {
+	a.log.Msg("SetOrientationCtlExt")
+	acceptor.OrientationCtlExt = newVal
 }
