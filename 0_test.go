@@ -3,15 +3,30 @@ package mpost
 import (
 	"fmt"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"os"
 	"testing"
 	"time"
 )
 
 func TestConnect(t *testing.T) {
-	a := NewCAcceptor(30*time.Second, 30*time.Second)
+	a := DefAcceptor
+	a.AddLog(
+		log.Output(zerolog.ConsoleWriter{
+			Out:        os.Stdout,
+			NoColor:    false,
+			TimeFormat: "15:04:05",
+		}),
+		"TEST",
+	)
 
 	a.AddHook(enum.EventConnected, func(acceptor *CAcceptor, i int) {
 		fmt.Println("Connect")
+
+		acceptor.SetEnableAcceptance(true)
+		acceptor.SetEnableBarCodes(true)
+		acceptor.SetEnableBookmarks(true)
 	})
 	a.AddHook(enum.EventDisconnected, func(acceptor *CAcceptor, i int) {
 		fmt.Println("Disconnect")
@@ -21,7 +36,10 @@ func TestConnect(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 	t.Log(a.GetDeviceSerialNumber())
-	t.Log(a.GetBNFStatus().String())
+	t.Log(a.GetBill())
+	t.Log(a.GetApplicationPN())
+	t.Log(a.GetBootPN())
+	t.Log(a.GetDeviceState().String())
 
 	a.Close()
 	time.Sleep(1 * time.Second)

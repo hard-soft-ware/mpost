@@ -61,6 +61,10 @@ func (a *CAcceptor) MessageLoopThread() {
 		}
 
 		select {
+		case <-a.ctx.Done():
+			a.Close()
+			return
+
 		case message := <-a.messageQueue:
 
 			a.dataLinkLayer.SendPacket(message.Payload)

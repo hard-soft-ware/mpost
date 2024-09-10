@@ -1,14 +1,11 @@
 package mpost
 
 import (
-	"github.com/hard-soft-ware/mpost/acceptor"
+	"context"
 	"github.com/hard-soft-ware/mpost/enum"
 	"github.com/hard-soft-ware/mpost/serial"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-	"os"
 	"sync"
-	"time"
 )
 
 ////////////////////////////////////
@@ -37,36 +34,29 @@ type CAcceptor struct {
 
 	log LogStruct
 
-	ss bool
+	ctx       context.Context
+	ctxCancel context.CancelFunc
+	ss        bool
 }
 
-func NewCAcceptor(transactionTimeout, downloadTimeout time.Duration) *CAcceptor {
+var DefAcceptor = &CAcceptor{
+	eventHandlers: make(map[enum.EventType]EventHandler, enum.Event_End),
 
-	acceptor.Timeout.Transaction = transactionTimeout
-	acceptor.Timeout.Download = downloadTimeout
+	messageQueue:        make(chan *CMessage, 1),
+	replyQueue:          make(chan []byte, 1),
+	flashDownloadThread: make(chan bool, 1),
+	openThread:          make(chan bool, 1),
+}
 
-	a := &CAcceptor{
-		eventHandlers: make(map[enum.EventType]EventHandler, enum.Event_End),
-
-		messageQueue:        make(chan *CMessage, 1),
-		replyQueue:          make(chan []byte, 1),
-		flashDownloadThread: make(chan bool, 1),
-		openThread:          make(chan bool, 1),
-
-		log: NewLog(
-			log.Output(zerolog.ConsoleWriter{
-				Out:        os.Stdout,
-				NoColor:    false,
-				TimeFormat: "15:04:05",
-			}),
-			"Acceptor",
-		),
-	}
-
-	return a
+func init() {
+	DefAcceptor.ctx, DefAcceptor.ctxCancel = context.WithCancel(context.Background())
 }
 
 //
+
+func (a *CAcceptor) AddLog(log zerolog.Logger, root string) {
+	a.log = NewLog(log, root)
+}
 
 func (a *CAcceptor) AddHook(ev enum.EventType, h EventHandler) {
 	a.eventHandlers[ev] = h

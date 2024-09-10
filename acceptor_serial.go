@@ -33,6 +33,7 @@ func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 }
 
 func (a *CAcceptor) Close() {
+	defer a.ctxCancel()
 
 	if !acceptor.Connected {
 		acceptor.StopOpenThread = true
