@@ -355,3 +355,204 @@ func (a *CAcceptor) GetBNFStatus() enum.BNFStatusType {
 
 	return enum.BNFStatusUnknown
 }
+
+func (a *CAcceptor) GetBootPN() string {
+	a.log.Msg("GetBootPN")
+
+	err := a.verifyPropertyIsAllowed(acceptor.Cap.BootPN, "GetBootPN")
+	if err != nil {
+		a.log.Err("GetBootPN", err)
+		return ""
+	}
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorBootPartNumber.Byte()}
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetBootPN", err)
+		return ""
+	}
+
+	if len(reply) == 14 {
+		s := string(reply[3:12]) // Extracting the substring from byte slice
+		return s
+	}
+
+	return ""
+}
+
+func (a *CAcceptor) GetCapApplicationID() bool {
+	a.log.Msg("GetCapApplicationID")
+	return acceptor.Cap.ApplicationID
+}
+
+func (a *CAcceptor) GetCapApplicationPN() bool {
+	a.log.Msg("GetCapApplicationPN")
+	return acceptor.Cap.ApplicationPN
+}
+
+func (a *CAcceptor) GetCapAssetNumber() bool {
+	a.log.Msg("GetCapAssetNumber")
+	return acceptor.Cap.AssetNumber
+}
+
+func (a *CAcceptor) GetCapAudit() bool {
+	a.log.Msg("GetCapAudit")
+	return acceptor.Cap.Audit
+}
+
+func (a *CAcceptor) GetCapBarCodes() bool {
+	a.log.Msg("GetCapBarCodes")
+	return acceptor.Cap.BarCodes
+}
+
+func (a *CAcceptor) GetCapBarCodesExt() bool {
+	a.log.Msg("GetCapBarCodesExt")
+	return acceptor.Cap.BarCodesExt
+}
+
+func (a *CAcceptor) GetCapBNFStatus() bool {
+	a.log.Msg("GetCapBNFStatus")
+	return acceptor.Cap.BNFStatus
+}
+
+func (a *CAcceptor) GetCapBookmark() bool {
+	a.log.Msg("GetCapBookmark")
+	return acceptor.Cap.Bookmark
+}
+
+func (a *CAcceptor) GetCapBootPN() bool {
+	a.log.Msg("GetCapBootPN")
+	return acceptor.Cap.BootPN
+}
+
+func (a *CAcceptor) GetCapCalibrate() bool {
+	a.log.Msg("GetCapCalibrate")
+	return acceptor.Cap.Calibrate
+}
+
+func (a *CAcceptor) GetCapCashBoxTotal() bool {
+	a.log.Msg("GetCapCashBoxTotal")
+	return acceptor.Cap.CashBoxTotal
+}
+
+func (a *CAcceptor) GetCapCouponExt() bool {
+	a.log.Msg("GetCapCouponExt")
+	return acceptor.Cap.CouponExt
+}
+
+func (a *CAcceptor) GetCapDevicePaused() bool {
+	a.log.Msg("GetCapDevicePaused")
+	return acceptor.Cap.DevicePaused
+}
+
+func (a *CAcceptor) GetCapDeviceSoftReset() bool {
+	a.log.Msg("GetCapDeviceSoftReset")
+	return acceptor.Cap.DeviceSoftReset
+}
+
+func (a *CAcceptor) GetCapDeviceType() bool {
+	a.log.Msg("GetCapDeviceType")
+	return acceptor.Cap.DeviceType
+}
+
+func (a *CAcceptor) GetCapDeviceResets() bool {
+	a.log.Msg("GetCapDeviceResets")
+	return acceptor.Cap.DeviceResets
+}
+
+func (a *CAcceptor) GetCapDeviceSerialNumber() bool {
+	a.log.Msg("GetCapDeviceSerialNumber")
+	return acceptor.Cap.DeviceSerialNumber
+}
+
+func (a *CAcceptor) GetCapEscrowTimeout() bool {
+	a.log.Msg("GetCapEscrowTimeout")
+	return acceptor.Cap.EscrowTimeout
+}
+
+func (a *CAcceptor) GetCapFlashDownload() bool {
+	a.log.Msg("GetCapFlashDownload")
+	return acceptor.Cap.FlashDownload
+}
+
+func (a *CAcceptor) GetCapNoPush() bool {
+	a.log.Msg("GetCapNoPush")
+	return acceptor.Cap.NoPush
+}
+
+func (a *CAcceptor) GetCapOrientationExt() bool {
+	a.log.Msg("GetCapOrientationExt")
+	return acceptor.Cap.OrientationExt
+}
+
+func (a *CAcceptor) GetCapPupExt() bool {
+	a.log.Msg("GetCapPupExt")
+	return acceptor.Cap.PupExt
+}
+
+func (a *CAcceptor) GetCapTestDoc() bool {
+	a.log.Msg("GetCapTestDoc")
+	return acceptor.Cap.TestDoc
+}
+
+func (a *CAcceptor) GetCapVariantID() bool {
+	a.log.Msg("GetCapVariantID")
+	return acceptor.Cap.VariantID
+}
+
+func (a *CAcceptor) GetCapVariantPN() bool {
+	a.log.Msg("GetCapVariantPN")
+	return acceptor.Cap.VariantPN
+}
+
+func (a *CAcceptor) GetCashBoxAttached() bool {
+	a.log.Msg("GetCashBoxAttached")
+	return acceptor.Cash.BoxAttached
+}
+
+func (a *CAcceptor) GetCashBoxFull() bool {
+	a.log.Msg("GetCashBoxFull")
+	return acceptor.Cash.BoxFull
+}
+
+func (a *CAcceptor) GetCashBoxTotal() int64 {
+	a.log.Msg("GetCashBoxTotal")
+
+	err := a.verifyPropertyIsAllowed(acceptor.Cap.CashBoxTotal, "GetCashBoxTotal")
+	if err != nil {
+		a.log.Err("GetCashBoxTotal", err)
+		return 0
+	}
+
+	payload := []byte{consts.CmdOmnibus.Byte(), 0x7F, 0x3C, 0x02}
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetCashBoxTotal", err)
+		return 0
+	}
+
+	if len(reply) < 9 {
+		return 0
+	}
+
+	total := int64(reply[3]&0x0F)<<20 |
+		int64(reply[4]&0x0F)<<16 |
+		int64(reply[5]&0x0F)<<12 |
+		int64(reply[6]&0x0F)<<8 |
+		int64(reply[7]&0x0F)<<4 |
+		int64(reply[8]&0x0F)
+
+	return total
+}
+
+func (a *CAcceptor) GetConnected() bool {
+	a.log.Msg("GetConnected")
+	return acceptor.Connected
+}
+
+func (a *CAcceptor) GetCoupon() *CCoupon {
+	a.log.Msg("GetCoupon")
+	return a.coupon
+}
