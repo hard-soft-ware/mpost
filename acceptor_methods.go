@@ -31,32 +31,6 @@ func (a *CAcceptor) verifyPropertyIsAllowed(capabilityFlag bool, propertyName st
 
 ////
 
-func (a *CAcceptor) GetDeviceSerialNumber() string {
-	a.log.Msg("GetDeviceSerialNumber")
-
-	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceSerialNumber, "DeviceSerialNumber")
-	if err != nil {
-		a.log.Err("GetDeviceSerialNumber", err)
-		return ""
-	}
-
-	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorSerialNumber.Byte()}
-	reply, err := a.SendSynchronousCommand(payload)
-	if err != nil {
-		a.log.Err("GetDeviceSerialNumber", err)
-		return ""
-	}
-
-	validCharIndex := 3
-	for validCharIndex < len(reply) && reply[validCharIndex] > 0x20 && reply[validCharIndex] < 0x7F && validCharIndex <= 22 {
-		validCharIndex++
-	}
-	returnedStringLength := validCharIndex - 3
-
-	s := string(reply[3 : 3+returnedStringLength])
-	return s
-}
-
 func (a *CAcceptor) GetApplicationID() string {
 	a.log.Msg("GetApplicationID")
 
@@ -555,4 +529,129 @@ func (a *CAcceptor) GetConnected() bool {
 func (a *CAcceptor) GetCoupon() *CCoupon {
 	a.log.Msg("GetCoupon")
 	return a.coupon
+}
+
+func (a *CAcceptor) GetDeviceBusy() bool {
+	a.log.Msg("GetDeviceBusy")
+	return acceptor.Device.State != enum.StateIdling
+}
+
+func (a *CAcceptor) GetDeviceCRC() int64 {
+	a.log.Msg("GetDeviceCRC")
+
+	err := a.verifyPropertyIsAllowed(true, "DeviceCRC")
+	if err != nil {
+		a.log.Err("GetDeviceCRC", err)
+		return 0
+	}
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxSoftwareCRC.Byte()}
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetDeviceCRC", err)
+		return 0
+	}
+
+	if len(reply) < 7 {
+		return 0
+	}
+
+	crc := int64(reply[3]&0x0F)<<12 |
+		int64(reply[4]&0x0F)<<8 |
+		int64(reply[5]&0x0F)<<4 |
+		int64(reply[6]&0x0F)
+
+	return crc
+}
+
+func (a *CAcceptor) GetDeviceFailure() bool {
+	a.log.Msg("GetDeviceFailure")
+	return acceptor.Device.State == enum.StateFailed
+}
+
+func (a *CAcceptor) GetDeviceJammed() bool {
+	a.log.Msg("GetDeviceJammed")
+	return acceptor.Device.Jammed
+}
+
+func (a *CAcceptor) GetDeviceModel() int {
+	a.log.Msg("GetDeviceModel")
+	return acceptor.Device.Model
+}
+
+func (a *CAcceptor) GetDevicePaused() bool {
+	a.log.Msg("GetDevicePaused")
+	return acceptor.Device.Paused
+}
+
+func (a *CAcceptor) GetDevicePortName() string {
+	a.log.Msg("GetDevicePortName")
+	return a.port.PortName
+}
+
+func (a *CAcceptor) GetDevicePowerUp() enum.PowerUpType {
+	a.log.Msg("GetDevicePowerUp")
+	return acceptor.Device.PowerUp
+}
+
+func (a *CAcceptor) GetDeviceResets() int {
+	a.log.Msg("GetDeviceResets")
+
+	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceResets, "DeviceResets")
+	if err != nil {
+		a.log.Err("GetDeviceResets", err)
+		return 0
+	}
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxDeviceResets.Byte()}
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetDeviceResets", err)
+		return 0
+	}
+
+	if len(reply) < 9 {
+		return 0
+	}
+
+	resets := int(reply[3]&0x0F)<<20 |
+		int(reply[4]&0x0F)<<16 |
+		int(reply[5]&0x0F)<<12 |
+		int(reply[6]&0x0F)<<8 |
+		int(reply[7]&0x0F)<<4 |
+		int(reply[8]&0x0F)
+
+	return resets
+}
+
+func (a *CAcceptor) GetDeviceRevision() int {
+	return acceptor.Device.Revision
+}
+
+func (a *CAcceptor) GetDeviceSerialNumber() string {
+	a.log.Msg("GetDeviceSerialNumber")
+
+	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceSerialNumber, "DeviceSerialNumber")
+	if err != nil {
+		a.log.Err("GetDeviceSerialNumber", err)
+		return ""
+	}
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorSerialNumber.Byte()}
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetDeviceSerialNumber", err)
+		return ""
+	}
+
+	validCharIndex := 3
+	for validCharIndex < len(reply) && reply[validCharIndex] > 0x20 && reply[validCharIndex] < 0x7F && validCharIndex <= 22 {
+		validCharIndex++
+	}
+	returnedStringLength := validCharIndex - 3
+
+	s := string(reply[3 : 3+returnedStringLength])
+	return s
 }

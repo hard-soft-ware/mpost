@@ -112,12 +112,12 @@ func (dl *CDataLinkLayer) RaiseEvents() {
 		acceptor.ShouldRaise.PauseClearedEvent = false
 	}
 
-	if acceptor.IsDeviceJammed && acceptor.ShouldRaise.JamDetectedEvent {
+	if acceptor.Device.Jammed && acceptor.ShouldRaise.JamDetectedEvent {
 		dl.log.Msg("Jam Detected Event Raised")
 		acceptor.ShouldRaise.JamDetectedEvent = false
 	}
 
-	if !acceptor.IsDeviceJammed && acceptor.ShouldRaise.JamClearedEvent {
+	if !acceptor.Device.Jammed && acceptor.ShouldRaise.JamClearedEvent {
 		dl.log.Msg("Jam Cleared Event Raised")
 		acceptor.ShouldRaise.JamClearedEvent = false
 	}

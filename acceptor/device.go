@@ -14,6 +14,8 @@ type DeviceStruct struct {
 	Stalled  bool
 	State    enum.StateType
 	Type     string
+
+	Jammed bool
 }
 
 var Device DeviceStruct

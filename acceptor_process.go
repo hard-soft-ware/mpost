@@ -67,10 +67,10 @@ func (a *CAcceptor) processData1(data1 byte) {
 	}
 
 	if (data1 & 0x04) != 0 {
-		acceptor.IsDeviceJammed = true
+		acceptor.Device.Jammed = true
 		acceptor.ShouldRaise.JamDetectedEvent = true
 	} else {
-		acceptor.IsDeviceJammed = false
+		acceptor.Device.Jammed = false
 		acceptor.ShouldRaise.JamClearedEvent = true
 	}
 

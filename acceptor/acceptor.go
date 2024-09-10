@@ -23,7 +23,6 @@ var InSoftResetOneSecondIgnore bool
 var InSoftResetWaitForReply bool
 var ExpandedNoteReporting bool
 var IsQueryDeviceCapabilitiesSupported bool
-var IsDeviceJammed bool
 var IsCheated bool
 var IsPoweredUp bool
 var IsInvalidCommand bool
