@@ -938,3 +938,24 @@ func (a *CAcceptor) Calibrate() {
 }
 
 ////
+
+func (a *CAcceptor) ClearCashBoxTotal() (err error) {
+	a.log.Msg("ClearCashBoxTotal")
+
+	if !acceptor.Connected {
+		err = errors.New("ClearCashBoxTotal called when not connected")
+		a.log.Err("ClearCashBoxTotal", err)
+		return
+	}
+
+	payload := []byte{consts.CmdCalibrate.Byte(), 0x00, 0x00, consts.CmdAuxCashBoxTotal.Byte()}
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("ClearCashBoxTotal", err)
+		return
+	}
+
+	a.dataLinkLayer.ProcessReply(reply)
+	return
+}
