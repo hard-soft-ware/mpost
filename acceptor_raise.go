@@ -41,7 +41,17 @@ func (a *CAcceptor) RaiseDownloadRestartEvent() {
 	acceptor.ShouldRaise.DownloadRestartEvent = false
 }
 
+//
+
 func (a *CAcceptor) RaiseCalibrateProgressEvent() {
 	a.raiseXX(enum.EventCalibrateProgress, 0)
 	acceptor.ShouldRaise.CalibrateProgressEvent = false
+}
+
+func (a *CAcceptor) RaiseCalibrateStartEvent() {
+	a.raiseXX(enum.EventCalibrateStart, 0)
+}
+
+func (a *CAcceptor) RaiseCalibrateFinishEvent() {
+	a.raiseXX(enum.EventCalibrateFinish, 0)
 }

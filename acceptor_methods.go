@@ -810,3 +810,129 @@ func (a *CAcceptor) SetOrientationCtlExt(newVal enum.OrientationControlType) {
 	a.log.Msg("SetOrientationCtlExt")
 	acceptor.OrientationCtlExt = newVal
 }
+
+func (a *CAcceptor) GetVariantNames() []string {
+	a.log.Msg("GetVariantNames")
+
+	err := a.verifyPropertyIsAllowed(true, "VariantNames")
+	if err != nil {
+		a.log.Err("GetVariantNames", err)
+		return nil
+	}
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorVariantName.Byte()}
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetVariantNames", err)
+		return nil
+	}
+
+	var names []string
+	validCharIndex := 3
+
+	for validCharIndex < len(reply) && reply[validCharIndex] > 0x20 && reply[validCharIndex] < 0x7F && validCharIndex <= 34 {
+		if validCharIndex+2 < len(reply) {
+			names = append(names, string(reply[validCharIndex:validCharIndex+3]))
+			validCharIndex += 4
+		} else {
+			break
+		}
+	}
+
+	return names
+}
+
+func (a *CAcceptor) GetVariantID() string {
+	a.log.Msg("GetVariantID")
+
+	err := a.verifyPropertyIsAllowed(acceptor.Cap.VariantID, "VariantID")
+	if err != nil {
+		a.log.Err("GetVariantID", err)
+		return ""
+	}
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorVariantID.Byte()}
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetVariantID", err)
+		return ""
+	}
+
+	if len(reply) == 14 {
+		return string(reply[3:12]) // Extracting a 9-byte string starting from index 3
+	}
+
+	return ""
+}
+
+func (a *CAcceptor) GetVariantPN() string {
+	a.log.Msg("GetVariantPN")
+
+	err := a.verifyPropertyIsAllowed(acceptor.Cap.VariantPN, "VariantPN")
+	if err != nil {
+		a.log.Err("GetVariantPN", err)
+		return ""
+	}
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorVariantPartNumber.Byte()}
+
+	reply, err := a.SendSynchronousCommand(payload)
+	if err != nil {
+		a.log.Err("GetVariantPN", err)
+		return ""
+	}
+
+	if len(reply) == 14 {
+		return string(reply[3:12])
+	}
+
+	return ""
+}
+
+func (a *CAcceptor) GetVersion() string {
+	a.log.Msg("GetVersion")
+	return acceptor.Version
+}
+
+func (a *CAcceptor) Calibrate() {
+	a.log.Msg("Calibrate")
+	if !acceptor.Connected {
+		a.log.Err("Calibrate", errors.New("Calibrate called when not connected"))
+		return
+	}
+
+	if acceptor.Device.State != enum.StateIdling {
+		a.log.Err("Calibrate", errors.New("Calibrate allowed only when DeviceState == Idling"))
+		return
+	}
+
+	payload := []byte{consts.CmdCalibrate.Byte(), 0x00, 0x00, 0x00}
+
+	acceptor.SuppressStandardPoll = true
+	acceptor.Device.State = enum.StateCalibrateStart
+
+	a.RaiseCalibrateStartEvent()
+
+	acceptor.ShouldRaise.CalibrateProgressEvent = true
+
+	startTickCount := time.Now()
+
+	for {
+		reply, err := a.SendSynchronousCommand(payload)
+		if err != nil {
+			a.log.Err("Calibrate", errors.New("Failed to send synchronous command during calibration"))
+			return
+		}
+
+		if len(reply) == 11 && (reply[2]&0x70) == 0x40 {
+			break
+		}
+
+		if time.Since(startTickCount) > CalibrateTimeout {
+			a.RaiseCalibrateFinishEvent()
+			return
+		}
+	}
+}
