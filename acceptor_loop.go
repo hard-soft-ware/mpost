@@ -1,43 +1,45 @@
 package mpost
 
-import "time"
+import (
+	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/consts"
+	"github.com/hard-soft-ware/mpost/enum"
+	"time"
+)
 
 ////////////////////////////////////
 
-func (a *CAcceptor) PollingLoop(lg *LogGlobalStruct) []byte {
+func (a *CAcceptor) PollingLoop() []byte {
 	startTickCount := time.Now()
 
 	for {
-		payload := []byte{CmdOmnibus, 0x00, 0x10, 0x00}
+		payload := []byte{consts.CmdOmnibus.Byte(), 0x00, 0x10, 0x00}
 
 		reply, err := a.SendSynchronousCommand(payload)
 		if err != nil {
-			lg.Debug().Err(err).Msg("PollingLoop")
+			a.log.Err("PollingLoop", err)
 		}
 
 		if time.Since(startTickCount) > PollingDisconnectTimeout {
-			if a.shouldRaiseDisconnectedEvent {
-				a.RaiseDisconnectedEvent()
-			}
+			a.Close()
 			startTickCount = time.Now()
 		}
 
-		if a.flashDownloadThread != nil {
-			if a.stopFlashDownloadThread {
-				a.stopFlashDownloadThread = true
-				<-a.flashDownloadThread
-				a.deviceState = Idling
-				a.wasStopped = true
+		if !a.flashDownloadThread {
+			if acceptor.StopFlashDownloadThread {
+				acceptor.StopFlashDownloadThread = true
+				a.flashDownloadThread = true
+				acceptor.Device.State = enum.StateIdling
+				acceptor.WasStopped = true
 				return nil
 			}
-		} else if a.openThread != nil {
-			if a.stopOpenThread {
-				a.stopOpenThread = false
-				a.stopWorkerThread = true
-
-				<-a.openThread
-
-				a.wasStopped = true
+		}
+		if !a.openThread {
+			if acceptor.StopOpenThread {
+				acceptor.StopOpenThread = false
+				acceptor.StopWorkerThread = true
+				a.openThread = true
+				acceptor.WasStopped = true
 				a.Close()
 				return nil
 			}

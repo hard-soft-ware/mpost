@@ -1,5 +1,10 @@
 package mpost
 
+import (
+	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/enum"
+)
+
 ////////////////////////////////////
 
 func (dl *CDataLinkLayer) ProcessStandardOmnibusReply(reply []byte) {
@@ -29,16 +34,16 @@ func (dl *CDataLinkLayer) ProcessExtendedOmnibusBarCodeReply(reply []byte) {
 	dl.Acceptor.processData3(reply[7])
 	dl.Acceptor.processData5(reply[9])
 
-	if dl.Acceptor.deviceState == Escrow {
-		dl.Acceptor.barCode = ""
+	if acceptor.Device.State == enum.StateEscrow {
+		acceptor.BarCode = ""
 		for i := 10; i < 38; i++ {
 			if reply[i] != '(' {
-				dl.Acceptor.barCode += string(reply[i])
+				acceptor.BarCode += string(reply[i])
 			} else {
 				break
 			}
 		}
-		dl.Acceptor.docType = Barcode
+		dl.Acceptor.docType = enum.DocumentBarcode
 	}
 }
 
@@ -67,7 +72,7 @@ func (dl *CDataLinkLayer) ProcessExtendedOmnibusExpandedCouponReply(reply []byte
 	dl.Acceptor.processData3(reply[7])
 	dl.Acceptor.processData5(reply[9])
 
-	if dl.Acceptor.deviceState == Escrow || (dl.Acceptor.deviceState == Stacked && !dl.Acceptor.wasDocTypeSetOnEscrow) {
+	if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !acceptor.WasDocTypeSetOnEscrow) {
 		couponData := ((int(reply[10]) & 0x0F) << 12) +
 			((int(reply[11]) & 0x0F) << 8) +
 			((int(reply[12]) & 0x0F) << 4) +
@@ -82,7 +87,7 @@ func (dl *CDataLinkLayer) ProcessExtendedOmnibusExpandedCouponReply(reply []byte
 
 		dl.Acceptor.coupon = NewCCoupon(ownerID, value)
 
-		dl.Acceptor.docType = Coupon
-		dl.Acceptor.wasDocTypeSetOnEscrow = dl.Acceptor.deviceState == Escrow
+		dl.Acceptor.docType = enum.DocumentCoupon
+		acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 	}
 }

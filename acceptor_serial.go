@@ -2,40 +2,29 @@ package mpost
 
 import (
 	"fmt"
-	"go.bug.st/serial"
-	"strings"
-	"time"
+	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/consts"
+	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/serial"
 )
-
-func byteSliceToString(b []byte) string {
-	var sb strings.Builder
-	for i, byteVal := range b {
-		if i > 0 {
-			sb.WriteString(" ")
-		}
-		fmt.Fprintf(&sb, "%02X", byteVal)
-	}
-	return sb.String()
-}
 
 ////////////////////////////////////
 
-func (a *CAcceptor) Open(portName string, powerUp PowerUp) error {
-	lg := a.log.NewLog("OpenSerial")
-
-	if a.connected {
-		lg.Debug().Msg("already connected")
+func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
+	if acceptor.Connected {
+		a.log.Msg("already connected")
 		return nil
 	}
 
-	a.devicePortName = portName
-	a.devicePowerUp = powerUp
+	acceptor.Device.PowerUp = powerUp
 
-	err := a.OpenPort(lg)
+	port, err := serial.Open(portName, &acceptor.Connected)
 	if err != nil {
-		lg.Debug().Err(err).Msg("failed to open serial port")
+		a.log.Err("failed to open serial port", err)
 		return err
 	}
+	a.port = port
+	a.log.Msg("Serial Open")
 
 	go a.MessageLoopThread()
 	go a.OpenThread()
@@ -43,91 +32,61 @@ func (a *CAcceptor) Open(portName string, powerUp PowerUp) error {
 	return nil
 }
 
-func (a *CAcceptor) OpenPort(lg *LogGlobalStruct) error {
-	mode := &serial.Mode{
-		BaudRate: 9600,
-		DataBits: 7,
-		Parity:   serial.EvenParity,
-		StopBits: serial.OneStopBit,
-	}
-
-	port, err := serial.Open(a.devicePortName, mode)
-	if err != nil {
-		lg.Debug().Err(err).Msg("failed to open serial port")
-		return err
-	}
-
-	port.SetReadTimeout(100 * time.Millisecond)
-	port.ResetInputBuffer()
-
-	port.SetDTR(false)
-	port.SetRTS(true)
-	time.Sleep(100 * time.Millisecond)
-
-	port.SetDTR(true)
-	port.SetRTS(false)
-	time.Sleep(5 * time.Millisecond)
-
-	port.ResetInputBuffer()
-	a.port = port
-
-	a.connected = true
-	lg.Debug().Msg("Connected")
-	return nil
-}
-
 func (a *CAcceptor) Close() {
+	a.RaiseDisconnectedEvent()
+	a.port.Close()
 
-	if !a.connected {
-		a.stopOpenThread = true
+	defer a.CtxCancel()
+
+	if !acceptor.Connected {
+		acceptor.StopOpenThread = true
 		return
 	}
 
-	if a.enableAcceptance {
-		a.enableAcceptance = false
+	if acceptor.Enable.Acceptance {
+		acceptor.Enable.Acceptance = false
 	}
 
 	if a.dataLinkLayer != nil {
-		a.dataLinkLayer.FlushIdenticalTransactionsToLog()
+		a.log.Msg(fmt.Sprintf("IdenticalCommandAndReplyCount: %d", a.dataLinkLayer.IdenticalCommandAndReplyCount))
 	}
 
-	a.stopWorkerThread = true
-	a.workerThread.Wait()
+	acceptor.StopWorkerThread = true
 
-	a.port.Close()
 	a.port = nil
-	a.connected = false
+	acceptor.Connected = false
+	a.log.Msg("Close")
 }
 
 ////
 
-func (a *CAcceptor) QueryDeviceCapabilities(lg *LogGlobalStruct) {
-	if !a.isQueryDeviceCapabilitiesSupported {
+func (a *CAcceptor) QueryDeviceCapabilities() {
+	if !acceptor.IsQueryDeviceCapabilitiesSupported {
 		return
 	}
 
-	payload := []byte{CmdAuxiliary, 0x00, 0x00, CmdAuxQueryDeviceCapabilities}
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0x00, 0x00, consts.CmdAuxDeviceCapabilities.Byte()}
 	reply, err := a.SendSynchronousCommand(payload)
 
 	if len(reply) < 4 {
-		lg.Debug().Err(err).Msg("Reply too short, unable to process.")
+		a.log.Err("Reply too short, unable to process.", err)
 		return
 	}
 
 	if reply[3]&0x01 != 0 {
-		a.capPupExt = true
+		acceptor.Cap.PupExt = true
 	}
 	if reply[3]&0x02 != 0 {
-		a.capOrientationExt = true
+		acceptor.Cap.OrientationExt = true
 	}
 	if reply[3]&0x04 != 0 {
-		a.capApplicationID = true
-		a.capVariantID = true
+		acceptor.Cap.ApplicationID = true
+		acceptor.Cap.VariantID = true
 	}
 	if reply[3]&0x08 != 0 {
-		a.capBNFStatus = true
+		acceptor.Cap.BNFStatus = true
 	}
 	if reply[3]&0x10 != 0 {
-		a.capTestDoc = true
+		acceptor.Cap.TestDoc = true
 	}
 }

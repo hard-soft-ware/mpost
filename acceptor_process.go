@@ -1,213 +1,219 @@
 package mpost
 
+import (
+	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
+	"github.com/hard-soft-ware/mpost/enum"
+)
+
 ////////////////////////////////////
 
 func (a *CAcceptor) processData0(data0 byte) {
 	if (data0 & 0x01) != 0 {
-		if a.deviceState != Calibrating && a.deviceState != CalibrateStart {
-			a.deviceState = Idling
+		if acceptor.Device.State != enum.StateCalibrating && acceptor.Device.State != enum.StateCalibrateStart {
+			acceptor.Device.State = enum.StateIdling
 		}
 	}
 
 	if (data0 & 0x02) != 0 {
-		if a.deviceState != Calibrating && a.deviceState != CalibrateStart {
-			a.deviceState = Accepting
+		if acceptor.Device.State != enum.StateCalibrating && acceptor.Device.State != enum.StateCalibrateStart {
+			acceptor.Device.State = enum.StateAccepting
 		}
 	}
 
 	if (data0 & 0x04) != 0 {
-		a.deviceState = Escrow
-		if a.autoStack {
-			a.shouldRaiseEscrowEvent = false
+		acceptor.Device.State = enum.StateEscrow
+		if acceptor.AutoStack {
+			acceptor.ShouldRaise.EscrowEvent = false
 		}
 	} else {
-		a.shouldRaiseEscrowEvent = true
+		acceptor.ShouldRaise.EscrowEvent = true
 	}
 
 	if (data0 & 0x08) != 0 {
-		a.deviceState = Stacking
+		acceptor.Device.State = enum.StateStacking
 	}
 
 	if (data0 & 0x10) != 0 {
-		a.deviceState = Stacked
+		acceptor.Device.State = enum.StateStacked
 	} else {
-		a.shouldRaiseStackedEvent = true
+		acceptor.ShouldRaise.StackedEvent = true
 	}
 
 	if (data0 & 0x20) != 0 {
-		a.deviceState = Returning
+		acceptor.Device.State = enum.StateReturning
 	}
 
 	if (data0 & 0x40) != 0 {
-		a.deviceState = Returned
-		a.bill = CBill{} // Resetting the bill
+		acceptor.Device.State = enum.StateReturned
+		bill.Reset() // Resetting the bill
 	} else {
-		a.shouldRaiseReturnedEvent = true
+		acceptor.ShouldRaise.ReturnedEvent = true
 	}
 }
 
 func (a *CAcceptor) processData1(data1 byte) {
 	if (data1 & 0x01) != 0 {
-		a.isCheated = true
+		acceptor.IsCheated = true
 	} else {
-		a.isCheated = false
-		a.shouldRaiseCheatedEvent = true
+		acceptor.IsCheated = false
+		acceptor.ShouldRaise.CheatedEvent = true
 	}
 
 	if (data1 & 0x02) != 0 {
-		a.deviceState = Rejected
+		acceptor.Device.State = enum.StateRejected
 	} else {
-		a.shouldRaiseRejectedEvent = true
+		acceptor.ShouldRaise.RejectedEvent = true
 	}
 
 	if (data1 & 0x04) != 0 {
-		a.isDeviceJammed = true
-		a.shouldRaiseJamDetectedEvent = true
+		acceptor.Device.Jammed = true
+		acceptor.ShouldRaise.JamDetectedEvent = true
 	} else {
-		a.isDeviceJammed = false
-		a.shouldRaiseJamClearedEvent = true
+		acceptor.Device.Jammed = false
+		acceptor.ShouldRaise.JamClearedEvent = true
 	}
 
 	if (data1 & 0x08) != 0 {
-		a.cashBoxFull = true
+		acceptor.Cash.BoxFull = true
 	} else {
-		a.cashBoxFull = false
-		a.shouldRaiseStackerFullEvent = true
+		acceptor.Cash.BoxFull = false
+		acceptor.ShouldRaise.StackerFullEvent = true
 	}
 
-	a.cashBoxAttached = (data1 & 0x10) != 0
+	acceptor.Cash.BoxAttached = (data1 & 0x10) != 0
 
-	if !a.cashBoxAttached {
+	if !acceptor.Cash.BoxAttached {
 		// Assume a DocumentType exists that handles this
 		// _docType = NoValue
 	}
 
 	if (data1 & 0x20) != 0 {
-		a.devicePaused = true
-		a.shouldRaisePauseClearedEvent = true
+		acceptor.Device.Paused = true
+		acceptor.ShouldRaise.PauseClearedEvent = true
 	} else {
-		a.devicePaused = false
-		a.shouldRaisePauseDetectedEvent = true
+		acceptor.Device.Paused = false
+		acceptor.ShouldRaise.PauseDetectedEvent = true
 	}
 
 	if (data1 & 0x40) != 0 {
-		a.deviceState = Calibrating
-		if a.shouldRaiseCalibrateProgressEvent {
+		acceptor.Device.State = enum.StateCalibrating
+		if acceptor.ShouldRaise.CalibrateProgressEvent {
 			a.RaiseCalibrateProgressEvent()
 		}
 	} else {
-		if a.deviceState == Calibrating {
-			a.shouldRaiseCalibrateFinishEvent = true
-			a.deviceState = Idling
+		if acceptor.Device.State == enum.StateCalibrating {
+			acceptor.ShouldRaise.CalibrateFinishEvent = true
+			acceptor.Device.State = enum.StateIdling
 		}
 	}
 }
 
 func (a *CAcceptor) processData2(data2 byte) {
-	if !a.expandedNoteReporting {
+	if !acceptor.ExpandedNoteReporting {
 		billTypeIndex := (data2 & 0x38) >> 3
 		if billTypeIndex > 0 {
-			if a.deviceState == Escrow || (a.deviceState == Stacked && !a.wasDocTypeSetOnEscrow) {
-				a.bill = a.billTypes[billTypeIndex-1]
-				a.docType = Bill
-				a.wasDocTypeSetOnEscrow = a.deviceState == Escrow
+			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !acceptor.WasDocTypeSetOnEscrow) {
+				bill.Bill = bill.Types[billTypeIndex-1]
+				a.docType = enum.DocumentBill
+				acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 			}
 		} else {
-			if a.deviceState == Stacked || a.deviceState == Escrow {
-				a.bill = CBill{}
-				a.docType = NoValue
-				a.wasDocTypeSetOnEscrow = false
+			if acceptor.Device.State == enum.StateStacked || acceptor.Device.State == enum.StateEscrow {
+				bill.Reset()
+				a.docType = enum.DocumentNoValue
+				acceptor.WasDocTypeSetOnEscrow = false
 			}
 		}
 	} else {
-		if a.deviceState == Stacked {
-			if a.docType == Bill && a.bill.Value == 0.0 {
-				a.docType = NoValue
+		if acceptor.Device.State == enum.StateStacked {
+			if a.docType == enum.DocumentBill && bill.Bill.Value == 0.0 {
+				a.docType = enum.DocumentNoValue
 			}
-		} else if a.deviceState == Escrow {
-			a.bill = CBill{}
-			a.docType = NoValue
+		} else if acceptor.Device.State == enum.StateEscrow {
+			bill.Reset()
+			a.docType = enum.DocumentNoValue
 		}
 	}
 
 	if (data2 & 0x01) != 0 {
-		a.isPoweredUp = true
-		a.docType = NoValue
+		acceptor.IsPoweredUp = true
+		a.docType = enum.DocumentNoValue
 	} else {
-		a.shouldRaisePowerUpEvent = true
-		if !a.isVeryFirstPoll {
-			a.isPoweredUp = false
+		acceptor.ShouldRaise.PowerUpEvent = true
+		if !acceptor.IsVeryFirstPoll {
+			acceptor.IsPoweredUp = false
 		}
 	}
 
 	if (data2 & 0x02) != 0 {
-		a.isInvalidCommand = true
+		acceptor.IsInvalidCommand = true
 	} else {
-		a.isInvalidCommand = false
-		a.shouldRaiseInvalidCommandEvent = true
+		acceptor.IsInvalidCommand = false
+		acceptor.ShouldRaise.InvalidCommandEvent = true
 	}
 
 	if (data2 & 0x04) != 0 {
-		a.deviceState = Failed
+		acceptor.Device.State = enum.StateFailed
 	}
 }
 
 func (a *CAcceptor) processData3(data3 byte) {
 	if (data3 & 0x01) != 0 {
-		a.deviceState = Stalled
-		a.shouldRaiseStallClearedEvent = true
+		acceptor.Device.State = enum.StateStalled
+		acceptor.ShouldRaise.StallClearedEvent = true
 	} else {
-		a.shouldRaiseStallDetectedEvent = true
+		acceptor.ShouldRaise.StallDetectedEvent = true
 	}
 
 	if (data3 & 0x02) != 0 {
-		a.deviceState = DownloadRestart
+		acceptor.Device.State = enum.StateDownloadRestart
 	}
 
 	if (data3 & 0x08) != 0 {
-		a.capBarCodesExt = true
+		acceptor.Cap.BarCodesExt = true
 	}
 
 	if (data3 & 0x10) != 0 {
-		a.isQueryDeviceCapabilitiesSupported = true
+		acceptor.IsQueryDeviceCapabilitiesSupported = true
 	}
 }
 
 func (a *CAcceptor) processData4(data4 byte) {
-	a.deviceModel = int(data4 & 0x7F) //todo проверить валидность перевода
-	m := a.deviceModel
+	acceptor.Device.Model = int(data4 & 0x7F)
+	m := acceptor.Device.Model
 	d := m
 
-	a.capApplicationPN = m == 'T' || m == 'U'
-	a.capAssetNumber = m == 'T' || m == 'U'
-	a.capAudit = m == 'T' || m == 'U'
-	a.capBarCodes = m == 'T' || m == 'U' || d == 15 || d == 23
-	a.capBookmark = true
-	a.capBootPN = m == 'T' || m == 'U'
-	a.capCalibrate = true
-	a.capCashBoxTotal = m == 'A' || m == 'B' || m == 'C' || m == 'D' || m == 'G' || m == 'M' || m == 'P' || m == 'W' || m == 'X'
-	a.capCouponExt = m == 'P' || m == 'X'
-	a.capDevicePaused = m == 'P' || m == 'X' || d == 31
-	a.capDeviceSoftReset = m == 'A' || m == 'B' || m == 'C' || m == 'D' || m == 'G' || m == 'M' || m == 'P' || m == 'T' || m == 'U' || m == 'W' || m == 'X' || d == 31
-	a.capDeviceType = m == 'T' || m == 'U'
-	a.capDeviceResets = m == 'A' || m == 'B' || m == 'C' || m == 'D' || m == 'G' || m == 'M' || m == 'P' || m == 'T' || m == 'U' || m == 'W' || m == 'X'
-	a.capDeviceSerialNumber = m == 'T' || m == 'U'
-	a.capFlashDownload = true
-	a.capEscrowTimeout = m == 'T' || m == 'U'
-	a.capNoPush = m == 'P' || m == 'X' || d == 31 || d == 23
-	a.capVariantPN = m == 'T' || m == 'U'
-	a.expandedNoteReporting = m == 'T' || m == 'U' // This setting might be toggled in debug or production builds
+	acceptor.Cap.ApplicationPN = m == 'T' || m == 'U'
+	acceptor.Cap.AssetNumber = m == 'T' || m == 'U'
+	acceptor.Cap.Audit = m == 'T' || m == 'U'
+	acceptor.Cap.BarCodes = m == 'T' || m == 'U' || d == 15 || d == 23
+	acceptor.Cap.Bookmark = true
+	acceptor.Cap.BootPN = m == 'T' || m == 'U'
+	acceptor.Cap.Calibrate = true
+	acceptor.Cap.CashBoxTotal = m == 'A' || m == 'B' || m == 'C' || m == 'D' || m == 'G' || m == 'M' || m == 'P' || m == 'W' || m == 'X'
+	acceptor.Cap.CouponExt = m == 'P' || m == 'X'
+	acceptor.Cap.DevicePaused = m == 'P' || m == 'X' || d == 31
+	acceptor.Cap.DeviceSoftReset = m == 'A' || m == 'B' || m == 'C' || m == 'D' || m == 'G' || m == 'M' || m == 'P' || m == 'T' || m == 'U' || m == 'W' || m == 'X' || d == 31
+	acceptor.Cap.DeviceType = m == 'T' || m == 'U'
+	acceptor.Cap.DeviceResets = m == 'A' || m == 'B' || m == 'C' || m == 'D' || m == 'G' || m == 'M' || m == 'P' || m == 'T' || m == 'U' || m == 'W' || m == 'X'
+	acceptor.Cap.DeviceSerialNumber = m == 'T' || m == 'U'
+	acceptor.Cap.FlashDownload = true
+	acceptor.Cap.EscrowTimeout = m == 'T' || m == 'U'
+	acceptor.Cap.NoPush = m == 'P' || m == 'X' || d == 31 || d == 23
+	acceptor.Cap.VariantPN = m == 'T' || m == 'U'
+	acceptor.ExpandedNoteReporting = m == 'T' || m == 'U' // This setting might be toggled in debug or production builds
 }
 
 func (a *CAcceptor) processData5(data5 byte) {
 	switch {
-	case a.deviceModel < 23, // S1K
-		a.deviceModel == 30 || a.deviceModel == 31, // S3K
-		a.deviceModel == 74,                        // CFMC
-		a.deviceModel == 84 || a.deviceModel == 85: // CFSC
-		a.deviceRevision = int(data5 & 0x7F)
+	case acceptor.Device.Model < 23, // S1K
+		acceptor.Device.Model == 30 || acceptor.Device.Model == 31, // S3K
+		acceptor.Device.Model == 74,                                // CFMC
+		acceptor.Device.Model == 84 || acceptor.Device.Model == 85: // CFSC
+		acceptor.Device.Revision = int(data5 & 0x7F)
 
 	default: // S2K
-		a.deviceRevision = int(data5&0x0F) + (int(data5&0x70)>>4)*10
+		acceptor.Device.Revision = int(data5&0x0F) + (int(data5&0x70)>>4)*10
 	}
 }

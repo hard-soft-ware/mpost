@@ -3,49 +3,28 @@ package mpost
 import (
 	"bufio"
 	"errors"
+	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/command"
+	"github.com/hard-soft-ware/mpost/consts"
+	"github.com/hard-soft-ware/mpost/enum"
 	"io"
-	"time"
 )
 
 ////////////////////////////////////
 
 func (dl *CDataLinkLayer) SendPacket(payload []byte) {
-	payloadLength := len(payload)
-	commandLength := payloadLength + 4 // STX + Length char + ETX + Checksum
+	send := command.Create(payload)
 
-	command := make([]byte, 0, commandLength)
-	command = append(command, STX)
-	command = append(command, byte(commandLength))
+	dl.CurrentCommand = send
+	dl.EchoDetect = send
 
-	command = append(command, payload...)
-	command[2] |= dl.AckToggleBit
-
-	command = append(command, ETX)
-	command = append(command, dl.ComputeCheckSum(command))
-
-	dl.CurrentCommand = command
-	dl.EchoDetect = command
-
-	dl.log.Debug().Str("data", byteSliceToString(command)).Msg("SERIAL SEND")
-	n, err := dl.Acceptor.port.Write(command)
+	dl.log.Bytes("SERIAL SEND >>> ", send)
+	n, err := dl.Acceptor.port.Write(send)
 	if err != nil || n == 0 {
-		dl.log.Debug().Err(err).Msg("Failed to write to port")
-
-		dl.Acceptor.port.Close()
-		dl.Acceptor.OpenPort(dl.log)
-	}
-}
-
-func (dl *CDataLinkLayer) WaitForQuiet() {
-	for {
-		buf := make([]byte, 1)
-		timeout := 20 * time.Millisecond
-
-		dl.Acceptor.port.SetReadTimeout(timeout)
-
-		_, err := dl.Acceptor.port.Read(buf)
+		dl.log.Err("Failed to write to port", err)
+		err = dl.Acceptor.port.Restart()
 		if err != nil {
-			return
+			dl.log.Err("Failed restart to port", err)
 		}
 	}
 }
@@ -55,14 +34,14 @@ func (dl *CDataLinkLayer) WaitForQuiet() {
 func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 	reply := []byte{}
 
-	timeout := dl.Acceptor.transactionTimeout
-	if dl.Acceptor.deviceState == DownloadStart || dl.Acceptor.deviceState == Downloading {
-		timeout = dl.Acceptor.downloadTimeout
+	timeout := acceptor.Timeout.Transaction
+	if acceptor.Device.State == enum.StateDownloadStart || acceptor.Device.State == enum.StateDownloading {
+		timeout = acceptor.Timeout.Download
 	}
 
-	dl.Acceptor.port.SetReadTimeout(timeout)
+	dl.Acceptor.port.SetTimeout(timeout)
 
-	reader := bufio.NewReader(dl.Acceptor.port)
+	reader := bufio.NewReader(dl.Acceptor.port.Port())
 	stxAndLength := make([]byte, 2)
 	bytesRead, err := io.ReadFull(reader, stxAndLength)
 	if err != nil {
@@ -71,7 +50,7 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 	if bytesRead < 2 {
 		return nil, errors.New("received insufficient bytes")
 	}
-	if stxAndLength[0] != STX {
+	if stxAndLength[0] != consts.DataSTX.Byte() {
 		return nil, errors.New("invalid STX received")
 	}
 
@@ -99,35 +78,11 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 		}
 	}
 
-	dl.log.Debug().Str("data", byteSliceToString(reply)).Msg("SERIAL READ")
+	dl.log.Bytes("SERIAL READ <<< ", reply)
 	return reply, nil
 }
 
 ////
-
-func (dl *CDataLinkLayer) ReplyAcked(reply []byte) bool {
-	if len(reply) < 3 {
-		return false
-	}
-
-	if (reply[2] & ACKMask) == dl.AckToggleBit {
-		dl.AckToggleBit ^= 0x01 // Переключаем бит подтверждения
-
-		dl.NakCount = 0
-
-		return true
-	} else {
-		dl.NakCount++
-
-		// Если получено 8 последовательных NAK, принудительно переключаем бит
-		if dl.NakCount == 8 {
-			dl.AckToggleBit ^= 0x01
-			dl.NakCount = 0
-		}
-
-		return false
-	}
-}
 
 func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 	if len(reply) < 3 {
@@ -141,7 +96,7 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 	}
 
 	if (ctl & 0x70) == 0x50 {
-		dl.Acceptor.deviceState = DownloadRestart
+		acceptor.Device.State = enum.StateDownloadRestart
 	}
 
 	if (ctl & 0x70) == 0x70 {
@@ -151,18 +106,18 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 			dl.ProcessExtendedOmnibusBarCodeReply(reply)
 		case 0x02:
 			dl.ProcessExtendedOmnibusExpandedNoteReply(reply)
-			if dl.Acceptor.deviceState == Escrow || (dl.Acceptor.deviceState == Stacked && !dl.Acceptor.wasDocTypeSetOnEscrow) {
-				if dl.Acceptor.capOrientationExt {
-					switch dl.Acceptor.orientationCtlExt {
-					case OneWay:
-						if dl.Acceptor.escrowOrientation != RightUp {
+			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !acceptor.WasDocTypeSetOnEscrow) {
+				if acceptor.Cap.OrientationExt {
+					switch acceptor.OrientationCtlExt {
+					case enum.OrientationControlOneWay:
+						if acceptor.EscrowOrientation != enum.OrientationRightUp {
 							dl.EscrowReturn()
 						}
-					case TwoWay:
-						if dl.Acceptor.escrowOrientation != RightUp && dl.Acceptor.escrowOrientation != LeftUp {
+					case enum.OrientationControlTwoWay:
+						if acceptor.EscrowOrientation != enum.OrientationRightUp && acceptor.EscrowOrientation != enum.OrientationLeftUp {
 							dl.EscrowReturn()
 						}
-					case FourWay:
+					case enum.OrientationControlFourWay:
 						// Accept all orientations.
 					}
 				}
@@ -173,12 +128,12 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 		dl.RaiseEvents()
 	}
 
-	if dl.Acceptor.deviceState == Escrow && dl.Acceptor.autoStack {
+	if acceptor.Device.State == enum.StateEscrow && acceptor.AutoStack {
 		dl.EscrowStack()
-		dl.Acceptor.shouldRaiseEscrowEvent = false
+		acceptor.ShouldRaise.EscrowEvent = false
 	}
 
-	if dl.Acceptor.deviceState != Escrow && dl.Acceptor.deviceState != Stacking {
-		dl.Acceptor.wasDocTypeSetOnEscrow = false
+	if acceptor.Device.State != enum.StateEscrow && acceptor.Device.State != enum.StateStacking {
+		acceptor.WasDocTypeSetOnEscrow = false
 	}
 }

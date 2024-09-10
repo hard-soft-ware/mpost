@@ -1,28 +1,32 @@
 package mpost
 
-import "time"
+import (
+	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
+	"github.com/hard-soft-ware/mpost/consts"
+	"github.com/hard-soft-ware/mpost/enum"
+	"time"
+)
 
 ////////////////////////////////////
 
 func (a *CAcceptor) OpenThread() {
-	lg := a.log.NewLog("Thread")
+	lg := a.log.New("Thread")
 
-	replay := a.PollingLoop(lg)
+	replay := a.PollingLoop()
 
-	if a.wasStopped {
-		lg.Debug().Msg("thread is stopped")
+	if acceptor.WasStopped {
+		lg.Msg("thread is stopped")
 		return
 	}
 
 	a.dataLinkLayer.ProcessReply(replay)
-	a.QueryDeviceCapabilities(lg)
+	a.QueryDeviceCapabilities()
 
-	if a.deviceState != DownloadRestart {
+	if acceptor.Device.State != enum.StateDownloadRestart {
 		a.SetUpBillTable()
-		a.connected = true
-		if a.shouldRaiseConnectedEvent {
-			a.RaiseConnectedEvent()
-		}
+		acceptor.Connected = true
+		a.RaiseConnectedEvent()
 	} else {
 		a.RaiseDownloadRestartEvent()
 	}
@@ -31,55 +35,98 @@ func (a *CAcceptor) OpenThread() {
 ////
 
 func (a *CAcceptor) MessageLoopThread() {
-	lg := a.log.NewLog("LoopThread")
+	lg := a.log.New("LoopThread")
 
 	a.dataLinkLayer = a.NewCDataLinkLayer(lg)
 	timeoutStart := time.Now()
+	loopCycleCounter := 0
 
 	for {
-		if !a.inSoftResetWaitForReply {
+		if !acceptor.InSoftResetWaitForReply {
 			time.Sleep(10 * time.Millisecond)
 		} else {
 			time.Sleep(1000 * time.Millisecond)
 		}
 
 		if time.Since(timeoutStart) > 30*time.Second {
-			if a.deviceState != Downloading && a.deviceState != DownloadRestart {
-				a.connected = false
-				if a.shouldRaiseDisconnectedEvent {
-					a.RaiseDisconnectedEvent()
-				}
-				a.wasDisconnected = true
+			if acceptor.Device.State != enum.StateDownloading && acceptor.Device.State != enum.StateDownloadRestart {
+				acceptor.Connected = false
+				a.Close()
+				acceptor.WasDisconnected = true
 				timeoutStart = time.Now()
 			}
 		}
 
-		if a.stopWorkerThread {
-			a.stopWorkerThread = false
-			lg.Debug().Msg("thread is stopped")
+		if acceptor.StopWorkerThread {
+			acceptor.StopWorkerThread = false
+			lg.Msg("thread is stopped")
 			return
 		}
 
 		select {
+		case <-a.Ctx.Done():
+			a.Close()
+			return
+
 		case message := <-a.messageQueue:
-			lg.Debug().Bytes("payload", message.Payload).Msg("MessageLoopThread")
+			loopCycleCounter = 0
 
 			a.dataLinkLayer.SendPacket(message.Payload)
 			reply, err := a.dataLinkLayer.ReceiveReply()
 			if err != nil {
-				lg.Error().Err(err).Msg("Invalid ReceiveReply")
+				a.log.Err("Invalid ReceiveReply", err)
 				continue
 			}
 
 			if len(reply) > 0 {
 				timeoutStart = time.Now()
-				if a.wasDisconnected {
-					a.wasDisconnected = false
+				if acceptor.WasDisconnected {
+					acceptor.WasDisconnected = false
 					a.RaiseConnectedEvent()
 				}
 				if message.IsSynchronous {
 					a.replyQueue <- reply
 				} else {
+					a.dataLinkLayer.ProcessReply(reply)
+				}
+			}
+
+		default:
+			loopCycleCounter++
+
+			if loopCycleCounter > 9 {
+				loopCycleCounter = 0
+
+				payload := make([]byte, 4)
+				acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, bill.TypeEnables)
+
+				a.dataLinkLayer.SendPacket(payload)
+
+				reply, err := a.dataLinkLayer.ReceiveReply()
+				if err != nil {
+					a.Close()
+					a.log.Err("Invalid loopCycleCounter", err)
+					return
+				}
+
+				if len(reply) > 0 {
+					timeoutStart = time.Now()
+
+					if acceptor.WasDisconnected {
+						acceptor.WasDisconnected = false
+
+						if reply[2]&0x70 != 0x50 {
+							acceptor.Connected = true
+							a.RaiseConnectedEvent()
+						} else {
+							a.RaiseDownloadRestartEvent()
+						}
+					}
+
+					if acceptor.InSoftResetWaitForReply {
+						acceptor.InSoftResetWaitForReply = false
+					}
+
 					a.dataLinkLayer.ProcessReply(reply)
 				}
 			}
