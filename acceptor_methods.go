@@ -201,9 +201,9 @@ func (a *CAcceptor) GetAutoStack() bool {
 	return acceptor.AutoStack
 }
 
-func (a *CAcceptor) SetAutoStack(newVal bool) {
+func (a *CAcceptor) SetAutoStack(v bool) {
 	a.log.Msg("SetAutoStack")
-	acceptor.AutoStack = newVal
+	acceptor.AutoStack = v
 }
 
 func (a *CAcceptor) GetBarCode() string {
@@ -226,7 +226,7 @@ func (a *CAcceptor) GetBillTypeEnables() []bool {
 	return bill.TypeEnables
 }
 
-func (a *CAcceptor) SetBillTypeEnables(newVal []bool) {
+func (a *CAcceptor) SetBillTypeEnables(v []bool) {
 	a.log.Msg("SetBillTypeEnables")
 
 	if !acceptor.Connected {
@@ -239,7 +239,7 @@ func (a *CAcceptor) SetBillTypeEnables(newVal []bool) {
 		return
 	}
 
-	bill.TypeEnables = newVal
+	bill.TypeEnables = v
 
 	if acceptor.ExpandedNoteReporting {
 		payload := make([]byte, 15)
@@ -270,9 +270,9 @@ func (a *CAcceptor) GetBillValueEnables() []bool {
 	return bill.ValueEnables
 }
 
-func (a *CAcceptor) SetBillValueEnables(newVal []bool) {
+func (a *CAcceptor) SetBillValueEnables(v []bool) {
 	a.log.Msg("SetBillValueEnables")
-	bill.ValueEnables = newVal
+	bill.ValueEnables = v
 
 	for _, enabled := range bill.ValueEnables {
 		for j, billType := range bill.Types {
@@ -708,9 +708,9 @@ func (a *CAcceptor) GetTransactionTimeout() time.Duration {
 	return acceptor.Timeout.Transaction
 }
 
-func (a *CAcceptor) SetTransactionTimeout(newVal time.Duration) {
+func (a *CAcceptor) SetTransactionTimeout(v time.Duration) {
 	a.log.Msg("SetTransactionTimeout")
-	acceptor.Timeout.Transaction = newVal
+	acceptor.Timeout.Transaction = v
 }
 
 func (a *CAcceptor) GetDownloadTimeout() time.Duration {
@@ -718,9 +718,9 @@ func (a *CAcceptor) GetDownloadTimeout() time.Duration {
 	return acceptor.Timeout.Download
 }
 
-func (a *CAcceptor) SetDownloadTimeout(newVal time.Duration) {
+func (a *CAcceptor) SetDownloadTimeout(v time.Duration) {
 	a.log.Msg("SetDownloadTimeout")
-	acceptor.Timeout.Download = newVal
+	acceptor.Timeout.Download = v
 }
 
 func (a *CAcceptor) GetEnableAcceptance() bool {
@@ -728,9 +728,9 @@ func (a *CAcceptor) GetEnableAcceptance() bool {
 	return acceptor.Enable.Acceptance
 }
 
-func (a *CAcceptor) SetEnableAcceptance(newVal bool) {
+func (a *CAcceptor) SetEnableAcceptance(v bool) {
 	a.log.Msg("SetEnableAcceptance")
-	acceptor.Enable.Acceptance = newVal
+	acceptor.Enable.Acceptance = v
 }
 
 func (a *CAcceptor) GetEnableBarCodes() bool {
@@ -738,9 +738,9 @@ func (a *CAcceptor) GetEnableBarCodes() bool {
 	return acceptor.Enable.BarCodes
 }
 
-func (a *CAcceptor) SetEnableBarCodes(newVal bool) {
+func (a *CAcceptor) SetEnableBarCodes(v bool) {
 	a.log.Msg("SetEnableBarCodes")
-	acceptor.Enable.BarCodes = newVal
+	acceptor.Enable.BarCodes = v
 }
 
 func (a *CAcceptor) GetEnableBookmarks() bool {
@@ -748,9 +748,9 @@ func (a *CAcceptor) GetEnableBookmarks() bool {
 	return acceptor.Enable.Bookmarks
 }
 
-func (a *CAcceptor) SetEnableBookmarks(newVal bool) {
+func (a *CAcceptor) SetEnableBookmarks(v bool) {
 	a.log.Msg("SetEnableBookmarks")
-	acceptor.Enable.Bookmarks = newVal
+	acceptor.Enable.Bookmarks = v
 }
 
 func (a *CAcceptor) GetEnableCouponExt() bool {
@@ -758,9 +758,9 @@ func (a *CAcceptor) GetEnableCouponExt() bool {
 	return acceptor.Enable.CouponExt
 }
 
-func (a *CAcceptor) SetEnableCouponExt(newVal bool) {
+func (a *CAcceptor) SetEnableCouponExt(v bool) {
 	a.log.Msg("SetEnableCouponExt")
-	acceptor.Enable.CouponExt = newVal
+	acceptor.Enable.CouponExt = v
 }
 
 func (a *CAcceptor) GetEnableNoPush() bool {
@@ -768,9 +768,9 @@ func (a *CAcceptor) GetEnableNoPush() bool {
 	return acceptor.Enable.NoPush
 }
 
-func (a *CAcceptor) SetEnableNoPush(newVal bool) {
+func (a *CAcceptor) SetEnableNoPush(v bool) {
 	a.log.Msg("SetEnableNoPush")
-	acceptor.Enable.NoPush = newVal
+	acceptor.Enable.NoPush = v
 }
 
 func (a *CAcceptor) GetEscrowOrientation() enum.OrientationType {
@@ -786,9 +786,9 @@ func (a *CAcceptor) GetHighSecurity() bool {
 	return acceptor.HighSecurity
 }
 
-func (a *CAcceptor) SetHighSecurity(newVal bool) {
+func (a *CAcceptor) SetHighSecurity(v bool) {
 	a.log.Msg("SetHighSecurity")
-	acceptor.HighSecurity = newVal
+	acceptor.HighSecurity = v
 }
 
 func (a *CAcceptor) GetOrientationControl() enum.OrientationControlType {
@@ -796,9 +796,9 @@ func (a *CAcceptor) GetOrientationControl() enum.OrientationControlType {
 	return acceptor.OrientationCtl
 }
 
-func (a *CAcceptor) SetOrientationControl(newVal enum.OrientationControlType) {
+func (a *CAcceptor) SetOrientationControl(v enum.OrientationControlType) {
 	a.log.Msg("SetOrientationControl")
-	acceptor.OrientationCtl = newVal
+	acceptor.OrientationCtl = v
 }
 
 func (a *CAcceptor) GetOrientationCtlExt() enum.OrientationControlType {
@@ -806,9 +806,9 @@ func (a *CAcceptor) GetOrientationCtlExt() enum.OrientationControlType {
 	return acceptor.OrientationCtlExt
 }
 
-func (a *CAcceptor) SetOrientationCtlExt(newVal enum.OrientationControlType) {
+func (a *CAcceptor) SetOrientationCtlExt(v enum.OrientationControlType) {
 	a.log.Msg("SetOrientationCtlExt")
-	acceptor.OrientationCtlExt = newVal
+	acceptor.OrientationCtlExt = v
 }
 
 func (a *CAcceptor) GetVariantNames() []string {
@@ -936,3 +936,5 @@ func (a *CAcceptor) Calibrate() {
 		}
 	}
 }
+
+////

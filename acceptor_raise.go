@@ -55,3 +55,25 @@ func (a *CAcceptor) RaiseCalibrateStartEvent() {
 func (a *CAcceptor) RaiseCalibrateFinishEvent() {
 	a.raiseXX(enum.EventCalibrateFinish, 0)
 }
+
+//
+
+func (a *CAcceptor) RaiseDownloadFinishEvent(st bool) {
+	v := 0
+	if st {
+		v = 1
+	}
+	a.raiseXX(enum.EventDownloadFinish, v)
+	acceptor.ShouldRaise.DownloadFinishEvent = false
+}
+
+func (a *CAcceptor) RaiseDownloadStartEvent(v int) {
+	a.raiseXX(enum.EventDownloadStart, v)
+
+	acceptor.ShouldRaise.DownloadStartEvent = false
+	acceptor.ShouldRaise.DownloadProgressEvent = true
+}
+
+func (a *CAcceptor) RaiseDownloadProgressEvent(v int) {
+	a.raiseXX(enum.EventDownloadProgress, v)
+}
