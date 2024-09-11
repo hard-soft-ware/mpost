@@ -7,20 +7,20 @@ import (
 
 ////////////////////////////////////
 
-func (a *MpostObj) GetApplicationID() string {
-	a.Log.Method("GetApplicationID", nil)
+func (m *MethodsObj) GetApplicationID() string {
+	m.a.Log.Method("GetApplicationID", nil)
 
 	err := acceptor.Verify(acceptor.Cap.ApplicationID, "GetApplicationID")
 	if err != nil {
-		a.Log.Err("GetApplicationID", err)
+		m.a.Log.Err("GetApplicationID", err)
 		return ""
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorApplicationID.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetApplicationID", err)
+		m.a.Log.Err("GetApplicationID", err)
 		return ""
 	}
 
@@ -32,20 +32,20 @@ func (a *MpostObj) GetApplicationID() string {
 	return ""
 }
 
-func (a *MpostObj) GetApplicationPN() string {
-	a.Log.Method("GetApplicationPN", nil)
+func (m *MethodsObj) GetApplicationPN() string {
+	m.a.Log.Method("GetApplicationPN", nil)
 
 	err := acceptor.Verify(acceptor.Cap.ApplicationPN, "ApplicationPN")
 	if err != nil {
-		a.Log.Err("ApplicationPN", err)
+		m.a.Log.Err("ApplicationPN", err)
 		return ""
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorApplicationPartNumber.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetApplicationPN", err)
+		m.a.Log.Err("GetApplicationPN", err)
 		return ""
 	}
 
@@ -57,12 +57,12 @@ func (a *MpostObj) GetApplicationPN() string {
 	return ""
 }
 
-func (a *MpostObj) GetCapApplicationID() bool {
-	a.Log.Method("GetCapApplicationID", nil)
+func (m *MethodsObj) GetCapApplicationID() bool {
+	m.a.Log.Method("GetCapApplicationID", nil)
 	return acceptor.Cap.ApplicationID
 }
 
-func (a *MpostObj) GetCapApplicationPN() bool {
-	a.Log.Method("GetCapApplicationPN", nil)
+func (m *MethodsObj) GetCapApplicationPN() bool {
+	m.a.Log.Method("GetCapApplicationPN", nil)
 	return acceptor.Cap.ApplicationPN
 }

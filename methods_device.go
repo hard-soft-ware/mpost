@@ -8,50 +8,50 @@ import (
 
 ////////////////////////////////////
 
-func (a *MpostObj) GetCapDevicePaused() bool {
-	a.Log.Method("GetCapDevicePaused", nil)
+func (m *MethodsObj) GetCapDevicePaused() bool {
+	m.a.Log.Method("GetCapDevicePaused", nil)
 	return acceptor.Cap.DevicePaused
 }
 
-func (a *MpostObj) GetCapDeviceSoftReset() bool {
-	a.Log.Method("GetCapDeviceSoftReset", nil)
+func (m *MethodsObj) GetCapDeviceSoftReset() bool {
+	m.a.Log.Method("GetCapDeviceSoftReset", nil)
 	return acceptor.Cap.DeviceSoftReset
 }
 
-func (a *MpostObj) GetCapDeviceType() bool {
-	a.Log.Method("GetCapDeviceType", nil)
+func (m *MethodsObj) GetCapDeviceType() bool {
+	m.a.Log.Method("GetCapDeviceType", nil)
 	return acceptor.Cap.DeviceType
 }
 
-func (a *MpostObj) GetCapDeviceResets() bool {
-	a.Log.Method("GetCapDeviceResets", nil)
+func (m *MethodsObj) GetCapDeviceResets() bool {
+	m.a.Log.Method("GetCapDeviceResets", nil)
 	return acceptor.Cap.DeviceResets
 }
 
-func (a *MpostObj) GetCapDeviceSerialNumber() bool {
-	a.Log.Method("GetCapDeviceSerialNumber", nil)
+func (m *MethodsObj) GetCapDeviceSerialNumber() bool {
+	m.a.Log.Method("GetCapDeviceSerialNumber", nil)
 	return acceptor.Cap.DeviceSerialNumber
 }
 
-func (a *MpostObj) GetDeviceBusy() bool {
-	a.Log.Method("GetDeviceBusy", nil)
+func (m *MethodsObj) GetDeviceBusy() bool {
+	m.a.Log.Method("GetDeviceBusy", nil)
 	return acceptor.Device.State != enum.StateIdling
 }
 
-func (a *MpostObj) GetDeviceCRC() int64 {
-	a.Log.Method("GetDeviceCRC", nil)
+func (m *MethodsObj) GetDeviceCRC() int64 {
+	m.a.Log.Method("GetDeviceCRC", nil)
 
 	err := acceptor.Verify(true, "DeviceCRC")
 	if err != nil {
-		a.Log.Err("GetDeviceCRC", err)
+		m.a.Log.Err("GetDeviceCRC", err)
 		return 0
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxSoftwareCRC.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetDeviceCRC", err)
+		m.a.Log.Err("GetDeviceCRC", err)
 		return 0
 	}
 
@@ -67,50 +67,50 @@ func (a *MpostObj) GetDeviceCRC() int64 {
 	return crc
 }
 
-func (a *MpostObj) GetDeviceFailure() bool {
-	a.Log.Method("GetDeviceFailure", nil)
+func (m *MethodsObj) GetDeviceFailure() bool {
+	m.a.Log.Method("GetDeviceFailure", nil)
 	return acceptor.Device.State == enum.StateFailed
 }
 
-func (a *MpostObj) GetDeviceJammed() bool {
-	a.Log.Method("GetDeviceJammed", nil)
+func (m *MethodsObj) GetDeviceJammed() bool {
+	m.a.Log.Method("GetDeviceJammed", nil)
 	return acceptor.Device.Jammed
 }
 
-func (a *MpostObj) GetDeviceModel() int {
-	a.Log.Method("GetDeviceModel", nil)
+func (m *MethodsObj) GetDeviceModel() int {
+	m.a.Log.Method("GetDeviceModel", nil)
 	return acceptor.Device.Model
 }
 
-func (a *MpostObj) GetDevicePaused() bool {
-	a.Log.Method("GetDevicePaused", nil)
+func (m *MethodsObj) GetDevicePaused() bool {
+	m.a.Log.Method("GetDevicePaused", nil)
 	return acceptor.Device.Paused
 }
 
-func (a *MpostObj) GetDevicePortName() string {
-	a.Log.Method("GetDevicePortName", nil)
-	return a.port.PortName
+func (m *MethodsObj) GetDevicePortName() string {
+	m.a.Log.Method("GetDevicePortName", nil)
+	return m.a.port.PortName
 }
 
-func (a *MpostObj) GetDevicePowerUp() enum.PowerUpType {
-	a.Log.Method("GetDevicePowerUp", nil)
+func (m *MethodsObj) GetDevicePowerUp() enum.PowerUpType {
+	m.a.Log.Method("GetDevicePowerUp", nil)
 	return acceptor.Device.PowerUp
 }
 
-func (a *MpostObj) GetDeviceResets() int {
-	a.Log.Method("GetDeviceResets", nil)
+func (m *MethodsObj) GetDeviceResets() int {
+	m.a.Log.Method("GetDeviceResets", nil)
 
 	err := acceptor.Verify(acceptor.Cap.DeviceResets, "DeviceResets")
 	if err != nil {
-		a.Log.Err("GetDeviceResets", err)
+		m.a.Log.Err("GetDeviceResets", err)
 		return 0
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxDeviceResets.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetDeviceResets", err)
+		m.a.Log.Err("GetDeviceResets", err)
 		return 0
 	}
 
@@ -128,24 +128,24 @@ func (a *MpostObj) GetDeviceResets() int {
 	return resets
 }
 
-func (a *MpostObj) GetDeviceRevision() int {
-	a.Log.Method("GetDeviceRevision", nil)
+func (m *MethodsObj) GetDeviceRevision() int {
+	m.a.Log.Method("GetDeviceRevision", nil)
 	return acceptor.Device.Revision
 }
 
-func (a *MpostObj) GetDeviceSerialNumber() string {
-	a.Log.Method("GetDeviceSerialNumber", nil)
+func (m *MethodsObj) GetDeviceSerialNumber() string {
+	m.a.Log.Method("GetDeviceSerialNumber", nil)
 
 	err := acceptor.Verify(acceptor.Cap.DeviceSerialNumber, "DeviceSerialNumber")
 	if err != nil {
-		a.Log.Err("GetDeviceSerialNumber", err)
+		m.a.Log.Err("GetDeviceSerialNumber", err)
 		return ""
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorSerialNumber.Byte()}
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetDeviceSerialNumber", err)
+		m.a.Log.Err("GetDeviceSerialNumber", err)
 		return ""
 	}
 
@@ -159,30 +159,30 @@ func (a *MpostObj) GetDeviceSerialNumber() string {
 	return s
 }
 
-func (a *MpostObj) GetDeviceStalled() bool {
-	a.Log.Method("GetDeviceStalled", nil)
+func (m *MethodsObj) GetDeviceStalled() bool {
+	m.a.Log.Method("GetDeviceStalled", nil)
 	return acceptor.Device.Stalled
 }
 
-func (a *MpostObj) GetDeviceState() enum.StateType {
-	a.Log.Method("GetDeviceState", nil)
+func (m *MethodsObj) GetDeviceState() enum.StateType {
+	m.a.Log.Method("GetDeviceState", nil)
 	return acceptor.Device.State
 }
 
-func (a *MpostObj) GetDeviceType() string {
-	a.Log.Method("GetDeviceType", nil)
+func (m *MethodsObj) GetDeviceType() string {
+	m.a.Log.Method("GetDeviceType", nil)
 
 	err := acceptor.Verify(acceptor.Cap.DeviceType, "DeviceType")
 	if err != nil {
-		a.Log.Err("GetDeviceType", err)
+		m.a.Log.Err("GetDeviceType", err)
 		return ""
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorType.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetDeviceType", err)
+		m.a.Log.Err("GetDeviceType", err)
 		return ""
 	}
 

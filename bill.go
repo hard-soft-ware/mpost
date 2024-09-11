@@ -120,7 +120,7 @@ func (a *MpostObj) retrieveBillTable() {
 	a.Log.Msg("Bill table retrieved")
 }
 
-func (a *MpostObj) SetUpBillTable() {
+func (a *MpostObj) setUpBillTable() {
 	bill.SetUpTable(acceptor.ExpandedNoteReporting, func() {
 		a.retrieveBillTable()
 	})

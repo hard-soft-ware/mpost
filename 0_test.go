@@ -62,7 +62,7 @@ func TestConnect(t *testing.T) {
 		}
 	}
 
-	a.SetEnableAcceptance(true)
+	a.Method.SetEnableAcceptance(true)
 
 	connCh := make(chan bool)
 
@@ -73,8 +73,6 @@ func TestConnect(t *testing.T) {
 		a.AddHook(enum.EventConnected, func(i int) {
 			connCh <- true
 			fmt.Println("HOOK\t\tConnect")
-
-			a.SetUpBillTable()
 		})
 		a.AddHook(enum.EventDisconnected, func(i int) {
 			connCh <- false
@@ -107,13 +105,13 @@ func TestConnect(t *testing.T) {
 				t.Log("Invalid Connect")
 				return
 			}
-			t.Log(a.GetDeviceSerialNumber())
-			t.Log(a.GetBill())
-			t.Log(a.GetApplicationPN())
-			t.Log(a.GetBootPN())
-			t.Log(a.GetDeviceType())
+			t.Log(a.Method.GetDeviceSerialNumber())
+			t.Log(a.Method.GetBill())
+			t.Log(a.Method.GetApplicationPN())
+			t.Log(a.Method.GetBootPN())
+			t.Log(a.Method.GetDeviceType())
 
-			t.Log(a.GetBNFStatus().String())
+			t.Log(a.Method.GetBNFStatus().String())
 
 		default:
 			continue

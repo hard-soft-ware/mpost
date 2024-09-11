@@ -4,22 +4,22 @@ import "github.com/hard-soft-ware/mpost/acceptor"
 
 ////////////////////////////////////
 
-func (a *MpostObj) GetCapCouponExt() bool {
-	a.Log.Method("GetCapCouponExt", nil)
+func (m *MethodsObj) GetCapCouponExt() bool {
+	m.a.Log.Method("GetCapCouponExt", nil)
 	return acceptor.Cap.CouponExt
 }
 
-func (a *MpostObj) GetCoupon() *CouponObj {
-	a.Log.Method("GetCoupon", nil)
-	return a.coupon
+func (m *MethodsObj) GetCoupon() *CouponObj {
+	m.a.Log.Method("GetCoupon", nil)
+	return m.a.coupon
 }
 
-func (a *MpostObj) GetEnableCouponExt() bool {
-	a.Log.Method("GetEnableCouponExt", nil)
+func (m *MethodsObj) GetEnableCouponExt() bool {
+	m.a.Log.Method("GetEnableCouponExt", nil)
 	return acceptor.Enable.CouponExt
 }
 
-func (a *MpostObj) SetEnableCouponExt(v bool) {
-	a.Log.Method("SetEnableCouponExt", nil)
+func (m *MethodsObj) SetEnableCouponExt(v bool) {
+	m.a.Log.Method("SetEnableCouponExt", nil)
 	acceptor.Enable.CouponExt = v
 }

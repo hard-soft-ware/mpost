@@ -4,27 +4,27 @@ import "github.com/hard-soft-ware/mpost/acceptor"
 
 ////////////////////////////////////
 
-func (a *MpostObj) GetBarCode() string {
-	a.Log.Method("GetBarCode", nil)
+func (m *MethodsObj) GetBarCode() string {
+	m.a.Log.Method("GetBarCode", nil)
 	return acceptor.BarCode
 }
 
-func (a *MpostObj) GetCapBarCodes() bool {
-	a.Log.Method("GetCapBarCodes", nil)
+func (m *MethodsObj) GetCapBarCodes() bool {
+	m.a.Log.Method("GetCapBarCodes", nil)
 	return acceptor.Cap.BarCodes
 }
 
-func (a *MpostObj) GetCapBarCodesExt() bool {
-	a.Log.Method("GetCapBarCodesExt", nil)
+func (m *MethodsObj) GetCapBarCodesExt() bool {
+	m.a.Log.Method("GetCapBarCodesExt", nil)
 	return acceptor.Cap.BarCodesExt
 }
 
-func (a *MpostObj) GetEnableBarCodes() bool {
-	a.Log.Method("GetEnableBarCodes", nil)
+func (m *MethodsObj) GetEnableBarCodes() bool {
+	m.a.Log.Method("GetEnableBarCodes", nil)
 	return acceptor.Enable.BarCodes
 }
 
-func (a *MpostObj) SetEnableBarCodes(v bool) {
-	a.Log.Method("SetEnableBarCodes", nil)
+func (m *MethodsObj) SetEnableBarCodes(v bool) {
+	m.a.Log.Method("SetEnableBarCodes", nil)
 	acceptor.Enable.BarCodes = v
 }

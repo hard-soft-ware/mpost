@@ -7,30 +7,30 @@ import (
 
 ////////////////////////////////////
 
-func (a *MpostObj) GetCapVariantID() bool {
-	a.Log.Method("GetCapVariantID", nil)
+func (m *MethodsObj) GetCapVariantID() bool {
+	m.a.Log.Method("GetCapVariantID", nil)
 	return acceptor.Cap.VariantID
 }
 
-func (a *MpostObj) GetCapVariantPN() bool {
-	a.Log.Method("GetCapVariantPN", nil)
+func (m *MethodsObj) GetCapVariantPN() bool {
+	m.a.Log.Method("GetCapVariantPN", nil)
 	return acceptor.Cap.VariantPN
 }
 
-func (a *MpostObj) GetVariantNames() []string {
-	a.Log.Method("GetVariantNames", nil)
+func (m *MethodsObj) GetVariantNames() []string {
+	m.a.Log.Method("GetVariantNames", nil)
 
 	err := acceptor.Verify(true, "VariantNames")
 	if err != nil {
-		a.Log.Err("GetVariantNames", err)
+		m.a.Log.Err("GetVariantNames", err)
 		return nil
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorVariantName.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetVariantNames", err)
+		m.a.Log.Err("GetVariantNames", err)
 		return nil
 	}
 
@@ -49,20 +49,20 @@ func (a *MpostObj) GetVariantNames() []string {
 	return names
 }
 
-func (a *MpostObj) GetVariantID() string {
-	a.Log.Method("GetVariantID", nil)
+func (m *MethodsObj) GetVariantID() string {
+	m.a.Log.Method("GetVariantID", nil)
 
 	err := acceptor.Verify(acceptor.Cap.VariantID, "VariantID")
 	if err != nil {
-		a.Log.Err("GetVariantID", err)
+		m.a.Log.Err("GetVariantID", err)
 		return ""
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorVariantID.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetVariantID", err)
+		m.a.Log.Err("GetVariantID", err)
 		return ""
 	}
 
@@ -73,20 +73,20 @@ func (a *MpostObj) GetVariantID() string {
 	return ""
 }
 
-func (a *MpostObj) GetVariantPN() string {
-	a.Log.Method("GetVariantPN", nil)
+func (m *MethodsObj) GetVariantPN() string {
+	m.a.Log.Method("GetVariantPN", nil)
 
 	err := acceptor.Verify(acceptor.Cap.VariantPN, "VariantPN")
 	if err != nil {
-		a.Log.Err("GetVariantPN", err)
+		m.a.Log.Err("GetVariantPN", err)
 		return ""
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorVariantPartNumber.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetVariantPN", err)
+		m.a.Log.Err("GetVariantPN", err)
 		return ""
 	}
 

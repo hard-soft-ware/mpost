@@ -67,7 +67,7 @@ func (a *MpostObj) openThread() {
 	a.queryDeviceCapabilities()
 
 	if acceptor.Device.State != enum.StateDownloadRestart {
-		a.SetUpBillTable()
+		a.setUpBillTable()
 		acceptor.Connected = true
 		hook.Raise.Connected()
 	} else {

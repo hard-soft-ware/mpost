@@ -7,35 +7,35 @@ import (
 
 ////////////////////////////////////
 
-func (a *MpostObj) GetCapOrientationExt() bool {
-	a.Log.Method("GetCapOrientationExt", nil)
+func (m *MethodsObj) GetCapOrientationExt() bool {
+	m.a.Log.Method("GetCapOrientationExt", nil)
 	return acceptor.Cap.OrientationExt
 }
 
-func (a *MpostObj) GetEscrowOrientation() enum.OrientationType {
-	a.Log.Method("GetEscrowOrientation", nil)
+func (m *MethodsObj) GetEscrowOrientation() enum.OrientationType {
+	m.a.Log.Method("GetEscrowOrientation", nil)
 	if acceptor.Cap.OrientationExt {
 		return acceptor.EscrowOrientation
 	}
 	return enum.OrientationUnknownOrientation
 }
 
-func (a *MpostObj) GetOrientationControl() enum.OrientationControlType {
-	a.Log.Method("GetOrientationControl", nil)
+func (m *MethodsObj) GetOrientationControl() enum.OrientationControlType {
+	m.a.Log.Method("GetOrientationControl", nil)
 	return acceptor.OrientationCtl
 }
 
-func (a *MpostObj) SetOrientationControl(v enum.OrientationControlType) {
-	a.Log.Method("SetOrientationControl", nil)
+func (m *MethodsObj) SetOrientationControl(v enum.OrientationControlType) {
+	m.a.Log.Method("SetOrientationControl", nil)
 	acceptor.OrientationCtl = v
 }
 
-func (a *MpostObj) GetOrientationCtlExt() enum.OrientationControlType {
-	a.Log.Method("GetOrientationCtlExt", nil)
+func (m *MethodsObj) GetOrientationCtlExt() enum.OrientationControlType {
+	m.a.Log.Method("GetOrientationCtlExt", nil)
 	return acceptor.OrientationCtlExt
 }
 
-func (a *MpostObj) SetOrientationCtlExt(v enum.OrientationControlType) {
-	a.Log.Method("SetOrientationCtlExt", nil)
+func (m *MethodsObj) SetOrientationCtlExt(v enum.OrientationControlType) {
+	m.a.Log.Method("SetOrientationCtlExt", nil)
 	acceptor.OrientationCtlExt = v
 }

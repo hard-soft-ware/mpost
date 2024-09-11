@@ -10,31 +10,31 @@ import (
 
 ////////////////////////////////////
 
-func (a *MpostObj) GetBill() bill.BillStruct {
-	a.Log.Method("GetBill", nil)
+func (m *MethodsObj) GetBill() bill.BillStruct {
+	m.a.Log.Method("GetBill", nil)
 	return bill.Bill
 }
 
-func (a *MpostObj) GetBillTypes() []bill.BillStruct {
-	a.Log.Method("GetBillTypes", nil)
+func (m *MethodsObj) GetBillTypes() []bill.BillStruct {
+	m.a.Log.Method("GetBillTypes", nil)
 	return bill.Types
 }
 
-func (a *MpostObj) GetBillTypeEnables() []bool {
-	a.Log.Method("GetBillTypeEnables", nil)
+func (m *MethodsObj) GetBillTypeEnables() []bool {
+	m.a.Log.Method("GetBillTypeEnables", nil)
 	return bill.TypeEnables
 }
 
-func (a *MpostObj) SetBillTypeEnables(v []bool) {
-	a.Log.Method("SetBillTypeEnables", nil)
+func (m *MethodsObj) SetBillTypeEnables(v []bool) {
+	m.a.Log.Method("SetBillTypeEnables", nil)
 
 	if !acceptor.Connected {
-		a.Log.Err("SetBillTypeEnables", errors.New("calling BillTypeEnables not allowed when not connected"))
+		m.a.Log.Err("SetBillTypeEnables", errors.New("calling BillTypeEnables not allowed when not connected"))
 		return
 	}
 
 	if len(bill.TypeEnables) != len(bill.Types) {
-		a.Log.Err("SetBillTypeEnables", fmt.Errorf("CBillTypeEnables size must match BillTypes size"))
+		m.a.Log.Err("SetBillTypeEnables", fmt.Errorf("CBillTypeEnables size must match BillTypes size"))
 		return
 	}
 
@@ -55,22 +55,22 @@ func (a *MpostObj) SetBillTypeEnables(v []bool) {
 			}
 		}
 
-		a.SendAsynchronousCommand(payload)
+		m.a.SendAsynchronousCommand(payload)
 	}
 }
 
-func (a *MpostObj) GetBillValues() []bill.BillStruct {
-	a.Log.Method("GetBillValues", nil)
+func (m *MethodsObj) GetBillValues() []bill.BillStruct {
+	m.a.Log.Method("GetBillValues", nil)
 	return bill.Values
 }
 
-func (a *MpostObj) GetBillValueEnables() []bool {
-	a.Log.Method("GetBillValueEnables", nil)
+func (m *MethodsObj) GetBillValueEnables() []bool {
+	m.a.Log.Method("GetBillValueEnables", nil)
 	return bill.ValueEnables
 }
 
-func (a *MpostObj) SetBillValueEnables(v []bool) {
-	a.Log.Method("SetBillValueEnables", nil)
+func (m *MethodsObj) SetBillValueEnables(v []bool) {
+	m.a.Log.Method("SetBillValueEnables", nil)
 	bill.ValueEnables = v
 
 	for _, enabled := range bill.ValueEnables {
@@ -95,5 +95,5 @@ func (a *MpostObj) SetBillValueEnables(v []bool) {
 		}
 	}
 
-	a.SendAsynchronousCommand(payload)
+	m.a.SendAsynchronousCommand(payload)
 }

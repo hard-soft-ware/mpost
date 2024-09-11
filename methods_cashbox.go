@@ -8,35 +8,35 @@ import (
 
 ////////////////////////////////////
 
-func (a *MpostObj) GetCapCashBoxTotal() bool {
-	a.Log.Method("GetCapCashBoxTotal", nil)
+func (m *MethodsObj) GetCapCashBoxTotal() bool {
+	m.a.Log.Method("GetCapCashBoxTotal", nil)
 	return acceptor.Cap.CashBoxTotal
 }
 
-func (a *MpostObj) GetCashBoxAttached() bool {
-	a.Log.Method("GetCashBoxAttached", nil)
+func (m *MethodsObj) GetCashBoxAttached() bool {
+	m.a.Log.Method("GetCashBoxAttached", nil)
 	return acceptor.Cash.BoxAttached
 }
 
-func (a *MpostObj) GetCashBoxFull() bool {
-	a.Log.Method("GetCashBoxFull", nil)
+func (m *MethodsObj) GetCashBoxFull() bool {
+	m.a.Log.Method("GetCashBoxFull", nil)
 	return acceptor.Cash.BoxFull
 }
 
-func (a *MpostObj) GetCashBoxTotal() int {
-	a.Log.Method("GetCashBoxTotal", nil)
+func (m *MethodsObj) GetCashBoxTotal() int {
+	m.a.Log.Method("GetCashBoxTotal", nil)
 
 	err := acceptor.Verify(acceptor.Cap.CashBoxTotal, "GetCashBoxTotal")
 	if err != nil {
-		a.Log.Err("GetCashBoxTotal", err)
+		m.a.Log.Err("GetCashBoxTotal", err)
 		return 0
 	}
 
 	payload := []byte{consts.CmdOmnibus.Byte(), 0x7F, 0x3C, 0x02}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetCashBoxTotal", err)
+		m.a.Log.Err("GetCashBoxTotal", err)
 		return 0
 	}
 
@@ -54,23 +54,23 @@ func (a *MpostObj) GetCashBoxTotal() int {
 	return total
 }
 
-func (a *MpostObj) ClearCashBoxTotal() (err error) {
-	a.Log.Method("ClearCashBoxTotal", nil)
+func (m *MethodsObj) ClearCashBoxTotal() (err error) {
+	m.a.Log.Method("ClearCashBoxTotal", nil)
 
 	if !acceptor.Connected {
 		err = errors.New("ClearCashBoxTotal called when not connected")
-		a.Log.Err("ClearCashBoxTotal", err)
+		m.a.Log.Err("ClearCashBoxTotal", err)
 		return
 	}
 
 	payload := []byte{consts.CmdCalibrate.Byte(), 0x00, 0x00, consts.CmdAuxCashBoxTotal.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("ClearCashBoxTotal", err)
+		m.a.Log.Err("ClearCashBoxTotal", err)
 		return
 	}
 
-	a.dataLinkLayer.ProcessReply(reply)
+	m.a.dataLinkLayer.ProcessReply(reply)
 	return
 }

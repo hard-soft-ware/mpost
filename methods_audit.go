@@ -7,21 +7,21 @@ import (
 
 ////////////////////////////////////
 
-func (a *MpostObj) GetAuditLifeTimeTotals() []int {
-	a.Log.Method("GetAuditLifeTimeTotals", nil)
+func (m *MethodsObj) GetAuditLifeTimeTotals() []int {
+	m.a.Log.Method("GetAuditLifeTimeTotals", nil)
 	values := []int{}
 
 	err := acceptor.Verify(acceptor.Cap.Audit, "GetAuditLifeTimeTotals")
 	if err != nil {
-		a.Log.Err("GetAuditLifeTimeTotals", err)
+		m.a.Log.Err("GetAuditLifeTimeTotals", err)
 		return values
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorAuditLifeTimeTotals.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetAuditLifeTimeTotals", err)
+		m.a.Log.Err("GetAuditLifeTimeTotals", err)
 		return values
 	}
 
@@ -47,21 +47,21 @@ func (a *MpostObj) GetAuditLifeTimeTotals() []int {
 	return values
 }
 
-func (a *MpostObj) GetAuditPerformance() []int {
-	a.Log.Method("GetAuditPerformance", nil)
+func (m *MethodsObj) GetAuditPerformance() []int {
+	m.a.Log.Method("GetAuditPerformance", nil)
 	values := []int{}
 
 	err := acceptor.Verify(acceptor.Cap.Audit, "GetAuditPerformance")
 	if err != nil {
-		a.Log.Err("GetAuditPerformance", err)
+		m.a.Log.Err("GetAuditPerformance", err)
 		return values
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorAuditPerformanceMeasures.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetAuditPerformance", err)
+		m.a.Log.Err("GetAuditPerformance", err)
 		return values
 	}
 
@@ -84,21 +84,21 @@ func (a *MpostObj) GetAuditPerformance() []int {
 	return values
 }
 
-func (a *MpostObj) GetAuditQP() []int {
-	a.Log.Method("GetAuditQP", nil)
+func (m *MethodsObj) GetAuditQP() []int {
+	m.a.Log.Method("GetAuditQP", nil)
 	values := []int{}
 
 	err := acceptor.Verify(acceptor.Cap.Audit, "GetAuditQP")
 	if err != nil {
-		a.Log.Err("GetAuditQP", err)
+		m.a.Log.Err("GetAuditQP", err)
 		return values
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorAuditQPMeasures.Byte()}
 
-	reply, err := a.SendSynchronousCommand(payload)
+	reply, err := m.a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.Log.Err("GetAuditQP", err)
+		m.a.Log.Err("GetAuditQP", err)
 		return values
 	}
 
@@ -121,7 +121,7 @@ func (a *MpostObj) GetAuditQP() []int {
 	return values
 }
 
-func (a *MpostObj) GetCapAudit() bool {
-	a.Log.Method("GetCapAudit", nil)
+func (m *MethodsObj) GetCapAudit() bool {
+	m.a.Log.Method("GetCapAudit", nil)
 	return acceptor.Cap.Audit
 }
