@@ -7,7 +7,25 @@ import (
 
 ////////////////////////////////////
 
-func (m *MethodsObj) GetApplicationID() string {
+type MethodsApplicationObj struct {
+	a   *MpostObj
+	Get MethodApplicationGetObj
+}
+
+type MethodApplicationGetObj struct{ a *MpostObj }
+
+func (m *MethodsObj) newApplication() *MethodsApplicationObj {
+	obj := MethodsApplicationObj{}
+
+	obj.a = m.a
+	obj.Get.a = m.a
+
+	return &obj
+}
+
+////////////////
+
+func (m *MethodApplicationGetObj) ID() string {
 	m.a.Log.Method("GetApplicationID", nil)
 
 	err := acceptor.Verify(acceptor.Cap.ApplicationID, "GetApplicationID")
@@ -32,7 +50,7 @@ func (m *MethodsObj) GetApplicationID() string {
 	return ""
 }
 
-func (m *MethodsObj) GetApplicationPN() string {
+func (m *MethodApplicationGetObj) PN() string {
 	m.a.Log.Method("GetApplicationPN", nil)
 
 	err := acceptor.Verify(acceptor.Cap.ApplicationPN, "ApplicationPN")
@@ -57,12 +75,14 @@ func (m *MethodsObj) GetApplicationPN() string {
 	return ""
 }
 
-func (m *MethodsObj) GetCapApplicationID() bool {
+//
+
+func (m *MethodApplicationGetObj) CapID() bool {
 	m.a.Log.Method("GetCapApplicationID", nil)
 	return acceptor.Cap.ApplicationID
 }
 
-func (m *MethodsObj) GetCapApplicationPN() bool {
+func (m *MethodApplicationGetObj) CapPN() bool {
 	m.a.Log.Method("GetCapApplicationPN", nil)
 	return acceptor.Cap.ApplicationPN
 }

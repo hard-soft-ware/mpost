@@ -17,7 +17,10 @@ type MethodsObj struct {
 	Get MethodsGetObj
 	Set MethodsSetObj
 
-	Enable *MethodsEnableObj
+	Enable      *MethodsEnableObj
+	Application *MethodsApplicationObj
+	Audit       *MethodsAuditObj
+	BarCode     *MethodsBarCodeObj
 }
 
 type MethodsGetObj struct{ a *MpostObj }
@@ -34,6 +37,9 @@ func (a *MpostObj) newMethods() *MethodsObj {
 	obj.Set.a = a
 
 	obj.Enable = obj.newEnable()
+	obj.Application = obj.newApplication()
+	obj.Audit = obj.newAudit()
+	obj.BarCode = obj.newBarCode()
 
 	return &obj
 }

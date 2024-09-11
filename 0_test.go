@@ -107,7 +107,7 @@ func TestConnect(t *testing.T) {
 			}
 			t.Log(a.Method.GetDeviceSerialNumber())
 			t.Log(a.Method.GetBill())
-			t.Log(a.Method.GetApplicationPN())
+			t.Log(a.Method.Application.Get.PN())
 			t.Log(a.Method.Get.BootPN())
 			t.Log(a.Method.GetDeviceType())
 

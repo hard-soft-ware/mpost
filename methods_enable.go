@@ -23,7 +23,7 @@ func (m *MethodsObj) newEnable() *MethodsEnableObj {
 	return &obj
 }
 
-//
+////////////////
 
 func (m *MethodsEnableGetObj) Acceptance() bool {
 	m.a.Log.Method("GetEnableAcceptance", nil)
@@ -55,4 +55,16 @@ func (m *MethodsEnableSetObj) Bookmarks(v bool) {
 func (m *MethodsEnableSetObj) NoPush(v bool) {
 	m.a.Log.Method("SetEnableNoPush", nil)
 	acceptor.Enable.NoPush = v
+}
+
+/**/
+
+func (m *MethodsEnableGetObj) BarCode() bool {
+	return m.a.Method.BarCode.Get.Enable()
+}
+
+//
+
+func (m *MethodsEnableSetObj) BarCode(v bool) {
+	m.a.Method.BarCode.Set.Enable(v)
 }
