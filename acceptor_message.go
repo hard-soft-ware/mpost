@@ -24,12 +24,6 @@ func NewCMessage(payload []byte, isSynchronous bool) *CMessage {
 ////
 
 func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
-	if !a.ss {
-		a.ss = true
-	} else {
-		a.ss = false
-		payload[0] += 1
-	}
 
 	a.messageQueue <- NewCMessage(payload, true)
 
@@ -47,12 +41,6 @@ func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
 }
 
 func (a *CAcceptor) SendAsynchronousCommand(payload []byte) {
-	if !a.ss {
-		a.ss = true
-	} else {
-		a.ss = false
-		payload[0] += 1
-	}
 
 	a.messageQueue <- NewCMessage(payload, false)
 }
