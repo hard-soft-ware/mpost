@@ -27,6 +27,8 @@ type MethodsObj struct {
 	Device      *MethodsDeviceObj
 	Orientation *MethodsOrientationObj
 	Variant     *MethodsVariantObj
+
+	Timeout *MethodsTimeoutObj
 }
 
 type MethodsGetObj struct{ a *MpostObj }
@@ -52,6 +54,8 @@ func (a *MpostObj) newMethods() *MethodsObj {
 	obj.Device = obj.newDevice()
 	obj.Orientation = obj.newOrientation()
 	obj.Variant = obj.newVariant()
+
+	obj.Timeout = obj.newTimeout()
 
 	return &obj
 }
@@ -109,16 +113,6 @@ func (m *MethodsGetObj) Connected() bool {
 func (m *MethodsGetObj) DocType() enum.DocumentType {
 	m.a.Log.Method("GetDocType", nil)
 	return m.a.DocType
-}
-
-func (m *MethodsGetObj) TransactionTimeout() time.Duration {
-	m.a.Log.Method("GetTransactionTimeout", nil)
-	return acceptor.Timeout.Transaction
-}
-
-func (m *MethodsGetObj) DownloadTimeout() time.Duration {
-	m.a.Log.Method("GetDownloadTimeout", nil)
-	return acceptor.Timeout.Download
 }
 
 func (m *MethodsGetObj) Version() string {
@@ -246,16 +240,6 @@ func (m *MethodsGetObj) CapBootPN() bool {
 }
 
 ////
-
-func (m *MethodsSetObj) TransactionTimeout(v time.Duration) {
-	m.a.Log.Method("SetTransactionTimeout", nil)
-	acceptor.Timeout.Transaction = v
-}
-
-func (m *MethodsSetObj) DownloadTimeout(v time.Duration) {
-	m.a.Log.Method("SetDownloadTimeout", nil)
-	acceptor.Timeout.Download = v
-}
 
 func (m *MethodsSetObj) AutoStack(v bool) {
 	m.a.Log.Method("SetAutoStack", nil)
