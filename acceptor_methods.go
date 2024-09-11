@@ -34,11 +34,11 @@ func (a *CAcceptor) verifyPropertyIsAllowed(capabilityFlag bool, propertyName st
 ////
 
 func (a *CAcceptor) GetApplicationID() string {
-	a.log.Msg("GetApplicationID")
+	a.Log.Msg("GetApplicationID")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.ApplicationID, "GetApplicationID")
 	if err != nil {
-		a.log.Err("GetApplicationID", err)
+		a.Log.Err("GetApplicationID", err)
 		return ""
 	}
 
@@ -46,7 +46,7 @@ func (a *CAcceptor) GetApplicationID() string {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetApplicationID", err)
+		a.Log.Err("GetApplicationID", err)
 		return ""
 	}
 
@@ -59,11 +59,11 @@ func (a *CAcceptor) GetApplicationID() string {
 }
 
 func (a *CAcceptor) GetApplicationPN() string {
-	a.log.Msg("GetApplicationPN")
+	a.Log.Msg("GetApplicationPN")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.ApplicationPN, "ApplicationPN")
 	if err != nil {
-		a.log.Err("ApplicationPN", err)
+		a.Log.Err("ApplicationPN", err)
 		return ""
 	}
 
@@ -71,7 +71,7 @@ func (a *CAcceptor) GetApplicationPN() string {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetApplicationPN", err)
+		a.Log.Err("GetApplicationPN", err)
 		return ""
 	}
 
@@ -84,12 +84,12 @@ func (a *CAcceptor) GetApplicationPN() string {
 }
 
 func (a *CAcceptor) GetAuditLifeTimeTotals() []int {
-	a.log.Msg("GetAuditLifeTimeTotals")
+	a.Log.Msg("GetAuditLifeTimeTotals")
 	values := []int{}
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.Audit, "GetAuditLifeTimeTotals")
 	if err != nil {
-		a.log.Err("GetAuditLifeTimeTotals", err)
+		a.Log.Err("GetAuditLifeTimeTotals", err)
 		return values
 	}
 
@@ -97,7 +97,7 @@ func (a *CAcceptor) GetAuditLifeTimeTotals() []int {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetAuditLifeTimeTotals", err)
+		a.Log.Err("GetAuditLifeTimeTotals", err)
 		return values
 	}
 
@@ -124,12 +124,12 @@ func (a *CAcceptor) GetAuditLifeTimeTotals() []int {
 }
 
 func (a *CAcceptor) GetAuditPerformance() []int {
-	a.log.Msg("GetAuditPerformance")
+	a.Log.Msg("GetAuditPerformance")
 	values := []int{}
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.Audit, "GetAuditPerformance")
 	if err != nil {
-		a.log.Err("GetAuditPerformance", err)
+		a.Log.Err("GetAuditPerformance", err)
 		return values
 	}
 
@@ -137,7 +137,7 @@ func (a *CAcceptor) GetAuditPerformance() []int {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetAuditPerformance", err)
+		a.Log.Err("GetAuditPerformance", err)
 		return values
 	}
 
@@ -161,12 +161,12 @@ func (a *CAcceptor) GetAuditPerformance() []int {
 }
 
 func (a *CAcceptor) GetAuditQP() []int {
-	a.log.Msg("GetAuditQP")
+	a.Log.Msg("GetAuditQP")
 	values := []int{}
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.Audit, "GetAuditQP")
 	if err != nil {
-		a.log.Err("GetAuditQP", err)
+		a.Log.Err("GetAuditQP", err)
 		return values
 	}
 
@@ -174,7 +174,7 @@ func (a *CAcceptor) GetAuditQP() []int {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetAuditQP", err)
+		a.Log.Err("GetAuditQP", err)
 		return values
 	}
 
@@ -198,45 +198,45 @@ func (a *CAcceptor) GetAuditQP() []int {
 }
 
 func (a *CAcceptor) GetAutoStack() bool {
-	a.log.Msg("GetAutoStack")
+	a.Log.Msg("GetAutoStack")
 	return acceptor.AutoStack
 }
 
 func (a *CAcceptor) SetAutoStack(v bool) {
-	a.log.Msg("SetAutoStack")
+	a.Log.Msg("SetAutoStack")
 	acceptor.AutoStack = v
 }
 
 func (a *CAcceptor) GetBarCode() string {
-	a.log.Msg("GetBarCode")
+	a.Log.Msg("GetBarCode")
 	return acceptor.BarCode
 }
 
 func (a *CAcceptor) GetBill() bill.BillStruct {
-	a.log.Msg("GetBill")
+	a.Log.Msg("GetBill")
 	return bill.Bill
 }
 
 func (a *CAcceptor) GetBillTypes() []bill.BillStruct {
-	a.log.Msg("GetBillTypes")
+	a.Log.Msg("GetBillTypes")
 	return bill.Types
 }
 
 func (a *CAcceptor) GetBillTypeEnables() []bool {
-	a.log.Msg("GetBillTypeEnables")
+	a.Log.Msg("GetBillTypeEnables")
 	return bill.TypeEnables
 }
 
 func (a *CAcceptor) SetBillTypeEnables(v []bool) {
-	a.log.Msg("SetBillTypeEnables")
+	a.Log.Msg("SetBillTypeEnables")
 
 	if !acceptor.Connected {
-		a.log.Err("SetBillTypeEnables", errors.New("calling BillTypeEnables not allowed when not connected"))
+		a.Log.Err("SetBillTypeEnables", errors.New("calling BillTypeEnables not allowed when not connected"))
 		return
 	}
 
 	if len(bill.TypeEnables) != len(bill.Types) {
-		a.log.Err("SetBillTypeEnables", fmt.Errorf("CBillTypeEnables size must match BillTypes size"))
+		a.Log.Err("SetBillTypeEnables", fmt.Errorf("CBillTypeEnables size must match BillTypes size"))
 		return
 	}
 
@@ -262,17 +262,17 @@ func (a *CAcceptor) SetBillTypeEnables(v []bool) {
 }
 
 func (a *CAcceptor) GetBillValues() []bill.BillStruct {
-	a.log.Msg("GetBillValues")
+	a.Log.Msg("GetBillValues")
 	return bill.Values
 }
 
 func (a *CAcceptor) GetBillValueEnables() []bool {
-	a.log.Msg("GetBillValueEnables")
+	a.Log.Msg("GetBillValueEnables")
 	return bill.ValueEnables
 }
 
 func (a *CAcceptor) SetBillValueEnables(v []bool) {
-	a.log.Msg("SetBillValueEnables")
+	a.Log.Msg("SetBillValueEnables")
 	bill.ValueEnables = v
 
 	for _, enabled := range bill.ValueEnables {
@@ -301,11 +301,11 @@ func (a *CAcceptor) SetBillValueEnables(v []bool) {
 }
 
 func (a *CAcceptor) GetBNFStatus() enum.BNFStatusType {
-	a.log.Msg("Getting BNF status")
+	a.Log.Msg("Getting BNF status")
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.BNFStatus, "BNFStatus")
 
 	if err != nil {
-		a.log.Err("GetBNFStatus", err)
+		a.Log.Err("GetBNFStatus", err)
 		return enum.BNFStatusUnknown
 	}
 
@@ -313,7 +313,7 @@ func (a *CAcceptor) GetBNFStatus() enum.BNFStatusType {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetBNFStatus", err)
+		a.Log.Err("GetBNFStatus", err)
 		return enum.BNFStatusUnknown
 	}
 
@@ -333,11 +333,11 @@ func (a *CAcceptor) GetBNFStatus() enum.BNFStatusType {
 }
 
 func (a *CAcceptor) GetBootPN() string {
-	a.log.Msg("GetBootPN")
+	a.Log.Msg("GetBootPN")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.BootPN, "GetBootPN")
 	if err != nil {
-		a.log.Err("GetBootPN", err)
+		a.Log.Err("GetBootPN", err)
 		return ""
 	}
 
@@ -345,7 +345,7 @@ func (a *CAcceptor) GetBootPN() string {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetBootPN", err)
+		a.Log.Err("GetBootPN", err)
 		return ""
 	}
 
@@ -358,146 +358,146 @@ func (a *CAcceptor) GetBootPN() string {
 }
 
 func (a *CAcceptor) GetCapApplicationID() bool {
-	a.log.Msg("GetCapApplicationID")
+	a.Log.Msg("GetCapApplicationID")
 	return acceptor.Cap.ApplicationID
 }
 
 func (a *CAcceptor) GetCapApplicationPN() bool {
-	a.log.Msg("GetCapApplicationPN")
+	a.Log.Msg("GetCapApplicationPN")
 	return acceptor.Cap.ApplicationPN
 }
 
 func (a *CAcceptor) GetCapAssetNumber() bool {
-	a.log.Msg("GetCapAssetNumber")
+	a.Log.Msg("GetCapAssetNumber")
 	return acceptor.Cap.AssetNumber
 }
 
 func (a *CAcceptor) GetCapAudit() bool {
-	a.log.Msg("GetCapAudit")
+	a.Log.Msg("GetCapAudit")
 	return acceptor.Cap.Audit
 }
 
 func (a *CAcceptor) GetCapBarCodes() bool {
-	a.log.Msg("GetCapBarCodes")
+	a.Log.Msg("GetCapBarCodes")
 	return acceptor.Cap.BarCodes
 }
 
 func (a *CAcceptor) GetCapBarCodesExt() bool {
-	a.log.Msg("GetCapBarCodesExt")
+	a.Log.Msg("GetCapBarCodesExt")
 	return acceptor.Cap.BarCodesExt
 }
 
 func (a *CAcceptor) GetCapBNFStatus() bool {
-	a.log.Msg("GetCapBNFStatus")
+	a.Log.Msg("GetCapBNFStatus")
 	return acceptor.Cap.BNFStatus
 }
 
 func (a *CAcceptor) GetCapBookmark() bool {
-	a.log.Msg("GetCapBookmark")
+	a.Log.Msg("GetCapBookmark")
 	return acceptor.Cap.Bookmark
 }
 
 func (a *CAcceptor) GetCapBootPN() bool {
-	a.log.Msg("GetCapBootPN")
+	a.Log.Msg("GetCapBootPN")
 	return acceptor.Cap.BootPN
 }
 
 func (a *CAcceptor) GetCapCalibrate() bool {
-	a.log.Msg("GetCapCalibrate")
+	a.Log.Msg("GetCapCalibrate")
 	return acceptor.Cap.Calibrate
 }
 
 func (a *CAcceptor) GetCapCashBoxTotal() bool {
-	a.log.Msg("GetCapCashBoxTotal")
+	a.Log.Msg("GetCapCashBoxTotal")
 	return acceptor.Cap.CashBoxTotal
 }
 
 func (a *CAcceptor) GetCapCouponExt() bool {
-	a.log.Msg("GetCapCouponExt")
+	a.Log.Msg("GetCapCouponExt")
 	return acceptor.Cap.CouponExt
 }
 
 func (a *CAcceptor) GetCapDevicePaused() bool {
-	a.log.Msg("GetCapDevicePaused")
+	a.Log.Msg("GetCapDevicePaused")
 	return acceptor.Cap.DevicePaused
 }
 
 func (a *CAcceptor) GetCapDeviceSoftReset() bool {
-	a.log.Msg("GetCapDeviceSoftReset")
+	a.Log.Msg("GetCapDeviceSoftReset")
 	return acceptor.Cap.DeviceSoftReset
 }
 
 func (a *CAcceptor) GetCapDeviceType() bool {
-	a.log.Msg("GetCapDeviceType")
+	a.Log.Msg("GetCapDeviceType")
 	return acceptor.Cap.DeviceType
 }
 
 func (a *CAcceptor) GetCapDeviceResets() bool {
-	a.log.Msg("GetCapDeviceResets")
+	a.Log.Msg("GetCapDeviceResets")
 	return acceptor.Cap.DeviceResets
 }
 
 func (a *CAcceptor) GetCapDeviceSerialNumber() bool {
-	a.log.Msg("GetCapDeviceSerialNumber")
+	a.Log.Msg("GetCapDeviceSerialNumber")
 	return acceptor.Cap.DeviceSerialNumber
 }
 
 func (a *CAcceptor) GetCapEscrowTimeout() bool {
-	a.log.Msg("GetCapEscrowTimeout")
+	a.Log.Msg("GetCapEscrowTimeout")
 	return acceptor.Cap.EscrowTimeout
 }
 
 func (a *CAcceptor) GetCapFlashDownload() bool {
-	a.log.Msg("GetCapFlashDownload")
+	a.Log.Msg("GetCapFlashDownload")
 	return acceptor.Cap.FlashDownload
 }
 
 func (a *CAcceptor) GetCapNoPush() bool {
-	a.log.Msg("GetCapNoPush")
+	a.Log.Msg("GetCapNoPush")
 	return acceptor.Cap.NoPush
 }
 
 func (a *CAcceptor) GetCapOrientationExt() bool {
-	a.log.Msg("GetCapOrientationExt")
+	a.Log.Msg("GetCapOrientationExt")
 	return acceptor.Cap.OrientationExt
 }
 
 func (a *CAcceptor) GetCapPupExt() bool {
-	a.log.Msg("GetCapPupExt")
+	a.Log.Msg("GetCapPupExt")
 	return acceptor.Cap.PupExt
 }
 
 func (a *CAcceptor) GetCapTestDoc() bool {
-	a.log.Msg("GetCapTestDoc")
+	a.Log.Msg("GetCapTestDoc")
 	return acceptor.Cap.TestDoc
 }
 
 func (a *CAcceptor) GetCapVariantID() bool {
-	a.log.Msg("GetCapVariantID")
+	a.Log.Msg("GetCapVariantID")
 	return acceptor.Cap.VariantID
 }
 
 func (a *CAcceptor) GetCapVariantPN() bool {
-	a.log.Msg("GetCapVariantPN")
+	a.Log.Msg("GetCapVariantPN")
 	return acceptor.Cap.VariantPN
 }
 
 func (a *CAcceptor) GetCashBoxAttached() bool {
-	a.log.Msg("GetCashBoxAttached")
+	a.Log.Msg("GetCashBoxAttached")
 	return acceptor.Cash.BoxAttached
 }
 
 func (a *CAcceptor) GetCashBoxFull() bool {
-	a.log.Msg("GetCashBoxFull")
+	a.Log.Msg("GetCashBoxFull")
 	return acceptor.Cash.BoxFull
 }
 
 func (a *CAcceptor) GetCashBoxTotal() int {
-	a.log.Msg("GetCashBoxTotal")
+	a.Log.Msg("GetCashBoxTotal")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.CashBoxTotal, "GetCashBoxTotal")
 	if err != nil {
-		a.log.Err("GetCashBoxTotal", err)
+		a.Log.Err("GetCashBoxTotal", err)
 		return 0
 	}
 
@@ -505,7 +505,7 @@ func (a *CAcceptor) GetCashBoxTotal() int {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetCashBoxTotal", err)
+		a.Log.Err("GetCashBoxTotal", err)
 		return 0
 	}
 
@@ -524,26 +524,26 @@ func (a *CAcceptor) GetCashBoxTotal() int {
 }
 
 func (a *CAcceptor) GetConnected() bool {
-	a.log.Msg("GetConnected")
+	a.Log.Msg("GetConnected")
 	return acceptor.Connected
 }
 
 func (a *CAcceptor) GetCoupon() *CCoupon {
-	a.log.Msg("GetCoupon")
+	a.Log.Msg("GetCoupon")
 	return a.coupon
 }
 
 func (a *CAcceptor) GetDeviceBusy() bool {
-	a.log.Msg("GetDeviceBusy")
+	a.Log.Msg("GetDeviceBusy")
 	return acceptor.Device.State != enum.StateIdling
 }
 
 func (a *CAcceptor) GetDeviceCRC() int64 {
-	a.log.Msg("GetDeviceCRC")
+	a.Log.Msg("GetDeviceCRC")
 
 	err := a.verifyPropertyIsAllowed(true, "DeviceCRC")
 	if err != nil {
-		a.log.Err("GetDeviceCRC", err)
+		a.Log.Err("GetDeviceCRC", err)
 		return 0
 	}
 
@@ -551,7 +551,7 @@ func (a *CAcceptor) GetDeviceCRC() int64 {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetDeviceCRC", err)
+		a.Log.Err("GetDeviceCRC", err)
 		return 0
 	}
 
@@ -568,41 +568,41 @@ func (a *CAcceptor) GetDeviceCRC() int64 {
 }
 
 func (a *CAcceptor) GetDeviceFailure() bool {
-	a.log.Msg("GetDeviceFailure")
+	a.Log.Msg("GetDeviceFailure")
 	return acceptor.Device.State == enum.StateFailed
 }
 
 func (a *CAcceptor) GetDeviceJammed() bool {
-	a.log.Msg("GetDeviceJammed")
+	a.Log.Msg("GetDeviceJammed")
 	return acceptor.Device.Jammed
 }
 
 func (a *CAcceptor) GetDeviceModel() int {
-	a.log.Msg("GetDeviceModel")
+	a.Log.Msg("GetDeviceModel")
 	return acceptor.Device.Model
 }
 
 func (a *CAcceptor) GetDevicePaused() bool {
-	a.log.Msg("GetDevicePaused")
+	a.Log.Msg("GetDevicePaused")
 	return acceptor.Device.Paused
 }
 
 func (a *CAcceptor) GetDevicePortName() string {
-	a.log.Msg("GetDevicePortName")
+	a.Log.Msg("GetDevicePortName")
 	return a.port.PortName
 }
 
 func (a *CAcceptor) GetDevicePowerUp() enum.PowerUpType {
-	a.log.Msg("GetDevicePowerUp")
+	a.Log.Msg("GetDevicePowerUp")
 	return acceptor.Device.PowerUp
 }
 
 func (a *CAcceptor) GetDeviceResets() int {
-	a.log.Msg("GetDeviceResets")
+	a.Log.Msg("GetDeviceResets")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceResets, "DeviceResets")
 	if err != nil {
-		a.log.Err("GetDeviceResets", err)
+		a.Log.Err("GetDeviceResets", err)
 		return 0
 	}
 
@@ -610,7 +610,7 @@ func (a *CAcceptor) GetDeviceResets() int {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetDeviceResets", err)
+		a.Log.Err("GetDeviceResets", err)
 		return 0
 	}
 
@@ -629,23 +629,23 @@ func (a *CAcceptor) GetDeviceResets() int {
 }
 
 func (a *CAcceptor) GetDeviceRevision() int {
-	a.log.Msg("GetDeviceRevision")
+	a.Log.Msg("GetDeviceRevision")
 	return acceptor.Device.Revision
 }
 
 func (a *CAcceptor) GetDeviceSerialNumber() string {
-	a.log.Msg("GetDeviceSerialNumber")
+	a.Log.Msg("GetDeviceSerialNumber")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceSerialNumber, "DeviceSerialNumber")
 	if err != nil {
-		a.log.Err("GetDeviceSerialNumber", err)
+		a.Log.Err("GetDeviceSerialNumber", err)
 		return ""
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), 0, 0, consts.CmdAuxAcceptorSerialNumber.Byte()}
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetDeviceSerialNumber", err)
+		a.Log.Err("GetDeviceSerialNumber", err)
 		return ""
 	}
 
@@ -660,21 +660,21 @@ func (a *CAcceptor) GetDeviceSerialNumber() string {
 }
 
 func (a *CAcceptor) GetDeviceStalled() bool {
-	a.log.Msg("GetDeviceStalled")
+	a.Log.Msg("GetDeviceStalled")
 	return acceptor.Device.Stalled
 }
 
 func (a *CAcceptor) GetDeviceState() enum.StateType {
-	a.log.Msg("GetDeviceState")
+	a.Log.Msg("GetDeviceState")
 	return acceptor.Device.State
 }
 
 func (a *CAcceptor) GetDeviceType() string {
-	a.log.Msg("GetDeviceType")
+	a.Log.Msg("GetDeviceType")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceType, "DeviceType")
 	if err != nil {
-		a.log.Err("GetDeviceType", err)
+		a.Log.Err("GetDeviceType", err)
 		return ""
 	}
 
@@ -682,7 +682,7 @@ func (a *CAcceptor) GetDeviceType() string {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetDeviceType", err)
+		a.Log.Err("GetDeviceType", err)
 		return ""
 	}
 
@@ -700,82 +700,82 @@ func (a *CAcceptor) GetDeviceType() string {
 }
 
 func (a *CAcceptor) GetDocType() enum.DocumentType {
-	a.log.Msg("GetDocType")
+	a.Log.Msg("GetDocType")
 	return a.docType
 }
 
 func (a *CAcceptor) GetTransactionTimeout() time.Duration {
-	a.log.Msg("GetTransactionTimeout")
+	a.Log.Msg("GetTransactionTimeout")
 	return acceptor.Timeout.Transaction
 }
 
 func (a *CAcceptor) SetTransactionTimeout(v time.Duration) {
-	a.log.Msg("SetTransactionTimeout")
+	a.Log.Msg("SetTransactionTimeout")
 	acceptor.Timeout.Transaction = v
 }
 
 func (a *CAcceptor) GetDownloadTimeout() time.Duration {
-	a.log.Msg("GetDownloadTimeout")
+	a.Log.Msg("GetDownloadTimeout")
 	return acceptor.Timeout.Download
 }
 
 func (a *CAcceptor) SetDownloadTimeout(v time.Duration) {
-	a.log.Msg("SetDownloadTimeout")
+	a.Log.Msg("SetDownloadTimeout")
 	acceptor.Timeout.Download = v
 }
 
 func (a *CAcceptor) GetEnableAcceptance() bool {
-	a.log.Msg("GetEnableAcceptance")
+	a.Log.Msg("GetEnableAcceptance")
 	return acceptor.Enable.Acceptance
 }
 
 func (a *CAcceptor) SetEnableAcceptance(v bool) {
-	a.log.Msg("SetEnableAcceptance")
+	a.Log.Msg("SetEnableAcceptance")
 	acceptor.Enable.Acceptance = v
 }
 
 func (a *CAcceptor) GetEnableBarCodes() bool {
-	a.log.Msg("GetEnableBarCodes")
+	a.Log.Msg("GetEnableBarCodes")
 	return acceptor.Enable.BarCodes
 }
 
 func (a *CAcceptor) SetEnableBarCodes(v bool) {
-	a.log.Msg("SetEnableBarCodes")
+	a.Log.Msg("SetEnableBarCodes")
 	acceptor.Enable.BarCodes = v
 }
 
 func (a *CAcceptor) GetEnableBookmarks() bool {
-	a.log.Msg("GetEnableBookmarks")
+	a.Log.Msg("GetEnableBookmarks")
 	return acceptor.Enable.Bookmarks
 }
 
 func (a *CAcceptor) SetEnableBookmarks(v bool) {
-	a.log.Msg("SetEnableBookmarks")
+	a.Log.Msg("SetEnableBookmarks")
 	acceptor.Enable.Bookmarks = v
 }
 
 func (a *CAcceptor) GetEnableCouponExt() bool {
-	a.log.Msg("GetEnableCouponExt")
+	a.Log.Msg("GetEnableCouponExt")
 	return acceptor.Enable.CouponExt
 }
 
 func (a *CAcceptor) SetEnableCouponExt(v bool) {
-	a.log.Msg("SetEnableCouponExt")
+	a.Log.Msg("SetEnableCouponExt")
 	acceptor.Enable.CouponExt = v
 }
 
 func (a *CAcceptor) GetEnableNoPush() bool {
-	a.log.Msg("GetEnableNoPush")
+	a.Log.Msg("GetEnableNoPush")
 	return acceptor.Enable.NoPush
 }
 
 func (a *CAcceptor) SetEnableNoPush(v bool) {
-	a.log.Msg("SetEnableNoPush")
+	a.Log.Msg("SetEnableNoPush")
 	acceptor.Enable.NoPush = v
 }
 
 func (a *CAcceptor) GetEscrowOrientation() enum.OrientationType {
-	a.log.Msg("GetEscrowOrientation")
+	a.Log.Msg("GetEscrowOrientation")
 	if acceptor.Cap.OrientationExt {
 		return acceptor.EscrowOrientation
 	}
@@ -783,41 +783,41 @@ func (a *CAcceptor) GetEscrowOrientation() enum.OrientationType {
 }
 
 func (a *CAcceptor) GetHighSecurity() bool {
-	a.log.Msg("GetHighSecurity")
+	a.Log.Msg("GetHighSecurity")
 	return acceptor.HighSecurity
 }
 
 func (a *CAcceptor) SetHighSecurity(v bool) {
-	a.log.Msg("SetHighSecurity")
+	a.Log.Msg("SetHighSecurity")
 	acceptor.HighSecurity = v
 }
 
 func (a *CAcceptor) GetOrientationControl() enum.OrientationControlType {
-	a.log.Msg("GetOrientationControl")
+	a.Log.Msg("GetOrientationControl")
 	return acceptor.OrientationCtl
 }
 
 func (a *CAcceptor) SetOrientationControl(v enum.OrientationControlType) {
-	a.log.Msg("SetOrientationControl")
+	a.Log.Msg("SetOrientationControl")
 	acceptor.OrientationCtl = v
 }
 
 func (a *CAcceptor) GetOrientationCtlExt() enum.OrientationControlType {
-	a.log.Msg("GetOrientationCtlExt")
+	a.Log.Msg("GetOrientationCtlExt")
 	return acceptor.OrientationCtlExt
 }
 
 func (a *CAcceptor) SetOrientationCtlExt(v enum.OrientationControlType) {
-	a.log.Msg("SetOrientationCtlExt")
+	a.Log.Msg("SetOrientationCtlExt")
 	acceptor.OrientationCtlExt = v
 }
 
 func (a *CAcceptor) GetVariantNames() []string {
-	a.log.Msg("GetVariantNames")
+	a.Log.Msg("GetVariantNames")
 
 	err := a.verifyPropertyIsAllowed(true, "VariantNames")
 	if err != nil {
-		a.log.Err("GetVariantNames", err)
+		a.Log.Err("GetVariantNames", err)
 		return nil
 	}
 
@@ -825,7 +825,7 @@ func (a *CAcceptor) GetVariantNames() []string {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetVariantNames", err)
+		a.Log.Err("GetVariantNames", err)
 		return nil
 	}
 
@@ -845,11 +845,11 @@ func (a *CAcceptor) GetVariantNames() []string {
 }
 
 func (a *CAcceptor) GetVariantID() string {
-	a.log.Msg("GetVariantID")
+	a.Log.Msg("GetVariantID")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.VariantID, "VariantID")
 	if err != nil {
-		a.log.Err("GetVariantID", err)
+		a.Log.Err("GetVariantID", err)
 		return ""
 	}
 
@@ -857,7 +857,7 @@ func (a *CAcceptor) GetVariantID() string {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetVariantID", err)
+		a.Log.Err("GetVariantID", err)
 		return ""
 	}
 
@@ -869,11 +869,11 @@ func (a *CAcceptor) GetVariantID() string {
 }
 
 func (a *CAcceptor) GetVariantPN() string {
-	a.log.Msg("GetVariantPN")
+	a.Log.Msg("GetVariantPN")
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.VariantPN, "VariantPN")
 	if err != nil {
-		a.log.Err("GetVariantPN", err)
+		a.Log.Err("GetVariantPN", err)
 		return ""
 	}
 
@@ -881,7 +881,7 @@ func (a *CAcceptor) GetVariantPN() string {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("GetVariantPN", err)
+		a.Log.Err("GetVariantPN", err)
 		return ""
 	}
 
@@ -893,19 +893,19 @@ func (a *CAcceptor) GetVariantPN() string {
 }
 
 func (a *CAcceptor) GetVersion() string {
-	a.log.Msg("GetVersion")
+	a.Log.Msg("GetVersion")
 	return acceptor.Version
 }
 
 func (a *CAcceptor) Calibrate() {
-	a.log.Msg("Calibrate")
+	a.Log.Msg("Calibrate")
 	if !acceptor.Connected {
-		a.log.Err("Calibrate", errors.New("Calibrate called when not connected"))
+		a.Log.Err("Calibrate", errors.New("Calibrate called when not connected"))
 		return
 	}
 
 	if acceptor.Device.State != enum.StateIdling {
-		a.log.Err("Calibrate", errors.New("Calibrate allowed only when DeviceState == Idling"))
+		a.Log.Err("Calibrate", errors.New("Calibrate allowed only when DeviceState == Idling"))
 		return
 	}
 
@@ -923,7 +923,7 @@ func (a *CAcceptor) Calibrate() {
 	for {
 		reply, err := a.SendSynchronousCommand(payload)
 		if err != nil {
-			a.log.Err("Calibrate", errors.New("Failed to send synchronous command during calibration"))
+			a.Log.Err("Calibrate", errors.New("Failed to send synchronous command during calibration"))
 			return
 		}
 
@@ -939,11 +939,11 @@ func (a *CAcceptor) Calibrate() {
 }
 
 func (a *CAcceptor) ClearCashBoxTotal() (err error) {
-	a.log.Msg("ClearCashBoxTotal")
+	a.Log.Msg("ClearCashBoxTotal")
 
 	if !acceptor.Connected {
 		err = errors.New("ClearCashBoxTotal called when not connected")
-		a.log.Err("ClearCashBoxTotal", err)
+		a.Log.Err("ClearCashBoxTotal", err)
 		return
 	}
 
@@ -951,7 +951,7 @@ func (a *CAcceptor) ClearCashBoxTotal() (err error) {
 
 	reply, err := a.SendSynchronousCommand(payload)
 	if err != nil {
-		a.log.Err("ClearCashBoxTotal", err)
+		a.Log.Err("ClearCashBoxTotal", err)
 		return
 	}
 

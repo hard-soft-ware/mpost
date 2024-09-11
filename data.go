@@ -3,18 +3,15 @@ package mpost
 ////////////////////////////////////
 
 type CDataLinkLayer struct {
-	log *LogStruct
-
 	Acceptor                       *CAcceptor
 	CurrentCommand, EchoDetect     []byte
 	PreviousCommand, PreviousReply []byte
 	IdenticalCommandAndReplyCount  int
 }
 
-func (a *CAcceptor) NewCDataLinkLayer(lg *LogStruct) *CDataLinkLayer {
+func (a *CAcceptor) NewCDataLinkLayer() *CDataLinkLayer {
 	return &CDataLinkLayer{
 		Acceptor: a,
-		log:      lg.New("Data"),
 	}
 }
 

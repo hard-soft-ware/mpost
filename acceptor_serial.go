@@ -13,7 +13,7 @@ import (
 
 func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 	if acceptor.Connected {
-		a.log.Msg("already connected")
+		a.Log.Msg("already connected")
 		return nil
 	}
 
@@ -21,11 +21,11 @@ func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 
 	port, err := serial.Open(portName, &acceptor.Connected)
 	if err != nil {
-		a.log.Err("failed to open serial port", err)
+		a.Log.Err("failed to open serial port", err)
 		return err
 	}
 	a.port = port
-	a.log.Msg("Serial Open")
+	a.Log.Msg("Serial Open")
 
 	go a.MessageLoopThread()
 	go a.OpenThread()
@@ -49,14 +49,14 @@ func (a *CAcceptor) Close() {
 	}
 
 	if a.dataLinkLayer != nil {
-		a.log.Msg(fmt.Sprintf("IdenticalCommandAndReplyCount: %d", a.dataLinkLayer.IdenticalCommandAndReplyCount))
+		a.Log.Msg(fmt.Sprintf("IdenticalCommandAndReplyCount: %d", a.dataLinkLayer.IdenticalCommandAndReplyCount))
 	}
 
 	acceptor.StopWorkerThread = true
 
 	a.port = nil
 	acceptor.Connected = false
-	a.log.Msg("Close")
+	a.Log.Msg("Close")
 }
 
 ////
@@ -70,7 +70,7 @@ func (a *CAcceptor) QueryDeviceCapabilities() {
 	reply, err := a.SendSynchronousCommand(payload)
 
 	if len(reply) < 4 {
-		a.log.Err("Reply too short, unable to process.", err)
+		a.Log.Err("Reply too short, unable to process.", err)
 		return
 	}
 

@@ -85,7 +85,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 			for {
 				reply, err = a.SendSynchronousCommand(payload)
 				if err != nil {
-					a.log.Err("Error sending command", err)
+					a.Log.Err("Error sending command", err)
 					break
 				}
 				if len(reply) == 30 {
@@ -117,7 +117,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 		bill.TypeEnables = append(bill.TypeEnables, true)
 	}
 
-	a.log.Msg("Bill table retrieved")
+	a.Log.Msg("Bill table retrieved")
 }
 
 func (a *CAcceptor) SetUpBillTable() {

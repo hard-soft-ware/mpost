@@ -12,12 +12,10 @@ import (
 ////////////////////////////////////
 
 func (a *CAcceptor) OpenThread() {
-	lg := a.log.New("Thread")
-
 	replay := a.PollingLoop()
 
 	if acceptor.WasStopped {
-		lg.Msg("thread is stopped")
+		a.Log.Msg("thread is stopped")
 		return
 	}
 
@@ -36,9 +34,7 @@ func (a *CAcceptor) OpenThread() {
 ////
 
 func (a *CAcceptor) MessageLoopThread() {
-	lg := a.log.New("LoopThread")
-
-	a.dataLinkLayer = a.NewCDataLinkLayer(lg)
+	a.dataLinkLayer = a.NewCDataLinkLayer()
 	timeoutStart := time.Now()
 	loopCycleCounter := 0
 
@@ -60,7 +56,7 @@ func (a *CAcceptor) MessageLoopThread() {
 
 		if acceptor.StopWorkerThread {
 			acceptor.StopWorkerThread = false
-			lg.Msg("thread is stopped")
+			a.Log.Msg("thread is stopped")
 			return
 		}
 
@@ -75,7 +71,7 @@ func (a *CAcceptor) MessageLoopThread() {
 			a.dataLinkLayer.SendPacket(message.Payload)
 			reply, err := a.dataLinkLayer.ReceiveReply()
 			if err != nil {
-				a.log.Err("Invalid ReceiveReply", err)
+				a.Log.Err("Invalid ReceiveReply", err)
 				continue
 			}
 
@@ -113,7 +109,7 @@ func (a *CAcceptor) MessageLoopThread() {
 				reply, err := a.dataLinkLayer.ReceiveReply()
 				if err != nil {
 					a.Close()
-					a.log.Err("Invalid loopCycleCounter", err)
+					a.Log.Err("Invalid loopCycleCounter", err)
 					return
 				}
 

@@ -12,7 +12,7 @@ import (
 
 func (dl *CDataLinkLayer) escrowXX(b byte) {
 	if !acceptor.Connected {
-		dl.log.Msg("serial not connected")
+		dl.Acceptor.Log.Msg("serial not connected")
 		return
 	}
 

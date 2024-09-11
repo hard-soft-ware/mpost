@@ -3,9 +3,6 @@ package mpost
 import (
 	"fmt"
 	"github.com/hard-soft-ware/mpost/enum"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-	"os"
 	"testing"
 	"time"
 )
@@ -14,15 +11,15 @@ func TestConnect(t *testing.T) {
 	//return
 
 	a := DefAcceptor
-	a.AddLog(
-		log.Output(zerolog.ConsoleWriter{
-			Out:        os.Stdout,
-			NoColor:    false,
-			TimeFormat: "15:04:05",
-		}),
-		"TEST",
-		true,
-	)
+	a.Log.Event = func(eventType enum.EventType, i int) {
+		t.Log("Event", eventType.String(), i)
+	}
+	a.Log.Msg = func(s string) {
+		t.Log("Msg", s)
+	}
+	a.Log.Err = func(s string, err error) {
+		t.Error("Err", s, err.Error())
+	}
 
 	a.SetEnableAcceptance(true)
 	a.SetEnableBarCodes(true)

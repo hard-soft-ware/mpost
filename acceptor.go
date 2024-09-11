@@ -5,7 +5,6 @@ import (
 	"github.com/hard-soft-ware/mpost/enum"
 	"github.com/hard-soft-ware/mpost/hook"
 	"github.com/hard-soft-ware/mpost/serial"
-	"github.com/rs/zerolog"
 )
 
 ////////////////////////////////////
@@ -31,7 +30,7 @@ type CAcceptor struct {
 
 	eventHandlers map[enum.EventType]EventHandler
 
-	log LogStruct
+	Log *LogObj
 
 	Ctx       context.Context
 	CtxCancel context.CancelFunc
@@ -43,20 +42,18 @@ var DefAcceptor = &CAcceptor{
 
 	messageQueue: make(chan *CMessage, 1),
 	replyQueue:   make(chan []byte, 1),
+	Log:          newLog(),
 }
 
 func init() {
 	DefAcceptor.Ctx, DefAcceptor.CtxCancel = context.WithCancel(context.Background())
+
+	hook.Raise.Log = func(eventType enum.EventType, i int) {
+		DefAcceptor.Log.Event(eventType, i)
+	}
 }
 
 //
-
-func (a *CAcceptor) AddLog(log zerolog.Logger, root string, printBytes bool) {
-	a.log = NewLog(log, root, printBytes)
-	hook.Raise.Log = func(e enum.EventType, i int) {
-		a.log.Msg(e.String())
-	}
-}
 
 func (a *CAcceptor) AddHook(ev enum.EventType, h EventHandler) {
 	a.eventHandlers[ev] = h

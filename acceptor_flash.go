@@ -14,11 +14,11 @@ import (
 ////////////////////////////////////
 
 func (a *CAcceptor) FlashDownload(filePath string) (err error) {
-	a.log.Msg("FlashDownload")
+	a.Log.Msg("FlashDownload")
 
 	if !acceptor.Connected && acceptor.Device.State != enum.StateDownloadRestart {
 		err = errors.New("FlashDownload not allowed when not connected or not in DownloadRestart state")
-		a.log.Err("FlashDownload", err)
+		a.Log.Err("FlashDownload", err)
 		return
 	}
 
@@ -30,7 +30,7 @@ func (a *CAcceptor) FlashDownload(filePath string) (err error) {
 		acceptor.Device.Model == 88) {
 		if acceptor.Device.State != enum.StateIdling && acceptor.Device.State != enum.StateDownloadRestart {
 			err = errors.New("FlashDownload allowed only when DeviceState is Idling or DownloadRestart")
-			a.log.Err("FlashDownload", err)
+			a.Log.Err("FlashDownload", err)
 			return
 		}
 	}
@@ -38,7 +38,7 @@ func (a *CAcceptor) FlashDownload(filePath string) (err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		err = errors.New(fmt.Sprintf("Failed to open flash download file: %s", err))
-		a.log.Err("FlashDownload", err)
+		a.Log.Err("FlashDownload", err)
 		return
 	}
 	defer file.Close()
@@ -47,13 +47,13 @@ func (a *CAcceptor) FlashDownload(filePath string) (err error) {
 	fileInfo, err := file.Stat()
 	if err != nil {
 		err = errors.New(fmt.Sprintf("Failed to stat flash download file: %s", err))
-		a.log.Err("FlashDownload", err)
+		a.Log.Err("FlashDownload", err)
 		return
 	}
 	fileSize := fileInfo.Size()
 	if fileSize%32 != 0 {
 		err = errors.New("Flash download file size must be divisible by 32")
-		a.log.Err("FlashDownload", err)
+		a.Log.Err("FlashDownload", err)
 		return
 	}
 
@@ -66,7 +66,7 @@ func (a *CAcceptor) FlashDownload(filePath string) (err error) {
 }
 
 func (a *CAcceptor) flashDownload(downloadFile *os.File, fileSize int64) {
-	a.log.Msg("FlashDownloadThread started")
+	a.Log.Msg("FlashDownloadThread started")
 
 	if acceptor.Device.State != enum.StateDownloadRestart {
 		acceptor.Device.State = enum.StateDownloadStart

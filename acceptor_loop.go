@@ -17,7 +17,7 @@ func (a *CAcceptor) PollingLoop() []byte {
 
 		reply, err := a.SendSynchronousCommand(payload)
 		if err != nil {
-			a.log.Err("PollingLoop", err)
+			a.Log.Err("PollingLoop", err)
 		}
 
 		if time.Since(startTickCount) > PollingDisconnectTimeout {
