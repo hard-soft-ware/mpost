@@ -19,23 +19,27 @@ type MpostObj struct {
 
 	DocType enum.DocumentType
 	Log     *LogObj
+	Method  *MethodsObj
 
 	Ctx       context.Context
 	CtxCancel context.CancelFunc
 }
 
-var DefAcceptor = &MpostObj{
-	messageQueue: make(chan *messageObj, 1),
-	replyQueue:   make(chan []byte, 1),
-	Log:          newLog(),
-}
+func New() *MpostObj {
+	obj := MpostObj{
+		messageQueue: make(chan *messageObj, 1),
+		replyQueue:   make(chan []byte, 1),
+		Log:          newLog(),
+	}
 
-func init() {
-	DefAcceptor.Ctx, DefAcceptor.CtxCancel = context.WithCancel(context.Background())
+	obj.Method = obj.newMethods()
+	obj.Ctx, obj.CtxCancel = context.WithCancel(context.Background())
 
 	hook.Raise.Log = func(eventType enum.EventType, i int) {
-		DefAcceptor.Log.Event(eventType, i)
+		obj.Log.Event(eventType, i)
 	}
+
+	return &obj
 }
 
 //

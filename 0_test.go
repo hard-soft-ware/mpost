@@ -25,7 +25,7 @@ func TestConnect(t *testing.T) {
 		return
 	}
 
-	a := DefAcceptor
+	a := New()
 	printByte := true
 	{
 		a.Log.Event = func(eventType enum.EventType, i int) {
