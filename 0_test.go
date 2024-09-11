@@ -4,17 +4,33 @@ import (
 	"fmt"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"go.bug.st/serial"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 )
 
 func TestConnect(t *testing.T) {
-	//return
+	ports, err := serial.GetPortsList()
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
+
+	if len(ports) == 0 {
+		t.Log("no serial ports found")
+		return
+	}
 
 	a := DefAcceptor
 	{
 		a.Log.Event = func(eventType enum.EventType, i int) {
+			if eventType == enum.EventJamCleared {
+				return
+			}
 			t.Log("Event", eventType.String(), i)
 		}
 		a.Log.Msg = func(s string) {
@@ -24,54 +40,83 @@ func TestConnect(t *testing.T) {
 			t.Error("Err", s, err.Error())
 		}
 
-		byteToStr := func(bytes []byte) string {
-			var sb strings.Builder
-			for i, byteVal := range bytes {
-				if i > 0 {
-					sb.WriteString(" ")
+		if false { //serial log
+			byteToStr := func(bytes []byte) string {
+				var sb strings.Builder
+				for i, byteVal := range bytes {
+					if i > 0 {
+						sb.WriteString(" ")
+					}
+					fmt.Fprintf(&sb, "%02X", byteVal)
 				}
-				fmt.Fprintf(&sb, "%02X", byteVal)
+				return sb.String()
 			}
-			return sb.String()
-		}
 
-		a.Log.SerialRead = func(cmdType consts.CmdType, bytes []byte) {
-
-			fmt.Println("<<< \t", cmdType.String(), byteToStr(bytes))
-		}
-		a.Log.SerialSend = func(cmdType consts.CmdType, bytes []byte) {
-			fmt.Println(">>> \t", cmdType.String(), byteToStr(bytes))
+			a.Log.SerialRead = func(cmdType consts.CmdType, bytes []byte) {
+				fmt.Println("<<< \t", cmdType.String(), byteToStr(bytes))
+			}
+			a.Log.SerialSend = func(cmdType consts.CmdType, bytes []byte) {
+				fmt.Println(">>> \t", cmdType.String(), byteToStr(bytes))
+			}
 		}
 	}
 
 	a.SetEnableAcceptance(true)
 
-	a.AddHook(enum.EventConnected, func(i int) {
-		fmt.Println("Connect")
+	connCh := make(chan bool)
 
-		a.SetUpBillTable()
-	})
-	a.AddHook(enum.EventDisconnected, func(i int) {
-		fmt.Println("Disconnect")
-	})
-	a.AddHook(enum.EventRejected, func(i int) {
-		fmt.Println("EventRejected")
-	})
-	a.AddHook(enum.EventReturned, func(i int) {
-		fmt.Println("EventReturned")
-	})
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	a.Open("/dev/ttyUSB0", enum.PowerUpE)
+	{
+		a.AddHook(enum.EventConnected, func(i int) {
+			connCh <- true
+			fmt.Println("HOOK\t\tConnect")
 
-	time.Sleep(2 * time.Second)
-	t.Log(a.GetDeviceSerialNumber())
-	t.Log(a.GetBill())
-	t.Log(a.GetApplicationPN())
-	t.Log(a.GetBootPN())
-	t.Log(a.GetDeviceType())
+			a.SetUpBillTable()
+		})
+		a.AddHook(enum.EventDisconnected, func(i int) {
+			connCh <- false
+			fmt.Println("HOOK\t\tDisconnect")
+		})
+		a.AddHook(enum.EventRejected, func(i int) {
+			fmt.Println("HOOK\t\tRejected")
+		})
+		a.AddHook(enum.EventReturned, func(i int) {
+			fmt.Println("HOOK\t\tReturned")
+		})
+	}
 
-	t.Log(a.GetBNFStatus().String())
+	fmt.Println("Connect to:\t\t" + ports[0])
+	a.Open(ports[0], enum.PowerUpE)
 
-	time.Sleep(100 * time.Second)
-	a.Close()
+	for {
+		select {
+
+		case <-sigChan:
+			t.Log("Sig Close")
+			return
+
+		case <-time.After(time.Second * 100):
+			t.Log("close Timeout")
+			a.Close()
+			return
+
+		case status := <-connCh:
+			if !status {
+				t.Log("Invalid Connect")
+				return
+			}
+			t.Log(a.GetDeviceSerialNumber())
+			t.Log(a.GetBill())
+			t.Log(a.GetApplicationPN())
+			t.Log(a.GetBootPN())
+			t.Log(a.GetDeviceType())
+
+			t.Log(a.GetBNFStatus().String())
+
+		default:
+			continue
+		}
+	}
 }

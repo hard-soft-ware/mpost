@@ -26,6 +26,7 @@ func (dl *CDataLinkLayer) SendPacket(payload []byte) {
 		err = dl.Acceptor.port.Restart()
 		if err != nil {
 			dl.Acceptor.Log.Err("Failed restart to port", err)
+			dl.Acceptor.Close()
 		}
 	}
 }

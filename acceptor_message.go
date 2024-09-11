@@ -41,6 +41,5 @@ func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
 }
 
 func (a *CAcceptor) SendAsynchronousCommand(payload []byte) {
-
 	a.messageQueue <- NewCMessage(payload, false)
 }

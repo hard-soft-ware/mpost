@@ -13,8 +13,6 @@ type SerialStruct struct {
 
 	port serial.Port
 	mode *serial.Mode
-
-	posCoin bool
 }
 
 func Open(portName string, connectStatus *bool) (*SerialStruct, error) {
