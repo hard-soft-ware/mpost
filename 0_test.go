@@ -62,7 +62,7 @@ func TestConnect(t *testing.T) {
 		}
 	}
 
-	a.Method.SetEnableAcceptance(true)
+	a.Method.Enable.Set.Acceptance(true)
 
 	connCh := make(chan bool)
 
@@ -108,10 +108,10 @@ func TestConnect(t *testing.T) {
 			t.Log(a.Method.GetDeviceSerialNumber())
 			t.Log(a.Method.GetBill())
 			t.Log(a.Method.GetApplicationPN())
-			t.Log(a.Method.GetBootPN())
+			t.Log(a.Method.Get.BootPN())
 			t.Log(a.Method.GetDeviceType())
 
-			t.Log(a.Method.GetBNFStatus().String())
+			t.Log(a.Method.Get.BNFStatus().String())
 
 		default:
 			continue
