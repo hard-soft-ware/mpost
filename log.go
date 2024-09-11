@@ -8,7 +8,8 @@ import (
 ////////////////////////////////////
 
 type LogObj struct {
-	Event func(enum.EventType, int)
+	Event  func(enum.EventType, int)
+	Method func(string, any)
 
 	Msg func(string)
 	Err func(string, error)
@@ -21,6 +22,7 @@ func newLog() *LogObj {
 	obj := LogObj{}
 
 	obj.Event = func(eventType enum.EventType, i int) {}
+	obj.Method = func(s string, a any) {}
 
 	obj.Msg = func(s string) {}
 	obj.Err = func(s string, err error) {}

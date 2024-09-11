@@ -13,7 +13,7 @@ import (
 
 ////////////////////////////////////
 
-func (a *CAcceptor) FlashDownload(filePath string) (err error) {
+func (a *MpostObj) FlashDownload(filePath string) (err error) {
 	a.Log.Msg("FlashDownload")
 
 	if !acceptor.Connected && acceptor.Device.State != enum.StateDownloadRestart {
@@ -65,7 +65,7 @@ func (a *CAcceptor) FlashDownload(filePath string) (err error) {
 	return
 }
 
-func (a *CAcceptor) flashDownload(downloadFile *os.File, fileSize int64) {
+func (a *MpostObj) flashDownload(downloadFile *os.File, fileSize int64) {
 	a.Log.Msg("FlashDownloadThread started")
 
 	if acceptor.Device.State != enum.StateDownloadRestart {

@@ -11,7 +11,7 @@ import (
 
 ////////////////////////////////////
 
-func (a *CAcceptor) PollingLoop() []byte {
+func (a *MpostObj) pollingLoop() []byte {
 	startTickCount := time.Now()
 
 	for {
@@ -27,20 +27,20 @@ func (a *CAcceptor) PollingLoop() []byte {
 			startTickCount = time.Now()
 		}
 
-		if !a.flashDownloadThread {
+		if !acceptor.FlashDownloadThread {
 			if acceptor.StopFlashDownloadThread {
 				acceptor.StopFlashDownloadThread = true
-				a.flashDownloadThread = true
+				acceptor.FlashDownloadThread = true
 				acceptor.Device.State = enum.StateIdling
 				acceptor.WasStopped = true
 				return nil
 			}
 		}
-		if !a.openThread {
+		if !acceptor.OpenThread {
 			if acceptor.StopOpenThread {
 				acceptor.StopOpenThread = false
 				acceptor.StopWorkerThread = true
-				a.openThread = true
+				acceptor.OpenThread = true
 				acceptor.WasStopped = true
 				a.Close()
 				return nil
@@ -55,8 +55,8 @@ func (a *CAcceptor) PollingLoop() []byte {
 
 ////////
 
-func (a *CAcceptor) OpenThread() {
-	replay := a.PollingLoop()
+func (a *MpostObj) openThread() {
+	replay := a.pollingLoop()
 
 	if acceptor.WasStopped {
 		a.Log.Msg("thread is stopped")
@@ -64,7 +64,7 @@ func (a *CAcceptor) OpenThread() {
 	}
 
 	a.dataLinkLayer.ProcessReply(replay)
-	a.QueryDeviceCapabilities()
+	a.queryDeviceCapabilities()
 
 	if acceptor.Device.State != enum.StateDownloadRestart {
 		a.SetUpBillTable()
@@ -75,8 +75,8 @@ func (a *CAcceptor) OpenThread() {
 	}
 }
 
-func (a *CAcceptor) MessageLoopThread() {
-	a.dataLinkLayer = a.NewCDataLinkLayer()
+func (a *MpostObj) messageLoopThread() {
+	a.dataLinkLayer = a.newCDataLinkLayer()
 	timeoutStart := time.Now()
 	loopCycleCounter := 0
 

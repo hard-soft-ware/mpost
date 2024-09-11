@@ -12,7 +12,7 @@ import (
 )
 
 // //////////////////////////////////
-func (a *CAcceptor) verifyPropertyIsAllowed(capabilityFlag bool, propertyName string) error {
+func (a *MpostObj) verifyPropertyIsAllowed(capabilityFlag bool, propertyName string) error {
 	if !acceptor.Connected {
 		return fmt.Errorf("Calling %s not allowed when not connected.", propertyName)
 	}
@@ -33,8 +33,8 @@ func (a *CAcceptor) verifyPropertyIsAllowed(capabilityFlag bool, propertyName st
 
 ////
 
-func (a *CAcceptor) GetApplicationID() string {
-	a.Log.Msg("GetApplicationID")
+func (a *MpostObj) GetApplicationID() string {
+	a.Log.Method("GetApplicationID", nil)
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.ApplicationID, "GetApplicationID")
 	if err != nil {
@@ -58,8 +58,8 @@ func (a *CAcceptor) GetApplicationID() string {
 	return ""
 }
 
-func (a *CAcceptor) GetApplicationPN() string {
-	a.Log.Msg("GetApplicationPN")
+func (a *MpostObj) GetApplicationPN() string {
+	a.Log.Method("GetApplicationPN", nil)
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.ApplicationPN, "ApplicationPN")
 	if err != nil {
@@ -83,8 +83,8 @@ func (a *CAcceptor) GetApplicationPN() string {
 	return ""
 }
 
-func (a *CAcceptor) GetAuditLifeTimeTotals() []int {
-	a.Log.Msg("GetAuditLifeTimeTotals")
+func (a *MpostObj) GetAuditLifeTimeTotals() []int {
+	a.Log.Method("GetAuditLifeTimeTotals", nil)
 	values := []int{}
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.Audit, "GetAuditLifeTimeTotals")
@@ -123,8 +123,8 @@ func (a *CAcceptor) GetAuditLifeTimeTotals() []int {
 	return values
 }
 
-func (a *CAcceptor) GetAuditPerformance() []int {
-	a.Log.Msg("GetAuditPerformance")
+func (a *MpostObj) GetAuditPerformance() []int {
+	a.Log.Method("GetAuditPerformance", nil)
 	values := []int{}
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.Audit, "GetAuditPerformance")
@@ -160,8 +160,8 @@ func (a *CAcceptor) GetAuditPerformance() []int {
 	return values
 }
 
-func (a *CAcceptor) GetAuditQP() []int {
-	a.Log.Msg("GetAuditQP")
+func (a *MpostObj) GetAuditQP() []int {
+	a.Log.Method("GetAuditQP", nil)
 	values := []int{}
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.Audit, "GetAuditQP")
@@ -197,38 +197,38 @@ func (a *CAcceptor) GetAuditQP() []int {
 	return values
 }
 
-func (a *CAcceptor) GetAutoStack() bool {
-	a.Log.Msg("GetAutoStack")
+func (a *MpostObj) GetAutoStack() bool {
+	a.Log.Method("GetAutoStack", nil)
 	return acceptor.AutoStack
 }
 
-func (a *CAcceptor) SetAutoStack(v bool) {
-	a.Log.Msg("SetAutoStack")
+func (a *MpostObj) SetAutoStack(v bool) {
+	a.Log.Method("SetAutoStack", nil)
 	acceptor.AutoStack = v
 }
 
-func (a *CAcceptor) GetBarCode() string {
-	a.Log.Msg("GetBarCode")
+func (a *MpostObj) GetBarCode() string {
+	a.Log.Method("GetBarCode", nil)
 	return acceptor.BarCode
 }
 
-func (a *CAcceptor) GetBill() bill.BillStruct {
-	a.Log.Msg("GetBill")
+func (a *MpostObj) GetBill() bill.BillStruct {
+	a.Log.Method("GetBill", nil)
 	return bill.Bill
 }
 
-func (a *CAcceptor) GetBillTypes() []bill.BillStruct {
-	a.Log.Msg("GetBillTypes")
+func (a *MpostObj) GetBillTypes() []bill.BillStruct {
+	a.Log.Method("GetBillTypes", nil)
 	return bill.Types
 }
 
-func (a *CAcceptor) GetBillTypeEnables() []bool {
-	a.Log.Msg("GetBillTypeEnables")
+func (a *MpostObj) GetBillTypeEnables() []bool {
+	a.Log.Method("GetBillTypeEnables", nil)
 	return bill.TypeEnables
 }
 
-func (a *CAcceptor) SetBillTypeEnables(v []bool) {
-	a.Log.Msg("SetBillTypeEnables")
+func (a *MpostObj) SetBillTypeEnables(v []bool) {
+	a.Log.Method("SetBillTypeEnables", nil)
 
 	if !acceptor.Connected {
 		a.Log.Err("SetBillTypeEnables", errors.New("calling BillTypeEnables not allowed when not connected"))
@@ -261,18 +261,18 @@ func (a *CAcceptor) SetBillTypeEnables(v []bool) {
 	}
 }
 
-func (a *CAcceptor) GetBillValues() []bill.BillStruct {
-	a.Log.Msg("GetBillValues")
+func (a *MpostObj) GetBillValues() []bill.BillStruct {
+	a.Log.Method("GetBillValues", nil)
 	return bill.Values
 }
 
-func (a *CAcceptor) GetBillValueEnables() []bool {
-	a.Log.Msg("GetBillValueEnables")
+func (a *MpostObj) GetBillValueEnables() []bool {
+	a.Log.Method("GetBillValueEnables", nil)
 	return bill.ValueEnables
 }
 
-func (a *CAcceptor) SetBillValueEnables(v []bool) {
-	a.Log.Msg("SetBillValueEnables")
+func (a *MpostObj) SetBillValueEnables(v []bool) {
+	a.Log.Method("SetBillValueEnables", nil)
 	bill.ValueEnables = v
 
 	for _, enabled := range bill.ValueEnables {
@@ -300,8 +300,8 @@ func (a *CAcceptor) SetBillValueEnables(v []bool) {
 	a.SendAsynchronousCommand(payload)
 }
 
-func (a *CAcceptor) GetBNFStatus() enum.BNFStatusType {
-	a.Log.Msg("Getting BNF status")
+func (a *MpostObj) GetBNFStatus() enum.BNFStatusType {
+	a.Log.Method("Getting BNF status", nil)
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.BNFStatus, "BNFStatus")
 
 	if err != nil {
@@ -332,8 +332,8 @@ func (a *CAcceptor) GetBNFStatus() enum.BNFStatusType {
 	return enum.BNFStatusUnknown
 }
 
-func (a *CAcceptor) GetBootPN() string {
-	a.Log.Msg("GetBootPN")
+func (a *MpostObj) GetBootPN() string {
+	a.Log.Method("GetBootPN", nil)
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.BootPN, "GetBootPN")
 	if err != nil {
@@ -357,143 +357,143 @@ func (a *CAcceptor) GetBootPN() string {
 	return ""
 }
 
-func (a *CAcceptor) GetCapApplicationID() bool {
-	a.Log.Msg("GetCapApplicationID")
+func (a *MpostObj) GetCapApplicationID() bool {
+	a.Log.Method("GetCapApplicationID", nil)
 	return acceptor.Cap.ApplicationID
 }
 
-func (a *CAcceptor) GetCapApplicationPN() bool {
-	a.Log.Msg("GetCapApplicationPN")
+func (a *MpostObj) GetCapApplicationPN() bool {
+	a.Log.Method("GetCapApplicationPN", nil)
 	return acceptor.Cap.ApplicationPN
 }
 
-func (a *CAcceptor) GetCapAssetNumber() bool {
-	a.Log.Msg("GetCapAssetNumber")
+func (a *MpostObj) GetCapAssetNumber() bool {
+	a.Log.Method("GetCapAssetNumber", nil)
 	return acceptor.Cap.AssetNumber
 }
 
-func (a *CAcceptor) GetCapAudit() bool {
-	a.Log.Msg("GetCapAudit")
+func (a *MpostObj) GetCapAudit() bool {
+	a.Log.Method("GetCapAudit", nil)
 	return acceptor.Cap.Audit
 }
 
-func (a *CAcceptor) GetCapBarCodes() bool {
-	a.Log.Msg("GetCapBarCodes")
+func (a *MpostObj) GetCapBarCodes() bool {
+	a.Log.Method("GetCapBarCodes", nil)
 	return acceptor.Cap.BarCodes
 }
 
-func (a *CAcceptor) GetCapBarCodesExt() bool {
-	a.Log.Msg("GetCapBarCodesExt")
+func (a *MpostObj) GetCapBarCodesExt() bool {
+	a.Log.Method("GetCapBarCodesExt", nil)
 	return acceptor.Cap.BarCodesExt
 }
 
-func (a *CAcceptor) GetCapBNFStatus() bool {
-	a.Log.Msg("GetCapBNFStatus")
+func (a *MpostObj) GetCapBNFStatus() bool {
+	a.Log.Method("GetCapBNFStatus", nil)
 	return acceptor.Cap.BNFStatus
 }
 
-func (a *CAcceptor) GetCapBookmark() bool {
-	a.Log.Msg("GetCapBookmark")
+func (a *MpostObj) GetCapBookmark() bool {
+	a.Log.Method("GetCapBookmark", nil)
 	return acceptor.Cap.Bookmark
 }
 
-func (a *CAcceptor) GetCapBootPN() bool {
-	a.Log.Msg("GetCapBootPN")
+func (a *MpostObj) GetCapBootPN() bool {
+	a.Log.Method("GetCapBootPN", nil)
 	return acceptor.Cap.BootPN
 }
 
-func (a *CAcceptor) GetCapCalibrate() bool {
-	a.Log.Msg("GetCapCalibrate")
+func (a *MpostObj) GetCapCalibrate() bool {
+	a.Log.Method("GetCapCalibrate", nil)
 	return acceptor.Cap.Calibrate
 }
 
-func (a *CAcceptor) GetCapCashBoxTotal() bool {
-	a.Log.Msg("GetCapCashBoxTotal")
+func (a *MpostObj) GetCapCashBoxTotal() bool {
+	a.Log.Method("GetCapCashBoxTotal", nil)
 	return acceptor.Cap.CashBoxTotal
 }
 
-func (a *CAcceptor) GetCapCouponExt() bool {
-	a.Log.Msg("GetCapCouponExt")
+func (a *MpostObj) GetCapCouponExt() bool {
+	a.Log.Method("GetCapCouponExt", nil)
 	return acceptor.Cap.CouponExt
 }
 
-func (a *CAcceptor) GetCapDevicePaused() bool {
-	a.Log.Msg("GetCapDevicePaused")
+func (a *MpostObj) GetCapDevicePaused() bool {
+	a.Log.Method("GetCapDevicePaused", nil)
 	return acceptor.Cap.DevicePaused
 }
 
-func (a *CAcceptor) GetCapDeviceSoftReset() bool {
-	a.Log.Msg("GetCapDeviceSoftReset")
+func (a *MpostObj) GetCapDeviceSoftReset() bool {
+	a.Log.Method("GetCapDeviceSoftReset", nil)
 	return acceptor.Cap.DeviceSoftReset
 }
 
-func (a *CAcceptor) GetCapDeviceType() bool {
-	a.Log.Msg("GetCapDeviceType")
+func (a *MpostObj) GetCapDeviceType() bool {
+	a.Log.Method("GetCapDeviceType", nil)
 	return acceptor.Cap.DeviceType
 }
 
-func (a *CAcceptor) GetCapDeviceResets() bool {
-	a.Log.Msg("GetCapDeviceResets")
+func (a *MpostObj) GetCapDeviceResets() bool {
+	a.Log.Method("GetCapDeviceResets", nil)
 	return acceptor.Cap.DeviceResets
 }
 
-func (a *CAcceptor) GetCapDeviceSerialNumber() bool {
-	a.Log.Msg("GetCapDeviceSerialNumber")
+func (a *MpostObj) GetCapDeviceSerialNumber() bool {
+	a.Log.Method("GetCapDeviceSerialNumber", nil)
 	return acceptor.Cap.DeviceSerialNumber
 }
 
-func (a *CAcceptor) GetCapEscrowTimeout() bool {
-	a.Log.Msg("GetCapEscrowTimeout")
+func (a *MpostObj) GetCapEscrowTimeout() bool {
+	a.Log.Method("GetCapEscrowTimeout", nil)
 	return acceptor.Cap.EscrowTimeout
 }
 
-func (a *CAcceptor) GetCapFlashDownload() bool {
-	a.Log.Msg("GetCapFlashDownload")
+func (a *MpostObj) GetCapFlashDownload() bool {
+	a.Log.Method("GetCapFlashDownload", nil)
 	return acceptor.Cap.FlashDownload
 }
 
-func (a *CAcceptor) GetCapNoPush() bool {
-	a.Log.Msg("GetCapNoPush")
+func (a *MpostObj) GetCapNoPush() bool {
+	a.Log.Method("GetCapNoPush", nil)
 	return acceptor.Cap.NoPush
 }
 
-func (a *CAcceptor) GetCapOrientationExt() bool {
-	a.Log.Msg("GetCapOrientationExt")
+func (a *MpostObj) GetCapOrientationExt() bool {
+	a.Log.Method("GetCapOrientationExt", nil)
 	return acceptor.Cap.OrientationExt
 }
 
-func (a *CAcceptor) GetCapPupExt() bool {
-	a.Log.Msg("GetCapPupExt")
+func (a *MpostObj) GetCapPupExt() bool {
+	a.Log.Method("GetCapPupExt", nil)
 	return acceptor.Cap.PupExt
 }
 
-func (a *CAcceptor) GetCapTestDoc() bool {
-	a.Log.Msg("GetCapTestDoc")
+func (a *MpostObj) GetCapTestDoc() bool {
+	a.Log.Method("GetCapTestDoc", nil)
 	return acceptor.Cap.TestDoc
 }
 
-func (a *CAcceptor) GetCapVariantID() bool {
-	a.Log.Msg("GetCapVariantID")
+func (a *MpostObj) GetCapVariantID() bool {
+	a.Log.Method("GetCapVariantID", nil)
 	return acceptor.Cap.VariantID
 }
 
-func (a *CAcceptor) GetCapVariantPN() bool {
-	a.Log.Msg("GetCapVariantPN")
+func (a *MpostObj) GetCapVariantPN() bool {
+	a.Log.Method("GetCapVariantPN", nil)
 	return acceptor.Cap.VariantPN
 }
 
-func (a *CAcceptor) GetCashBoxAttached() bool {
-	a.Log.Msg("GetCashBoxAttached")
+func (a *MpostObj) GetCashBoxAttached() bool {
+	a.Log.Method("GetCashBoxAttached", nil)
 	return acceptor.Cash.BoxAttached
 }
 
-func (a *CAcceptor) GetCashBoxFull() bool {
-	a.Log.Msg("GetCashBoxFull")
+func (a *MpostObj) GetCashBoxFull() bool {
+	a.Log.Method("GetCashBoxFull", nil)
 	return acceptor.Cash.BoxFull
 }
 
-func (a *CAcceptor) GetCashBoxTotal() int {
-	a.Log.Msg("GetCashBoxTotal")
+func (a *MpostObj) GetCashBoxTotal() int {
+	a.Log.Method("GetCashBoxTotal", nil)
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.CashBoxTotal, "GetCashBoxTotal")
 	if err != nil {
@@ -523,23 +523,23 @@ func (a *CAcceptor) GetCashBoxTotal() int {
 	return total
 }
 
-func (a *CAcceptor) GetConnected() bool {
-	a.Log.Msg("GetConnected")
+func (a *MpostObj) GetConnected() bool {
+	a.Log.Method("GetConnected", nil)
 	return acceptor.Connected
 }
 
-func (a *CAcceptor) GetCoupon() *CCoupon {
-	a.Log.Msg("GetCoupon")
+func (a *MpostObj) GetCoupon() *CCoupon {
+	a.Log.Method("GetCoupon", nil)
 	return a.coupon
 }
 
-func (a *CAcceptor) GetDeviceBusy() bool {
-	a.Log.Msg("GetDeviceBusy")
+func (a *MpostObj) GetDeviceBusy() bool {
+	a.Log.Method("GetDeviceBusy", nil)
 	return acceptor.Device.State != enum.StateIdling
 }
 
-func (a *CAcceptor) GetDeviceCRC() int64 {
-	a.Log.Msg("GetDeviceCRC")
+func (a *MpostObj) GetDeviceCRC() int64 {
+	a.Log.Method("GetDeviceCRC", nil)
 
 	err := a.verifyPropertyIsAllowed(true, "DeviceCRC")
 	if err != nil {
@@ -567,38 +567,38 @@ func (a *CAcceptor) GetDeviceCRC() int64 {
 	return crc
 }
 
-func (a *CAcceptor) GetDeviceFailure() bool {
-	a.Log.Msg("GetDeviceFailure")
+func (a *MpostObj) GetDeviceFailure() bool {
+	a.Log.Method("GetDeviceFailure", nil)
 	return acceptor.Device.State == enum.StateFailed
 }
 
-func (a *CAcceptor) GetDeviceJammed() bool {
-	a.Log.Msg("GetDeviceJammed")
+func (a *MpostObj) GetDeviceJammed() bool {
+	a.Log.Method("GetDeviceJammed", nil)
 	return acceptor.Device.Jammed
 }
 
-func (a *CAcceptor) GetDeviceModel() int {
-	a.Log.Msg("GetDeviceModel")
+func (a *MpostObj) GetDeviceModel() int {
+	a.Log.Method("GetDeviceModel", nil)
 	return acceptor.Device.Model
 }
 
-func (a *CAcceptor) GetDevicePaused() bool {
-	a.Log.Msg("GetDevicePaused")
+func (a *MpostObj) GetDevicePaused() bool {
+	a.Log.Method("GetDevicePaused", nil)
 	return acceptor.Device.Paused
 }
 
-func (a *CAcceptor) GetDevicePortName() string {
-	a.Log.Msg("GetDevicePortName")
+func (a *MpostObj) GetDevicePortName() string {
+	a.Log.Method("GetDevicePortName", nil)
 	return a.port.PortName
 }
 
-func (a *CAcceptor) GetDevicePowerUp() enum.PowerUpType {
-	a.Log.Msg("GetDevicePowerUp")
+func (a *MpostObj) GetDevicePowerUp() enum.PowerUpType {
+	a.Log.Method("GetDevicePowerUp", nil)
 	return acceptor.Device.PowerUp
 }
 
-func (a *CAcceptor) GetDeviceResets() int {
-	a.Log.Msg("GetDeviceResets")
+func (a *MpostObj) GetDeviceResets() int {
+	a.Log.Method("GetDeviceResets", nil)
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceResets, "DeviceResets")
 	if err != nil {
@@ -628,13 +628,13 @@ func (a *CAcceptor) GetDeviceResets() int {
 	return resets
 }
 
-func (a *CAcceptor) GetDeviceRevision() int {
-	a.Log.Msg("GetDeviceRevision")
+func (a *MpostObj) GetDeviceRevision() int {
+	a.Log.Method("GetDeviceRevision", nil)
 	return acceptor.Device.Revision
 }
 
-func (a *CAcceptor) GetDeviceSerialNumber() string {
-	a.Log.Msg("GetDeviceSerialNumber")
+func (a *MpostObj) GetDeviceSerialNumber() string {
+	a.Log.Method("GetDeviceSerialNumber", nil)
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceSerialNumber, "DeviceSerialNumber")
 	if err != nil {
@@ -659,18 +659,18 @@ func (a *CAcceptor) GetDeviceSerialNumber() string {
 	return s
 }
 
-func (a *CAcceptor) GetDeviceStalled() bool {
-	a.Log.Msg("GetDeviceStalled")
+func (a *MpostObj) GetDeviceStalled() bool {
+	a.Log.Method("GetDeviceStalled", nil)
 	return acceptor.Device.Stalled
 }
 
-func (a *CAcceptor) GetDeviceState() enum.StateType {
-	a.Log.Msg("GetDeviceState")
+func (a *MpostObj) GetDeviceState() enum.StateType {
+	a.Log.Method("GetDeviceState", nil)
 	return acceptor.Device.State
 }
 
-func (a *CAcceptor) GetDeviceType() string {
-	a.Log.Msg("GetDeviceType")
+func (a *MpostObj) GetDeviceType() string {
+	a.Log.Method("GetDeviceType", nil)
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.DeviceType, "DeviceType")
 	if err != nil {
@@ -699,121 +699,121 @@ func (a *CAcceptor) GetDeviceType() string {
 	return ""
 }
 
-func (a *CAcceptor) GetDocType() enum.DocumentType {
-	a.Log.Msg("GetDocType")
+func (a *MpostObj) GetDocType() enum.DocumentType {
+	a.Log.Method("GetDocType", nil)
 	return a.docType
 }
 
-func (a *CAcceptor) GetTransactionTimeout() time.Duration {
-	a.Log.Msg("GetTransactionTimeout")
+func (a *MpostObj) GetTransactionTimeout() time.Duration {
+	a.Log.Method("GetTransactionTimeout", nil)
 	return acceptor.Timeout.Transaction
 }
 
-func (a *CAcceptor) SetTransactionTimeout(v time.Duration) {
-	a.Log.Msg("SetTransactionTimeout")
+func (a *MpostObj) SetTransactionTimeout(v time.Duration) {
+	a.Log.Method("SetTransactionTimeout", nil)
 	acceptor.Timeout.Transaction = v
 }
 
-func (a *CAcceptor) GetDownloadTimeout() time.Duration {
-	a.Log.Msg("GetDownloadTimeout")
+func (a *MpostObj) GetDownloadTimeout() time.Duration {
+	a.Log.Method("GetDownloadTimeout", nil)
 	return acceptor.Timeout.Download
 }
 
-func (a *CAcceptor) SetDownloadTimeout(v time.Duration) {
-	a.Log.Msg("SetDownloadTimeout")
+func (a *MpostObj) SetDownloadTimeout(v time.Duration) {
+	a.Log.Method("SetDownloadTimeout", nil)
 	acceptor.Timeout.Download = v
 }
 
-func (a *CAcceptor) GetEnableAcceptance() bool {
-	a.Log.Msg("GetEnableAcceptance")
+func (a *MpostObj) GetEnableAcceptance() bool {
+	a.Log.Method("GetEnableAcceptance", nil)
 	return acceptor.Enable.Acceptance
 }
 
-func (a *CAcceptor) SetEnableAcceptance(v bool) {
-	a.Log.Msg("SetEnableAcceptance")
+func (a *MpostObj) SetEnableAcceptance(v bool) {
+	a.Log.Method("SetEnableAcceptance", nil)
 	acceptor.Enable.Acceptance = v
 }
 
-func (a *CAcceptor) GetEnableBarCodes() bool {
-	a.Log.Msg("GetEnableBarCodes")
+func (a *MpostObj) GetEnableBarCodes() bool {
+	a.Log.Method("GetEnableBarCodes", nil)
 	return acceptor.Enable.BarCodes
 }
 
-func (a *CAcceptor) SetEnableBarCodes(v bool) {
-	a.Log.Msg("SetEnableBarCodes")
+func (a *MpostObj) SetEnableBarCodes(v bool) {
+	a.Log.Method("SetEnableBarCodes", nil)
 	acceptor.Enable.BarCodes = v
 }
 
-func (a *CAcceptor) GetEnableBookmarks() bool {
-	a.Log.Msg("GetEnableBookmarks")
+func (a *MpostObj) GetEnableBookmarks() bool {
+	a.Log.Method("GetEnableBookmarks", nil)
 	return acceptor.Enable.Bookmarks
 }
 
-func (a *CAcceptor) SetEnableBookmarks(v bool) {
-	a.Log.Msg("SetEnableBookmarks")
+func (a *MpostObj) SetEnableBookmarks(v bool) {
+	a.Log.Method("SetEnableBookmarks", nil)
 	acceptor.Enable.Bookmarks = v
 }
 
-func (a *CAcceptor) GetEnableCouponExt() bool {
-	a.Log.Msg("GetEnableCouponExt")
+func (a *MpostObj) GetEnableCouponExt() bool {
+	a.Log.Method("GetEnableCouponExt", nil)
 	return acceptor.Enable.CouponExt
 }
 
-func (a *CAcceptor) SetEnableCouponExt(v bool) {
-	a.Log.Msg("SetEnableCouponExt")
+func (a *MpostObj) SetEnableCouponExt(v bool) {
+	a.Log.Method("SetEnableCouponExt", nil)
 	acceptor.Enable.CouponExt = v
 }
 
-func (a *CAcceptor) GetEnableNoPush() bool {
-	a.Log.Msg("GetEnableNoPush")
+func (a *MpostObj) GetEnableNoPush() bool {
+	a.Log.Method("GetEnableNoPush", nil)
 	return acceptor.Enable.NoPush
 }
 
-func (a *CAcceptor) SetEnableNoPush(v bool) {
-	a.Log.Msg("SetEnableNoPush")
+func (a *MpostObj) SetEnableNoPush(v bool) {
+	a.Log.Method("SetEnableNoPush", nil)
 	acceptor.Enable.NoPush = v
 }
 
-func (a *CAcceptor) GetEscrowOrientation() enum.OrientationType {
-	a.Log.Msg("GetEscrowOrientation")
+func (a *MpostObj) GetEscrowOrientation() enum.OrientationType {
+	a.Log.Method("GetEscrowOrientation", nil)
 	if acceptor.Cap.OrientationExt {
 		return acceptor.EscrowOrientation
 	}
 	return enum.OrientationUnknownOrientation
 }
 
-func (a *CAcceptor) GetHighSecurity() bool {
-	a.Log.Msg("GetHighSecurity")
+func (a *MpostObj) GetHighSecurity() bool {
+	a.Log.Method("GetHighSecurity", nil)
 	return acceptor.HighSecurity
 }
 
-func (a *CAcceptor) SetHighSecurity(v bool) {
-	a.Log.Msg("SetHighSecurity")
+func (a *MpostObj) SetHighSecurity(v bool) {
+	a.Log.Method("SetHighSecurity", nil)
 	acceptor.HighSecurity = v
 }
 
-func (a *CAcceptor) GetOrientationControl() enum.OrientationControlType {
-	a.Log.Msg("GetOrientationControl")
+func (a *MpostObj) GetOrientationControl() enum.OrientationControlType {
+	a.Log.Method("GetOrientationControl", nil)
 	return acceptor.OrientationCtl
 }
 
-func (a *CAcceptor) SetOrientationControl(v enum.OrientationControlType) {
-	a.Log.Msg("SetOrientationControl")
+func (a *MpostObj) SetOrientationControl(v enum.OrientationControlType) {
+	a.Log.Method("SetOrientationControl", nil)
 	acceptor.OrientationCtl = v
 }
 
-func (a *CAcceptor) GetOrientationCtlExt() enum.OrientationControlType {
-	a.Log.Msg("GetOrientationCtlExt")
+func (a *MpostObj) GetOrientationCtlExt() enum.OrientationControlType {
+	a.Log.Method("GetOrientationCtlExt", nil)
 	return acceptor.OrientationCtlExt
 }
 
-func (a *CAcceptor) SetOrientationCtlExt(v enum.OrientationControlType) {
-	a.Log.Msg("SetOrientationCtlExt")
+func (a *MpostObj) SetOrientationCtlExt(v enum.OrientationControlType) {
+	a.Log.Method("SetOrientationCtlExt", nil)
 	acceptor.OrientationCtlExt = v
 }
 
-func (a *CAcceptor) GetVariantNames() []string {
-	a.Log.Msg("GetVariantNames")
+func (a *MpostObj) GetVariantNames() []string {
+	a.Log.Method("GetVariantNames", nil)
 
 	err := a.verifyPropertyIsAllowed(true, "VariantNames")
 	if err != nil {
@@ -844,8 +844,8 @@ func (a *CAcceptor) GetVariantNames() []string {
 	return names
 }
 
-func (a *CAcceptor) GetVariantID() string {
-	a.Log.Msg("GetVariantID")
+func (a *MpostObj) GetVariantID() string {
+	a.Log.Method("GetVariantID", nil)
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.VariantID, "VariantID")
 	if err != nil {
@@ -868,8 +868,8 @@ func (a *CAcceptor) GetVariantID() string {
 	return ""
 }
 
-func (a *CAcceptor) GetVariantPN() string {
-	a.Log.Msg("GetVariantPN")
+func (a *MpostObj) GetVariantPN() string {
+	a.Log.Method("GetVariantPN", nil)
 
 	err := a.verifyPropertyIsAllowed(acceptor.Cap.VariantPN, "VariantPN")
 	if err != nil {
@@ -892,13 +892,13 @@ func (a *CAcceptor) GetVariantPN() string {
 	return ""
 }
 
-func (a *CAcceptor) GetVersion() string {
-	a.Log.Msg("GetVersion")
+func (a *MpostObj) GetVersion() string {
+	a.Log.Method("GetVersion", nil)
 	return acceptor.Version
 }
 
-func (a *CAcceptor) Calibrate() {
-	a.Log.Msg("Calibrate")
+func (a *MpostObj) Calibrate() {
+	a.Log.Method("Calibrate", nil)
 	if !acceptor.Connected {
 		a.Log.Err("Calibrate", errors.New("Calibrate called when not connected"))
 		return
@@ -938,8 +938,8 @@ func (a *CAcceptor) Calibrate() {
 	}
 }
 
-func (a *CAcceptor) ClearCashBoxTotal() (err error) {
-	a.Log.Msg("ClearCashBoxTotal")
+func (a *MpostObj) ClearCashBoxTotal() (err error) {
+	a.Log.Method("ClearCashBoxTotal", nil)
 
 	if !acceptor.Connected {
 		err = errors.New("ClearCashBoxTotal called when not connected")

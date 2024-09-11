@@ -26,6 +26,7 @@ func TestConnect(t *testing.T) {
 	}
 
 	a := DefAcceptor
+	printByte := true
 	{
 		a.Log.Event = func(eventType enum.EventType, i int) {
 			if eventType == enum.EventJamCleared {
@@ -40,7 +41,7 @@ func TestConnect(t *testing.T) {
 			t.Error("Err", s, err.Error())
 		}
 
-		if false { //serial log
+		if printByte { //serial log
 			byteToStr := func(bytes []byte) string {
 				var sb strings.Builder
 				for i, byteVal := range bytes {
@@ -53,10 +54,10 @@ func TestConnect(t *testing.T) {
 			}
 
 			a.Log.SerialRead = func(cmdType consts.CmdType, bytes []byte) {
-				fmt.Println("<<< \t", cmdType.String(), byteToStr(bytes))
+				fmt.Println("<\t", cmdType.String()+"\t<<<\t", byteToStr(bytes))
 			}
 			a.Log.SerialSend = func(cmdType consts.CmdType, bytes []byte) {
-				fmt.Println(">>> \t", cmdType.String(), byteToStr(bytes))
+				fmt.Println(">\t", cmdType.String()+"\t>>>\t", byteToStr(bytes))
 			}
 		}
 	}
@@ -99,7 +100,6 @@ func TestConnect(t *testing.T) {
 
 		case <-time.After(time.Second * 100):
 			t.Log("close Timeout")
-			a.Close()
 			return
 
 		case status := <-connCh:
@@ -119,4 +119,6 @@ func TestConnect(t *testing.T) {
 			continue
 		}
 	}
+
+	a.Close()
 }

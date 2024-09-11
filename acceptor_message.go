@@ -23,7 +23,7 @@ func NewCMessage(payload []byte, isSynchronous bool) *CMessage {
 
 ////
 
-func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
+func (a *MpostObj) SendSynchronousCommand(payload []byte) ([]byte, error) {
 
 	a.messageQueue <- NewCMessage(payload, true)
 
@@ -40,6 +40,6 @@ func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
 	return nil, errors.New("invalid response")
 }
 
-func (a *CAcceptor) SendAsynchronousCommand(payload []byte) {
+func (a *MpostObj) SendAsynchronousCommand(payload []byte) {
 	a.messageQueue <- NewCMessage(payload, false)
 }

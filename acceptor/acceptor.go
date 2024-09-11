@@ -36,6 +36,9 @@ var StopFlashDownloadThread bool
 var SuppressStandardPoll bool
 var WasStopped bool
 
+var OpenThread bool
+var FlashDownloadThread bool
+
 ////
 
 func ConstructOmnibusCommand(payload []byte, controlCode consts.CmdType, data0Index int, billTypeEnables []bool) {

@@ -8,6 +8,8 @@ import (
 
 var coin bool
 
+var CurrentCommand, PreviousCommand []byte
+
 func CreateMsg(payload []byte) []byte {
 	if !coin {
 		coin = true
@@ -27,5 +29,7 @@ func CreateMsg(payload []byte) []byte {
 	command = append(command, consts.DataETX.Byte())
 	command = append(command, CRC(command))
 
+	PreviousCommand = CurrentCommand
+	CurrentCommand = command
 	return command
 }

@@ -9,7 +9,7 @@ import (
 
 ////////////////////////////////////
 
-type CAcceptor struct {
+type MpostObj struct {
 	port                *serial.SerialStruct
 	auditLifeTimeTotals []int
 	auditPerformance    []int
@@ -19,9 +19,7 @@ type CAcceptor struct {
 
 	docType enum.DocumentType
 
-	openThread          bool
-	flashDownloadThread bool
-	dataLinkLayer       *CDataLinkLayer
+	dataLinkLayer *CDataLinkLayer
 
 	messageQueue chan *CMessage
 	replyQueue   chan []byte
@@ -32,7 +30,7 @@ type CAcceptor struct {
 	CtxCancel context.CancelFunc
 }
 
-var DefAcceptor = &CAcceptor{
+var DefAcceptor = &MpostObj{
 	messageQueue: make(chan *CMessage, 1),
 	replyQueue:   make(chan []byte, 1),
 	Log:          newLog(),
@@ -48,6 +46,6 @@ func init() {
 
 //
 
-func (a *CAcceptor) AddHook(ev enum.EventType, h func(int)) {
+func (a *MpostObj) AddHook(ev enum.EventType, h func(int)) {
 	hook.Add(ev, h)
 }

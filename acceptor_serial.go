@@ -1,7 +1,6 @@
 package mpost
 
 import (
-	"fmt"
 	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
@@ -11,7 +10,7 @@ import (
 
 ////////////////////////////////////
 
-func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
+func (a *MpostObj) Open(portName string, powerUp enum.PowerUpType) error {
 	if acceptor.Connected {
 		a.Log.Msg("already connected")
 		return nil
@@ -27,13 +26,13 @@ func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 	a.port = port
 	a.Log.Msg("Serial Open")
 
-	go a.MessageLoopThread()
-	go a.OpenThread()
+	go a.messageLoopThread()
+	go a.openThread()
 
 	return nil
 }
 
-func (a *CAcceptor) Close() {
+func (a *MpostObj) Close() {
 	hook.Raise.Disconnected()
 	a.port.Close()
 
@@ -48,10 +47,6 @@ func (a *CAcceptor) Close() {
 		acceptor.Enable.Acceptance = false
 	}
 
-	if a.dataLinkLayer != nil {
-		a.Log.Msg(fmt.Sprintf("IdenticalCommandAndReplyCount: %d", a.dataLinkLayer.IdenticalCommandAndReplyCount))
-	}
-
 	acceptor.StopWorkerThread = true
 
 	a.port = nil
@@ -61,7 +56,7 @@ func (a *CAcceptor) Close() {
 
 ////
 
-func (a *CAcceptor) QueryDeviceCapabilities() {
+func (a *MpostObj) queryDeviceCapabilities() {
 	if !acceptor.IsQueryDeviceCapabilitiesSupported {
 		return
 	}

@@ -16,9 +16,6 @@ import (
 func (dl *CDataLinkLayer) SendPacket(payload []byte) {
 	send := command.CreateMsg(payload)
 
-	dl.CurrentCommand = send
-	dl.EchoDetect = send
-
 	dl.Acceptor.Log.SerialSend(command.Parse(send))
 	n, err := dl.Acceptor.port.Write(send)
 	if err != nil || n == 0 {

@@ -9,7 +9,7 @@ import (
 
 ////////////////////////////////////
 
-func (a *CAcceptor) processData0(data0 byte) {
+func (a *MpostObj) processData0(data0 byte) {
 	if (data0 & 0x01) != 0 {
 		if acceptor.Device.State != enum.StateCalibrating && acceptor.Device.State != enum.StateCalibrateStart {
 			acceptor.Device.State = enum.StateIdling
@@ -53,7 +53,7 @@ func (a *CAcceptor) processData0(data0 byte) {
 	}
 }
 
-func (a *CAcceptor) processData1(data1 byte) {
+func (a *MpostObj) processData1(data1 byte) {
 	if (data1 & 0x01) != 0 {
 		acceptor.IsCheated = true
 	} else {
@@ -110,7 +110,7 @@ func (a *CAcceptor) processData1(data1 byte) {
 	}
 }
 
-func (a *CAcceptor) processData2(data2 byte) {
+func (a *MpostObj) processData2(data2 byte) {
 	if !acceptor.ExpandedNoteReporting {
 		billTypeIndex := (data2 & 0x38) >> 3
 		if billTypeIndex > 0 {
@@ -159,7 +159,7 @@ func (a *CAcceptor) processData2(data2 byte) {
 	}
 }
 
-func (a *CAcceptor) processData3(data3 byte) {
+func (a *MpostObj) processData3(data3 byte) {
 	if (data3 & 0x01) != 0 {
 		acceptor.Device.State = enum.StateStalled
 		hook.StallCleared = true
@@ -180,7 +180,7 @@ func (a *CAcceptor) processData3(data3 byte) {
 	}
 }
 
-func (a *CAcceptor) processData4(data4 byte) {
+func (a *MpostObj) processData4(data4 byte) {
 	acceptor.Device.Model = int(data4 & 0x7F)
 	m := acceptor.Device.Model
 	d := m
@@ -206,7 +206,7 @@ func (a *CAcceptor) processData4(data4 byte) {
 	acceptor.ExpandedNoteReporting = m == 'T' || m == 'U' // This setting might be toggled in debug or production builds
 }
 
-func (a *CAcceptor) processData5(data5 byte) {
+func (a *MpostObj) processData5(data5 byte) {
 	switch {
 	case acceptor.Device.Model < 23, // S1K
 		acceptor.Device.Model == 30 || acceptor.Device.Model == 31, // S3K

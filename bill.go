@@ -12,7 +12,7 @@ import (
 
 ////////////////////////////////////
 
-func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) bill.BillStruct {
+func (a *MpostObj) parseBillData(reply []byte, extDataIndex int) bill.BillStruct {
 	var bill bill.BillStruct
 
 	if len(reply) < extDataIndex+15 {
@@ -71,7 +71,7 @@ func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) bill.BillStruc
 
 ////////
 
-func (a *CAcceptor) RetrieveBillTable() {
+func (a *MpostObj) retrieveBillTable() {
 	var index byte = 1
 	for {
 		payload := make([]byte, 6)
@@ -108,7 +108,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 			break
 		}
 
-		billFromTable := a.ParseBillData(reply, 10)
+		billFromTable := a.parseBillData(reply, 10)
 		bill.Types = append(bill.Types, billFromTable)
 		index++
 	}
@@ -120,8 +120,8 @@ func (a *CAcceptor) RetrieveBillTable() {
 	a.Log.Msg("Bill table retrieved")
 }
 
-func (a *CAcceptor) SetUpBillTable() {
+func (a *MpostObj) SetUpBillTable() {
 	bill.SetUpTable(acceptor.ExpandedNoteReporting, func() {
-		a.RetrieveBillTable()
+		a.retrieveBillTable()
 	})
 }
