@@ -10,28 +10,22 @@ import (
 ////////////////////////////////////
 
 type MpostObj struct {
-	port                *serial.SerialStruct
-	auditLifeTimeTotals []int
-	auditPerformance    []int
-	auditQP             []int
+	port          *serial.SerialStruct
+	dataLinkLayer *dataObj
+	coupon        *CouponObj
 
-	coupon *CCoupon
-
-	docType enum.DocumentType
-
-	dataLinkLayer *CDataLinkLayer
-
-	messageQueue chan *CMessage
+	messageQueue chan *messageObj
 	replyQueue   chan []byte
 
-	Log *LogObj
+	DocType enum.DocumentType
+	Log     *LogObj
 
 	Ctx       context.Context
 	CtxCancel context.CancelFunc
 }
 
 var DefAcceptor = &MpostObj{
-	messageQueue: make(chan *CMessage, 1),
+	messageQueue: make(chan *messageObj, 1),
 	replyQueue:   make(chan []byte, 1),
 	Log:          newLog(),
 }

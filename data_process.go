@@ -7,7 +7,7 @@ import (
 
 ////////////////////////////////////
 
-func (dl *CDataLinkLayer) ProcessStandardOmnibusReply(reply []byte) {
+func (dl *dataObj) ProcessStandardOmnibusReply(reply []byte) {
 	if len(reply) < 9 {
 		return
 	}
@@ -22,7 +22,7 @@ func (dl *CDataLinkLayer) ProcessStandardOmnibusReply(reply []byte) {
 	dl.RaiseEvents()
 }
 
-func (dl *CDataLinkLayer) ProcessExtendedOmnibusBarCodeReply(reply []byte) {
+func (dl *dataObj) ProcessExtendedOmnibusBarCodeReply(reply []byte) {
 	if len(reply) < 38 {
 		return
 	}
@@ -43,11 +43,11 @@ func (dl *CDataLinkLayer) ProcessExtendedOmnibusBarCodeReply(reply []byte) {
 				break
 			}
 		}
-		dl.Acceptor.docType = enum.DocumentBarcode
+		dl.Acceptor.DocType = enum.DocumentBarcode
 	}
 }
 
-func (dl *CDataLinkLayer) ProcessExtendedOmnibusExpandedNoteReply(reply []byte) {
+func (dl *dataObj) ProcessExtendedOmnibusExpandedNoteReply(reply []byte) {
 	if len(reply) < 10 {
 		return
 	}
@@ -60,7 +60,7 @@ func (dl *CDataLinkLayer) ProcessExtendedOmnibusExpandedNoteReply(reply []byte) 
 	dl.Acceptor.processData5(reply[9])
 }
 
-func (dl *CDataLinkLayer) ProcessExtendedOmnibusExpandedCouponReply(reply []byte) {
+func (dl *dataObj) ProcessExtendedOmnibusExpandedCouponReply(reply []byte) {
 	if len(reply) < 15 {
 		return
 	}
@@ -85,9 +85,9 @@ func (dl *CDataLinkLayer) ProcessExtendedOmnibusExpandedCouponReply(reply []byte
 
 		ownerID := (couponData & 0xFFF8) >> 3
 
-		dl.Acceptor.coupon = NewCCoupon(ownerID, value)
+		dl.Acceptor.coupon = newCoupon(ownerID, value)
 
-		dl.Acceptor.docType = enum.DocumentCoupon
+		dl.Acceptor.DocType = enum.DocumentCoupon
 		acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 	}
 }

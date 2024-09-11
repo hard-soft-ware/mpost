@@ -1,14 +1,29 @@
 package mpost
 
+import (
+	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
+	"github.com/hard-soft-ware/mpost/consts"
+)
+
 ////////////////////////////////////
 
-type CDataLinkLayer struct {
-	Acceptor                      *MpostObj
-	IdenticalCommandAndReplyCount int
+type dataObj struct {
+	Acceptor *MpostObj
 }
 
-func (a *MpostObj) newCDataLinkLayer() *CDataLinkLayer {
-	return &CDataLinkLayer{
-		Acceptor: a,
+////
+
+func (dl *dataObj) escrowXX(b byte) {
+	if !acceptor.Connected {
+		dl.Acceptor.Log.Msg("serial not connected")
+		return
 	}
+
+	payload := make([]byte, 4)
+	acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, bill.TypeEnables)
+
+	payload[2] |= b
+
+	dl.Acceptor.SendAsynchronousCommand(payload)
 }

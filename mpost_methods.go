@@ -528,7 +528,7 @@ func (a *MpostObj) GetConnected() bool {
 	return acceptor.Connected
 }
 
-func (a *MpostObj) GetCoupon() *CCoupon {
+func (a *MpostObj) GetCoupon() *CouponObj {
 	a.Log.Method("GetCoupon", nil)
 	return a.coupon
 }
@@ -701,7 +701,7 @@ func (a *MpostObj) GetDeviceType() string {
 
 func (a *MpostObj) GetDocType() enum.DocumentType {
 	a.Log.Method("GetDocType", nil)
-	return a.docType
+	return a.DocType
 }
 
 func (a *MpostObj) GetTransactionTimeout() time.Duration {

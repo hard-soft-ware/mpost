@@ -13,14 +13,14 @@ import (
 ////////////////////////////////////
 
 func (a *MpostObj) parseBillData(reply []byte, extDataIndex int) bill.BillStruct {
-	var bill bill.BillStruct
+	var bil bill.BillStruct
 
 	if len(reply) < extDataIndex+15 {
-		return bill
+		return bil
 	}
 
 	country := string(reply[extDataIndex+1 : extDataIndex+4])
-	bill.Country = strings.TrimSpace(country)
+	bil.Country = strings.TrimSpace(country)
 
 	valueString := string(reply[extDataIndex+4 : extDataIndex+7])
 	billValue, err := strconv.ParseFloat(valueString, 64)
@@ -45,8 +45,8 @@ func (a *MpostObj) parseBillData(reply []byte, extDataIndex int) bill.BillStruct
 		}
 	}
 
-	bill.Value = billValue
-	a.docType = enum.DocumentBill
+	bil.Value = billValue
+	a.DocType = enum.DocumentBill
 	acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 
 	orientation := reply[extDataIndex+10]
@@ -61,12 +61,12 @@ func (a *MpostObj) parseBillData(reply []byte, extDataIndex int) bill.BillStruct
 		acceptor.EscrowOrientation = enum.OrientationLeftDown
 	}
 
-	bill.Type = rune(reply[extDataIndex+11])
-	bill.Series = rune(reply[extDataIndex+12])
-	bill.Compatibility = rune(reply[extDataIndex+13])
-	bill.Version = rune(reply[extDataIndex+14])
+	bil.Type = rune(reply[extDataIndex+11])
+	bil.Series = rune(reply[extDataIndex+12])
+	bil.Compatibility = rune(reply[extDataIndex+13])
+	bil.Version = rune(reply[extDataIndex+14])
 
-	return bill
+	return bil
 }
 
 ////////

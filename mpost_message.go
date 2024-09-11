@@ -7,14 +7,14 @@ import (
 
 ////////////////////////////////////
 
-type CMessage struct {
+type messageObj struct {
 	Payload       []byte
 	PayloadLength int
 	IsSynchronous bool
 }
 
-func NewCMessage(payload []byte, isSynchronous bool) *CMessage {
-	return &CMessage{
+func newMessage(payload []byte, isSynchronous bool) *messageObj {
+	return &messageObj{
 		Payload:       payload,
 		PayloadLength: len(payload),
 		IsSynchronous: isSynchronous,
@@ -25,7 +25,7 @@ func NewCMessage(payload []byte, isSynchronous bool) *CMessage {
 
 func (a *MpostObj) SendSynchronousCommand(payload []byte) ([]byte, error) {
 
-	a.messageQueue <- NewCMessage(payload, true)
+	a.messageQueue <- newMessage(payload, true)
 
 	select {
 	case <-a.Ctx.Done():
@@ -41,5 +41,5 @@ func (a *MpostObj) SendSynchronousCommand(payload []byte) ([]byte, error) {
 }
 
 func (a *MpostObj) SendAsynchronousCommand(payload []byte) {
-	a.messageQueue <- NewCMessage(payload, false)
+	a.messageQueue <- newMessage(payload, false)
 }

@@ -13,7 +13,7 @@ import (
 
 ////////////////////////////////////
 
-func (dl *CDataLinkLayer) SendPacket(payload []byte) {
+func (dl *dataObj) SendPacket(payload []byte) {
 	send := command.CreateMsg(payload)
 
 	dl.Acceptor.Log.SerialSend(command.Parse(send))
@@ -30,7 +30,7 @@ func (dl *CDataLinkLayer) SendPacket(payload []byte) {
 
 //
 
-func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
+func (dl *dataObj) ReceiveReply() ([]byte, error) {
 	reply := []byte{}
 
 	timeout := acceptor.Timeout.Transaction
@@ -83,7 +83,7 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 
 ////
 
-func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
+func (dl *dataObj) ProcessReply(reply []byte) {
 	if len(reply) < 3 {
 		return
 	}

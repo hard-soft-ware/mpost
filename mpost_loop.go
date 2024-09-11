@@ -76,7 +76,7 @@ func (a *MpostObj) openThread() {
 }
 
 func (a *MpostObj) messageLoopThread() {
-	a.dataLinkLayer = a.newCDataLinkLayer()
+	a.dataLinkLayer = &dataObj{Acceptor: a}
 	timeoutStart := time.Now()
 	loopCycleCounter := 0
 

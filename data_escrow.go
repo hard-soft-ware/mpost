@@ -2,39 +2,23 @@ package mpost
 
 import (
 	"github.com/hard-soft-ware/mpost/acceptor"
-	"github.com/hard-soft-ware/mpost/bill"
-	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 	"github.com/hard-soft-ware/mpost/hook"
 )
 
 ////////////////////////////////////
 
-func (dl *CDataLinkLayer) escrowXX(b byte) {
-	if !acceptor.Connected {
-		dl.Acceptor.Log.Msg("serial not connected")
-		return
-	}
-
-	payload := make([]byte, 4)
-	acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, bill.TypeEnables)
-
-	payload[2] |= b
-
-	dl.Acceptor.SendAsynchronousCommand(payload)
-}
-
-func (dl *CDataLinkLayer) EscrowReturn() {
+func (dl *dataObj) EscrowReturn() {
 	dl.escrowXX(0x40)
 }
 
-func (dl *CDataLinkLayer) EscrowStack() {
+func (dl *dataObj) EscrowStack() {
 	dl.escrowXX(0x20)
 }
 
 ////
 
-func (dl *CDataLinkLayer) RaiseEvents() {
+func (dl *dataObj) RaiseEvents() {
 	if acceptor.IsPoweredUp && hook.PowerUp {
 		hook.Raise.PowerUp()
 	}

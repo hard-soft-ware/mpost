@@ -86,7 +86,7 @@ func (a *MpostObj) processData1(data1 byte) {
 
 	if !acceptor.Cash.BoxAttached {
 		// Assume a DocumentType exists that handles this
-		// _docType = NoValue
+		// _DocType = NoValue
 	}
 
 	if (data1 & 0x20) != 0 {
@@ -116,30 +116,30 @@ func (a *MpostObj) processData2(data2 byte) {
 		if billTypeIndex > 0 {
 			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !acceptor.WasDocTypeSetOnEscrow) {
 				bill.Bill = bill.Types[billTypeIndex-1]
-				a.docType = enum.DocumentBill
+				a.DocType = enum.DocumentBill
 				acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 			}
 		} else {
 			if acceptor.Device.State == enum.StateStacked || acceptor.Device.State == enum.StateEscrow {
 				bill.Reset()
-				a.docType = enum.DocumentNoValue
+				a.DocType = enum.DocumentNoValue
 				acceptor.WasDocTypeSetOnEscrow = false
 			}
 		}
 	} else {
 		if acceptor.Device.State == enum.StateStacked {
-			if a.docType == enum.DocumentBill && bill.Bill.Value == 0.0 {
-				a.docType = enum.DocumentNoValue
+			if a.DocType == enum.DocumentBill && bill.Bill.Value == 0.0 {
+				a.DocType = enum.DocumentNoValue
 			}
 		} else if acceptor.Device.State == enum.StateEscrow {
 			bill.Reset()
-			a.docType = enum.DocumentNoValue
+			a.DocType = enum.DocumentNoValue
 		}
 	}
 
 	if (data2 & 0x01) != 0 {
 		acceptor.IsPoweredUp = true
-		a.docType = enum.DocumentNoValue
+		a.DocType = enum.DocumentNoValue
 	} else {
 		hook.PowerUp = true
 		if !acceptor.IsVeryFirstPoll {
