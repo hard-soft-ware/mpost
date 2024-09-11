@@ -1,18 +1,18 @@
 package mpost
 
 import (
-	"fmt"
 	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 	"github.com/hard-soft-ware/mpost/serial"
 )
 
 ////////////////////////////////////
 
-func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
+func (a *MpostObj) Open(portName string, powerUp enum.PowerUpType) error {
 	if acceptor.Connected {
-		a.log.Msg("already connected")
+		a.Log.Msg("already connected")
 		return nil
 	}
 
@@ -20,20 +20,20 @@ func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 
 	port, err := serial.Open(portName, &acceptor.Connected)
 	if err != nil {
-		a.log.Err("failed to open serial port", err)
+		a.Log.Err("failed to open serial port", err)
 		return err
 	}
 	a.port = port
-	a.log.Msg("Serial Open")
+	a.Log.Msg("Serial Open")
 
-	go a.MessageLoopThread()
-	go a.OpenThread()
+	go a.messageLoopThread()
+	go a.openThread()
 
 	return nil
 }
 
-func (a *CAcceptor) Close() {
-	a.RaiseDisconnectedEvent()
+func (a *MpostObj) Close() {
+	hook.Raise.Disconnected()
 	a.port.Close()
 
 	defer a.CtxCancel()
@@ -47,20 +47,16 @@ func (a *CAcceptor) Close() {
 		acceptor.Enable.Acceptance = false
 	}
 
-	if a.dataLinkLayer != nil {
-		a.log.Msg(fmt.Sprintf("IdenticalCommandAndReplyCount: %d", a.dataLinkLayer.IdenticalCommandAndReplyCount))
-	}
-
 	acceptor.StopWorkerThread = true
 
 	a.port = nil
 	acceptor.Connected = false
-	a.log.Msg("Close")
+	a.Log.Msg("Close")
 }
 
 ////
 
-func (a *CAcceptor) QueryDeviceCapabilities() {
+func (a *MpostObj) queryDeviceCapabilities() {
 	if !acceptor.IsQueryDeviceCapabilitiesSupported {
 		return
 	}
@@ -69,7 +65,7 @@ func (a *CAcceptor) QueryDeviceCapabilities() {
 	reply, err := a.SendSynchronousCommand(payload)
 
 	if len(reply) < 4 {
-		a.log.Err("Reply too short, unable to process.", err)
+		a.Log.Err("Reply too short, unable to process.", err)
 		return
 	}
 

@@ -7,14 +7,14 @@ import (
 
 ////////////////////////////////////
 
-type CMessage struct {
+type messageObj struct {
 	Payload       []byte
 	PayloadLength int
 	IsSynchronous bool
 }
 
-func NewCMessage(payload []byte, isSynchronous bool) *CMessage {
-	return &CMessage{
+func newMessage(payload []byte, isSynchronous bool) *messageObj {
+	return &messageObj{
 		Payload:       payload,
 		PayloadLength: len(payload),
 		IsSynchronous: isSynchronous,
@@ -23,15 +23,9 @@ func NewCMessage(payload []byte, isSynchronous bool) *CMessage {
 
 ////
 
-func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
-	if !a.ss {
-		a.ss = true
-	} else {
-		a.ss = false
-		payload[0] += 1
-	}
+func (a *MpostObj) SendSynchronousCommand(payload []byte) ([]byte, error) {
 
-	a.messageQueue <- NewCMessage(payload, true)
+	a.messageQueue <- newMessage(payload, true)
 
 	select {
 	case <-a.Ctx.Done():
@@ -46,13 +40,6 @@ func (a *CAcceptor) SendSynchronousCommand(payload []byte) ([]byte, error) {
 	return nil, errors.New("invalid response")
 }
 
-func (a *CAcceptor) SendAsynchronousCommand(payload []byte) {
-	if !a.ss {
-		a.ss = true
-	} else {
-		a.ss = false
-		payload[0] += 1
-	}
-
-	a.messageQueue <- NewCMessage(payload, false)
+func (a *MpostObj) SendAsynchronousCommand(payload []byte) {
+	a.messageQueue <- newMessage(payload, false)
 }

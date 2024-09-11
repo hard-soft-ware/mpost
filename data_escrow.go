@@ -2,40 +2,25 @@ package mpost
 
 import (
 	"github.com/hard-soft-ware/mpost/acceptor"
-	"github.com/hard-soft-ware/mpost/bill"
-	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 )
 
 ////////////////////////////////////
 
-func (dl *CDataLinkLayer) escrowXX(b byte) {
-	if !acceptor.Connected {
-		dl.log.Msg("serial not connected")
-		return
-	}
-
-	payload := make([]byte, 4)
-	acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, bill.TypeEnables)
-
-	payload[2] |= b
-
-	dl.Acceptor.SendAsynchronousCommand(payload)
-}
-
-func (dl *CDataLinkLayer) EscrowReturn() {
+func (dl *dataObj) EscrowReturn() {
 	dl.escrowXX(0x40)
 }
 
-func (dl *CDataLinkLayer) EscrowStack() {
+func (dl *dataObj) EscrowStack() {
 	dl.escrowXX(0x20)
 }
 
 ////
 
-func (dl *CDataLinkLayer) RaiseEvents() {
-	if acceptor.IsPoweredUp && acceptor.ShouldRaise.PowerUpEvent {
-		dl.Acceptor.RaisePowerUpEvent()
+func (dl *dataObj) RaiseEvents() {
+	if acceptor.IsPoweredUp && hook.PowerUp {
+		hook.Raise.PowerUp()
 	}
 
 	if acceptor.IsVeryFirstPoll {
@@ -45,70 +30,70 @@ func (dl *CDataLinkLayer) RaiseEvents() {
 
 	switch acceptor.Device.State {
 	case enum.StateEscrow:
-		if acceptor.IsPoweredUp && acceptor.ShouldRaise.PUPEscrowEvent {
-			dl.Acceptor.RaisePUPEscrowEvent()
-		} else if acceptor.ShouldRaise.EscrowEvent {
-			dl.Acceptor.RaiseEscrowEvent()
+		if acceptor.IsPoweredUp && hook.PUPEscrow {
+			hook.Raise.PUPEscrow()
+		} else if hook.Escrow {
+			hook.Raise.Escrow()
 		}
 	case enum.StateStacked:
-		if acceptor.ShouldRaise.StackedEvent {
-			dl.Acceptor.RaiseStackedEvent()
+		if hook.Stacked {
+			hook.Raise.Stacked()
 		}
 	case enum.StateReturned:
-		if acceptor.ShouldRaise.ReturnedEvent {
-			dl.Acceptor.RaiseReturnedEvent()
+		if hook.Returned {
+			hook.Raise.Returned()
 		}
 	case enum.StateRejected:
-		if acceptor.ShouldRaise.RejectedEvent {
-			dl.Acceptor.RaiseRejectedEvent()
+		if hook.Rejected {
+			hook.Raise.Rejected()
 		}
 	case enum.StateStalled:
-		if acceptor.ShouldRaise.StallDetectedEvent {
-			dl.Acceptor.RaiseStallDetectedEvent()
+		if hook.StallDetected {
+			hook.Raise.Stall.Detected()
 		}
 	}
 
-	if acceptor.Device.State != enum.StateStalled && acceptor.ShouldRaise.StallClearedEvent {
-		dl.Acceptor.RaiseStallClearedEvent()
+	if acceptor.Device.State != enum.StateStalled && hook.StallCleared {
+		hook.Raise.Stall.Cleared()
 	}
 
-	if acceptor.Cash.BoxFull && acceptor.ShouldRaise.StackerFullEvent {
-		dl.Acceptor.RaiseStackerFullEvent()
+	if acceptor.Cash.BoxFull && hook.StackerFull {
+		hook.Raise.StackerFull()
 	}
 
-	if acceptor.IsCheated && acceptor.ShouldRaise.CheatedEvent {
-		dl.Acceptor.RaiseCheatedEvent()
+	if acceptor.IsCheated && hook.Cheated {
+		hook.Raise.Cheated()
 	}
 
-	if acceptor.Cash.BoxAttached && acceptor.ShouldRaise.CashBoxAttachedEvent {
-		dl.Acceptor.RaiseCashBoxAttachedEvent()
+	if acceptor.Cash.BoxAttached && hook.CashBoxAttached {
+		hook.Raise.CashBox.Attached()
 	}
 
-	if !acceptor.Cash.BoxAttached && acceptor.ShouldRaise.CashBoxRemovedEvent {
-		dl.Acceptor.RaiseCashBoxRemovedEvent()
+	if !acceptor.Cash.BoxAttached && hook.CashBoxRemoved {
+		hook.Raise.CashBox.Removed()
 	}
 
-	if acceptor.Device.Paused && acceptor.ShouldRaise.PauseDetectedEvent {
-		dl.Acceptor.RaisePauseDetectedEvent()
+	if acceptor.Device.Paused && hook.PauseDetected {
+		hook.Raise.Pause.Detected()
 	}
 
-	if !acceptor.Device.Paused && acceptor.ShouldRaise.PauseClearedEvent {
-		dl.Acceptor.RaisePauseClearedEvent()
+	if !acceptor.Device.Paused && hook.PauseCleared {
+		hook.Raise.Pause.Cleared()
 	}
 
-	if acceptor.Device.Jammed && acceptor.ShouldRaise.JamDetectedEvent {
-		dl.Acceptor.RaiseJamDetectedEvent()
+	if acceptor.Device.Jammed && hook.JamDetected {
+		hook.Raise.Jam.Detected()
 	}
 
-	if !acceptor.Device.Jammed && acceptor.ShouldRaise.JamClearedEvent {
-		dl.Acceptor.RaiseJamClearedEvent()
+	if !acceptor.Device.Jammed && hook.JamCleared {
+		hook.Raise.Jam.Cleared()
 	}
 
-	if acceptor.IsInvalidCommand && acceptor.ShouldRaise.InvalidCommandEvent {
-		dl.Acceptor.RaiseInvalidCommandEvent()
+	if acceptor.IsInvalidCommand && hook.InvalidCommand {
+		hook.Raise.InvalidCommand()
 	}
 
-	if acceptor.ShouldRaise.CalibrateFinishEvent {
-		dl.Acceptor.RaiseCalibrateFinishEvent()
+	if hook.CalibrateFinish {
+		hook.Raise.Calibrate.Finish()
 	}
 }

@@ -5,39 +5,78 @@ import (
 	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 	"time"
 )
 
 ////////////////////////////////////
 
-func (a *CAcceptor) OpenThread() {
-	lg := a.log.New("Thread")
+func (a *MpostObj) pollingLoop() []byte {
+	startTickCount := time.Now()
 
-	replay := a.PollingLoop()
+	for {
+		payload := []byte{consts.CmdOmnibus.Byte(), 0x00, 0x10, 0x00}
+
+		reply, err := a.SendSynchronousCommand(payload)
+		if err != nil {
+			a.Log.Err("PollingLoop", err)
+		}
+
+		if time.Since(startTickCount) > PollingDisconnectTimeout {
+			a.Close()
+			startTickCount = time.Now()
+		}
+
+		if !acceptor.FlashDownloadThread {
+			if acceptor.StopFlashDownloadThread {
+				acceptor.StopFlashDownloadThread = true
+				acceptor.FlashDownloadThread = true
+				acceptor.Device.State = enum.StateIdling
+				acceptor.WasStopped = true
+				return nil
+			}
+		}
+		if !acceptor.OpenThread {
+			if acceptor.StopOpenThread {
+				acceptor.StopOpenThread = false
+				acceptor.StopWorkerThread = true
+				acceptor.OpenThread = true
+				acceptor.WasStopped = true
+				a.Close()
+				return nil
+			}
+		}
+
+		if len(reply) > 0 {
+			return reply
+		}
+	}
+}
+
+////////
+
+func (a *MpostObj) openThread() {
+	replay := a.pollingLoop()
 
 	if acceptor.WasStopped {
-		lg.Msg("thread is stopped")
+		a.Log.Msg("thread is stopped")
 		return
 	}
 
 	a.dataLinkLayer.ProcessReply(replay)
-	a.QueryDeviceCapabilities()
+	a.queryDeviceCapabilities()
 
 	if acceptor.Device.State != enum.StateDownloadRestart {
-		a.SetUpBillTable()
+		a.setUpBillTable()
 		acceptor.Connected = true
-		a.RaiseConnectedEvent()
+		hook.Raise.Connected()
 	} else {
-		a.RaiseDownloadRestartEvent()
+		hook.Raise.Download.Restart()
 	}
 }
 
-////
-
-func (a *CAcceptor) MessageLoopThread() {
-	lg := a.log.New("LoopThread")
-
-	a.dataLinkLayer = a.NewCDataLinkLayer(lg)
+func (a *MpostObj) messageLoopThread() {
+	a.dataLinkLayer = &dataObj{Acceptor: a}
 	timeoutStart := time.Now()
 	loopCycleCounter := 0
 
@@ -59,7 +98,7 @@ func (a *CAcceptor) MessageLoopThread() {
 
 		if acceptor.StopWorkerThread {
 			acceptor.StopWorkerThread = false
-			lg.Msg("thread is stopped")
+			a.Log.Msg("thread is stopped")
 			return
 		}
 
@@ -74,7 +113,7 @@ func (a *CAcceptor) MessageLoopThread() {
 			a.dataLinkLayer.SendPacket(message.Payload)
 			reply, err := a.dataLinkLayer.ReceiveReply()
 			if err != nil {
-				a.log.Err("Invalid ReceiveReply", err)
+				a.Log.Err("Invalid ReceiveReply", err)
 				continue
 			}
 
@@ -82,7 +121,7 @@ func (a *CAcceptor) MessageLoopThread() {
 				timeoutStart = time.Now()
 				if acceptor.WasDisconnected {
 					acceptor.WasDisconnected = false
-					a.RaiseConnectedEvent()
+					hook.Raise.Connected()
 				}
 				if message.IsSynchronous {
 					a.replyQueue <- reply
@@ -100,19 +139,12 @@ func (a *CAcceptor) MessageLoopThread() {
 				payload := make([]byte, 4)
 				acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, bill.TypeEnables)
 
-				if !a.ss {
-					a.ss = true
-				} else {
-					a.ss = false
-					payload[0] += 1
-				}
-
 				a.dataLinkLayer.SendPacket(payload)
 
 				reply, err := a.dataLinkLayer.ReceiveReply()
 				if err != nil {
 					a.Close()
-					a.log.Err("Invalid loopCycleCounter", err)
+					a.Log.Err("Invalid loopCycleCounter", err)
 					return
 				}
 
@@ -124,9 +156,9 @@ func (a *CAcceptor) MessageLoopThread() {
 
 						if reply[2]&0x70 != 0x50 {
 							acceptor.Connected = true
-							a.RaiseConnectedEvent()
+							hook.Raise.Connected()
 						} else {
-							a.RaiseDownloadRestartEvent()
+							hook.Raise.Download.Restart()
 						}
 					}
 

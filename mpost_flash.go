@@ -6,18 +6,19 @@ import (
 	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 	"os"
 	"time"
 )
 
 ////////////////////////////////////
 
-func (a *CAcceptor) FlashDownload(filePath string) (err error) {
-	a.log.Msg("FlashDownload")
+func (a *MpostObj) FlashDownload(filePath string) (err error) {
+	a.Log.Msg("FlashDownload")
 
 	if !acceptor.Connected && acceptor.Device.State != enum.StateDownloadRestart {
 		err = errors.New("FlashDownload not allowed when not connected or not in DownloadRestart state")
-		a.log.Err("FlashDownload", err)
+		a.Log.Err("FlashDownload", err)
 		return
 	}
 
@@ -29,7 +30,7 @@ func (a *CAcceptor) FlashDownload(filePath string) (err error) {
 		acceptor.Device.Model == 88) {
 		if acceptor.Device.State != enum.StateIdling && acceptor.Device.State != enum.StateDownloadRestart {
 			err = errors.New("FlashDownload allowed only when DeviceState is Idling or DownloadRestart")
-			a.log.Err("FlashDownload", err)
+			a.Log.Err("FlashDownload", err)
 			return
 		}
 	}
@@ -37,7 +38,7 @@ func (a *CAcceptor) FlashDownload(filePath string) (err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		err = errors.New(fmt.Sprintf("Failed to open flash download file: %s", err))
-		a.log.Err("FlashDownload", err)
+		a.Log.Err("FlashDownload", err)
 		return
 	}
 	defer file.Close()
@@ -46,13 +47,13 @@ func (a *CAcceptor) FlashDownload(filePath string) (err error) {
 	fileInfo, err := file.Stat()
 	if err != nil {
 		err = errors.New(fmt.Sprintf("Failed to stat flash download file: %s", err))
-		a.log.Err("FlashDownload", err)
+		a.Log.Err("FlashDownload", err)
 		return
 	}
 	fileSize := fileInfo.Size()
 	if fileSize%32 != 0 {
 		err = errors.New("Flash download file size must be divisible by 32")
-		a.log.Err("FlashDownload", err)
+		a.Log.Err("FlashDownload", err)
 		return
 	}
 
@@ -64,8 +65,8 @@ func (a *CAcceptor) FlashDownload(filePath string) (err error) {
 	return
 }
 
-func (a *CAcceptor) flashDownload(downloadFile *os.File, fileSize int64) {
-	a.log.Msg("FlashDownloadThread started")
+func (a *MpostObj) flashDownload(downloadFile *os.File, fileSize int64) {
+	a.Log.Msg("FlashDownloadThread started")
 
 	if acceptor.Device.State != enum.StateDownloadRestart {
 		acceptor.Device.State = enum.StateDownloadStart
@@ -86,7 +87,7 @@ func (a *CAcceptor) flashDownload(downloadFile *os.File, fileSize int64) {
 		reply, err = a.SendSynchronousCommand(payload)
 		if err != nil || len(reply) == 0 {
 			if !acceptor.Connected {
-				a.RaiseDownloadFinishEvent(false)
+				hook.Raise.Download.Finish(false)
 				acceptor.Device.State = enum.StateIdling
 				return
 			}
@@ -99,7 +100,7 @@ func (a *CAcceptor) flashDownload(downloadFile *os.File, fileSize int64) {
 		packetNum = (int(reply[3]&0x0F)<<12 + int(reply[4]&0x0F)<<8 + int(reply[5]&0x0F)<<4 + int(reply[6]&0x0F) + 1) & 0xFFFF
 	}
 
-	a.RaiseDownloadStartEvent(finalPacketNum)
+	hook.Raise.Download.Start(finalPacketNum)
 	timeoutStartTickCount := time.Now()
 
 	for packetNum < finalPacketNum {
@@ -131,8 +132,8 @@ func (a *CAcceptor) flashDownload(downloadFile *os.File, fileSize int64) {
 
 		if reply[0] == consts.DataSTX.Byte() {
 			acceptor.Device.State = enum.StateDownloading
-			if acceptor.ShouldRaise.DownloadProgressEvent {
-				a.RaiseDownloadProgressEvent(packetNum)
+			if hook.DownloadProgress {
+				hook.Raise.Download.Progress(packetNum)
 			}
 			packetNum++
 		} else {
@@ -141,15 +142,15 @@ func (a *CAcceptor) flashDownload(downloadFile *os.File, fileSize int64) {
 		}
 
 		if time.Since(timeoutStartTickCount) > acceptor.Timeout.Download {
-			a.RaiseDownloadFinishEvent(false)
+			hook.Raise.Download.Finish(false)
 			acceptor.Device.State = enum.StateIdling
 			return
 		}
 	}
 
 	time.Sleep(30 * time.Millisecond)
-	a.RaiseDownloadFinishEvent(true)
+	hook.Raise.Download.Finish(true)
 	acceptor.Device.State = enum.StateIdling
 	acceptor.Connected = true
-	a.RaiseConnectedEvent()
+	hook.Raise.Connected()
 }

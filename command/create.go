@@ -6,18 +6,18 @@ import (
 
 ////////////////////////////////////
 
-func CRC(command []byte) byte {
-	var result byte
+var coin bool
 
-	end := int(command[1]) - 2
-	for i := 1; i < end; i++ {
-		result ^= command[i]
+var CurrentCommand, PreviousCommand []byte
+
+func CreateMsg(payload []byte) []byte {
+	if !coin {
+		coin = true
+	} else {
+		coin = false
+		payload[0] += 1
 	}
 
-	return result
-}
-
-func Create(payload []byte) []byte {
 	commandLength := len(payload) + 4 // STX + Length char + ETX + Checksum
 
 	command := make([]byte, 0, commandLength)
@@ -29,5 +29,7 @@ func Create(payload []byte) []byte {
 	command = append(command, consts.DataETX.Byte())
 	command = append(command, CRC(command))
 
+	PreviousCommand = CurrentCommand
+	CurrentCommand = command
 	return command
 }

@@ -4,11 +4,12 @@ import (
 	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 )
 
 ////////////////////////////////////
 
-func (a *CAcceptor) processData0(data0 byte) {
+func (a *MpostObj) processData0(data0 byte) {
 	if (data0 & 0x01) != 0 {
 		if acceptor.Device.State != enum.StateCalibrating && acceptor.Device.State != enum.StateCalibrateStart {
 			acceptor.Device.State = enum.StateIdling
@@ -24,10 +25,10 @@ func (a *CAcceptor) processData0(data0 byte) {
 	if (data0 & 0x04) != 0 {
 		acceptor.Device.State = enum.StateEscrow
 		if acceptor.AutoStack {
-			acceptor.ShouldRaise.EscrowEvent = false
+			hook.Escrow = false
 		}
 	} else {
-		acceptor.ShouldRaise.EscrowEvent = true
+		hook.Escrow = true
 	}
 
 	if (data0 & 0x08) != 0 {
@@ -37,7 +38,7 @@ func (a *CAcceptor) processData0(data0 byte) {
 	if (data0 & 0x10) != 0 {
 		acceptor.Device.State = enum.StateStacked
 	} else {
-		acceptor.ShouldRaise.StackedEvent = true
+		hook.Stacked = true
 	}
 
 	if (data0 & 0x20) != 0 {
@@ -48,99 +49,99 @@ func (a *CAcceptor) processData0(data0 byte) {
 		acceptor.Device.State = enum.StateReturned
 		bill.Reset() // Resetting the bill
 	} else {
-		acceptor.ShouldRaise.ReturnedEvent = true
+		hook.Returned = true
 	}
 }
 
-func (a *CAcceptor) processData1(data1 byte) {
+func (a *MpostObj) processData1(data1 byte) {
 	if (data1 & 0x01) != 0 {
 		acceptor.IsCheated = true
 	} else {
 		acceptor.IsCheated = false
-		acceptor.ShouldRaise.CheatedEvent = true
+		hook.Cheated = true
 	}
 
 	if (data1 & 0x02) != 0 {
 		acceptor.Device.State = enum.StateRejected
 	} else {
-		acceptor.ShouldRaise.RejectedEvent = true
+		hook.Rejected = true
 	}
 
 	if (data1 & 0x04) != 0 {
 		acceptor.Device.Jammed = true
-		acceptor.ShouldRaise.JamDetectedEvent = true
+		hook.JamDetected = true
 	} else {
 		acceptor.Device.Jammed = false
-		acceptor.ShouldRaise.JamClearedEvent = true
+		hook.JamCleared = true
 	}
 
 	if (data1 & 0x08) != 0 {
 		acceptor.Cash.BoxFull = true
 	} else {
 		acceptor.Cash.BoxFull = false
-		acceptor.ShouldRaise.StackerFullEvent = true
+		hook.StackerFull = true
 	}
 
 	acceptor.Cash.BoxAttached = (data1 & 0x10) != 0
 
 	if !acceptor.Cash.BoxAttached {
 		// Assume a DocumentType exists that handles this
-		// _docType = NoValue
+		// _DocType = NoValue
 	}
 
 	if (data1 & 0x20) != 0 {
 		acceptor.Device.Paused = true
-		acceptor.ShouldRaise.PauseClearedEvent = true
+		hook.PauseCleared = true
 	} else {
 		acceptor.Device.Paused = false
-		acceptor.ShouldRaise.PauseDetectedEvent = true
+		hook.PauseDetected = true
 	}
 
 	if (data1 & 0x40) != 0 {
 		acceptor.Device.State = enum.StateCalibrating
-		if acceptor.ShouldRaise.CalibrateProgressEvent {
-			a.RaiseCalibrateProgressEvent()
+		if hook.CalibrateProgress {
+			hook.Raise.Calibrate.Progress()
 		}
 	} else {
 		if acceptor.Device.State == enum.StateCalibrating {
-			acceptor.ShouldRaise.CalibrateFinishEvent = true
+			hook.CalibrateFinish = true
 			acceptor.Device.State = enum.StateIdling
 		}
 	}
 }
 
-func (a *CAcceptor) processData2(data2 byte) {
+func (a *MpostObj) processData2(data2 byte) {
 	if !acceptor.ExpandedNoteReporting {
 		billTypeIndex := (data2 & 0x38) >> 3
 		if billTypeIndex > 0 {
 			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !acceptor.WasDocTypeSetOnEscrow) {
 				bill.Bill = bill.Types[billTypeIndex-1]
-				a.docType = enum.DocumentBill
+				a.DocType = enum.DocumentBill
 				acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 			}
 		} else {
 			if acceptor.Device.State == enum.StateStacked || acceptor.Device.State == enum.StateEscrow {
 				bill.Reset()
-				a.docType = enum.DocumentNoValue
+				a.DocType = enum.DocumentNoValue
 				acceptor.WasDocTypeSetOnEscrow = false
 			}
 		}
 	} else {
 		if acceptor.Device.State == enum.StateStacked {
-			if a.docType == enum.DocumentBill && bill.Bill.Value == 0.0 {
-				a.docType = enum.DocumentNoValue
+			if a.DocType == enum.DocumentBill && bill.Bill.Value == 0.0 {
+				a.DocType = enum.DocumentNoValue
 			}
 		} else if acceptor.Device.State == enum.StateEscrow {
 			bill.Reset()
-			a.docType = enum.DocumentNoValue
+			a.DocType = enum.DocumentNoValue
 		}
 	}
 
 	if (data2 & 0x01) != 0 {
 		acceptor.IsPoweredUp = true
-		a.docType = enum.DocumentNoValue
+		a.DocType = enum.DocumentNoValue
 	} else {
-		acceptor.ShouldRaise.PowerUpEvent = true
+		hook.PowerUp = true
 		if !acceptor.IsVeryFirstPoll {
 			acceptor.IsPoweredUp = false
 		}
@@ -150,7 +151,7 @@ func (a *CAcceptor) processData2(data2 byte) {
 		acceptor.IsInvalidCommand = true
 	} else {
 		acceptor.IsInvalidCommand = false
-		acceptor.ShouldRaise.InvalidCommandEvent = true
+		hook.InvalidCommand = true
 	}
 
 	if (data2 & 0x04) != 0 {
@@ -158,12 +159,12 @@ func (a *CAcceptor) processData2(data2 byte) {
 	}
 }
 
-func (a *CAcceptor) processData3(data3 byte) {
+func (a *MpostObj) processData3(data3 byte) {
 	if (data3 & 0x01) != 0 {
 		acceptor.Device.State = enum.StateStalled
-		acceptor.ShouldRaise.StallClearedEvent = true
+		hook.StallCleared = true
 	} else {
-		acceptor.ShouldRaise.StallDetectedEvent = true
+		hook.StallDetected = true
 	}
 
 	if (data3 & 0x02) != 0 {
@@ -179,7 +180,7 @@ func (a *CAcceptor) processData3(data3 byte) {
 	}
 }
 
-func (a *CAcceptor) processData4(data4 byte) {
+func (a *MpostObj) processData4(data4 byte) {
 	acceptor.Device.Model = int(data4 & 0x7F)
 	m := acceptor.Device.Model
 	d := m
@@ -205,7 +206,7 @@ func (a *CAcceptor) processData4(data4 byte) {
 	acceptor.ExpandedNoteReporting = m == 'T' || m == 'U' // This setting might be toggled in debug or production builds
 }
 
-func (a *CAcceptor) processData5(data5 byte) {
+func (a *MpostObj) processData5(data5 byte) {
 	switch {
 	case acceptor.Device.Model < 23, // S1K
 		acceptor.Device.Model == 30 || acceptor.Device.Model == 31, // S3K

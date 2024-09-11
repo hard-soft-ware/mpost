@@ -1,34 +1,29 @@
 package mpost
 
+import (
+	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
+	"github.com/hard-soft-ware/mpost/consts"
+)
+
 ////////////////////////////////////
 
-type CDataLinkLayer struct {
-	log *LogStruct
-
-	Acceptor                       *CAcceptor
-	CurrentCommand, EchoDetect     []byte
-	PreviousCommand, PreviousReply []byte
-	IdenticalCommandAndReplyCount  int
-}
-
-func (a *CAcceptor) NewCDataLinkLayer(lg *LogStruct) *CDataLinkLayer {
-	return &CDataLinkLayer{
-		Acceptor: a,
-		log:      lg.New("Data"),
-	}
+type dataObj struct {
+	Acceptor *MpostObj
 }
 
 ////
 
-func (dl *CDataLinkLayer) ComputeCheckSum(command []byte) byte {
-	var result byte
-
-	end := int(command[1]) - 2
-	for i := 1; i < end; i++ {
-		result ^= command[i]
+func (dl *dataObj) escrowXX(b byte) {
+	if !acceptor.Connected {
+		dl.Acceptor.Log.Msg("serial not connected")
+		return
 	}
 
-	return result
-}
+	payload := make([]byte, 4)
+	acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, bill.TypeEnables)
 
-//
+	payload[2] |= b
+
+	dl.Acceptor.SendAsynchronousCommand(payload)
+}

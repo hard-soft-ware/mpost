@@ -1,0 +1,30 @@
+package hook
+
+var (
+	Connected         bool
+	Escrow            bool
+	PUPEscrow         bool
+	Stacked           bool
+	Returned          bool
+	Rejected          bool
+	Cheated           bool
+	StackerFull       bool
+	CalibrateStart    bool
+	CalibrateProgress bool
+	CalibrateFinish   bool
+	DownloadStart     bool
+	DownloadRestart   bool
+	DownloadProgress  bool
+	DownloadFinish    bool
+	PauseDetected     bool
+	PauseCleared      bool
+	StallDetected     bool
+	StallCleared      bool
+	JamDetected       bool
+	JamCleared        bool
+	PowerUp           bool
+	InvalidCommand    bool
+	CashBoxAttached   bool
+	CashBoxRemoved    bool
+	Disconnected      bool
+)

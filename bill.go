@@ -12,15 +12,15 @@ import (
 
 ////////////////////////////////////
 
-func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) bill.BillStruct {
-	var bill bill.BillStruct
+func (a *MpostObj) parseBillData(reply []byte, extDataIndex int) bill.BillStruct {
+	var bil bill.BillStruct
 
 	if len(reply) < extDataIndex+15 {
-		return bill
+		return bil
 	}
 
 	country := string(reply[extDataIndex+1 : extDataIndex+4])
-	bill.Country = strings.TrimSpace(country)
+	bil.Country = strings.TrimSpace(country)
 
 	valueString := string(reply[extDataIndex+4 : extDataIndex+7])
 	billValue, err := strconv.ParseFloat(valueString, 64)
@@ -45,8 +45,8 @@ func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) bill.BillStruc
 		}
 	}
 
-	bill.Value = billValue
-	a.docType = enum.DocumentBill
+	bil.Value = billValue
+	a.DocType = enum.DocumentBill
 	acceptor.WasDocTypeSetOnEscrow = acceptor.Device.State == enum.StateEscrow
 
 	orientation := reply[extDataIndex+10]
@@ -61,17 +61,17 @@ func (a *CAcceptor) ParseBillData(reply []byte, extDataIndex int) bill.BillStruc
 		acceptor.EscrowOrientation = enum.OrientationLeftDown
 	}
 
-	bill.Type = rune(reply[extDataIndex+11])
-	bill.Series = rune(reply[extDataIndex+12])
-	bill.Compatibility = rune(reply[extDataIndex+13])
-	bill.Version = rune(reply[extDataIndex+14])
+	bil.Type = rune(reply[extDataIndex+11])
+	bil.Series = rune(reply[extDataIndex+12])
+	bil.Compatibility = rune(reply[extDataIndex+13])
+	bil.Version = rune(reply[extDataIndex+14])
 
-	return bill
+	return bil
 }
 
 ////////
 
-func (a *CAcceptor) RetrieveBillTable() {
+func (a *MpostObj) retrieveBillTable() {
 	var index byte = 1
 	for {
 		payload := make([]byte, 6)
@@ -85,7 +85,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 			for {
 				reply, err = a.SendSynchronousCommand(payload)
 				if err != nil {
-					a.log.Err("Error sending command", err)
+					a.Log.Err("Error sending command", err)
 					break
 				}
 				if len(reply) == 30 {
@@ -108,7 +108,7 @@ func (a *CAcceptor) RetrieveBillTable() {
 			break
 		}
 
-		billFromTable := a.ParseBillData(reply, 10)
+		billFromTable := a.parseBillData(reply, 10)
 		bill.Types = append(bill.Types, billFromTable)
 		index++
 	}
@@ -117,11 +117,11 @@ func (a *CAcceptor) RetrieveBillTable() {
 		bill.TypeEnables = append(bill.TypeEnables, true)
 	}
 
-	a.log.Msg("Bill table retrieved")
+	a.Log.Msg("Bill table retrieved")
 }
 
-func (a *CAcceptor) SetUpBillTable() {
+func (a *MpostObj) setUpBillTable() {
 	bill.SetUpTable(acceptor.ExpandedNoteReporting, func() {
-		a.RetrieveBillTable()
+		a.retrieveBillTable()
 	})
 }

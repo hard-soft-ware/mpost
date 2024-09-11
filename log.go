@@ -1,71 +1,34 @@
 package mpost
 
 import (
-	"fmt"
+	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
-	"github.com/rs/zerolog"
-	"strings"
 )
 
-/////////////////////////////////////////////////////////
+////////////////////////////////////
 
-type LogStruct struct {
-	isEnable   bool
-	log        zerolog.Logger
-	index      string
-	printBytes bool
+type LogObj struct {
+	Event  func(enum.EventType, int)
+	Method func(string, any)
+
+	Msg func(string)
+	Err func(string, error)
+
+	SerialSend func(consts.CmdType, []byte)
+	SerialRead func(consts.CmdType, []byte)
 }
 
-func NewLog(log zerolog.Logger, root string, printBytes bool) LogStruct {
-	obj := LogStruct{
-		isEnable:   true,
-		index:      root,
-		log:        log,
-		printBytes: printBytes,
-	}
-	return obj
-}
+func newLog() *LogObj {
+	obj := LogObj{}
 
-func (obj *LogStruct) New(point string) *LogStruct {
-	newObj := *obj
-	newObj.index = obj.index + "/" + point
-	return &newObj
-}
+	obj.Event = func(eventType enum.EventType, i int) {}
+	obj.Method = func(s string, a any) {}
 
-////
+	obj.Msg = func(s string) {}
+	obj.Err = func(s string, err error) {}
 
-func (obj *LogStruct) Msg(msg string) {
-	if !obj.isEnable {
-		return
-	}
-	obj.log.Debug().Str("index", obj.index).Msg(msg)
-}
+	obj.SerialSend = func(cmd consts.CmdType, data []byte) {}
+	obj.SerialRead = func(cmd consts.CmdType, data []byte) {}
 
-func (obj *LogStruct) Err(msg string, err error) {
-	if !obj.isEnable {
-		return
-	}
-	obj.log.Debug().Str("index", obj.index).Err(err).Msg(msg)
-}
-
-func (obj *LogStruct) Bytes(msg string, data []byte) {
-	if !obj.isEnable || !obj.printBytes {
-		return
-	}
-
-	var sb strings.Builder
-	for i, byteVal := range data {
-		if i > 0 {
-			sb.WriteString(" ")
-		}
-		fmt.Fprintf(&sb, "%02X", byteVal)
-	}
-
-	obj.log.Debug().Str("index", obj.index).Str("data", sb.String()).Int("len", len(data)).Msg(msg)
-}
-
-//
-
-func (obj *LogStruct) Event(event enum.EventType) {
-	obj.log.Debug().Str("index", obj.index).Str("event", event.String()).Msg("Event")
+	return &obj
 }

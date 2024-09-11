@@ -7,31 +7,30 @@ import (
 	"github.com/hard-soft-ware/mpost/command"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 	"io"
 )
 
 ////////////////////////////////////
 
-func (dl *CDataLinkLayer) SendPacket(payload []byte) {
-	send := command.Create(payload)
+func (dl *dataObj) SendPacket(payload []byte) {
+	send := command.CreateMsg(payload)
 
-	dl.CurrentCommand = send
-	dl.EchoDetect = send
-
-	dl.log.Bytes("SERIAL SEND >>> ", send)
+	dl.Acceptor.Log.SerialSend(command.Parse(send))
 	n, err := dl.Acceptor.port.Write(send)
 	if err != nil || n == 0 {
-		dl.log.Err("Failed to write to port", err)
+		dl.Acceptor.Log.Err("Failed to write to port", err)
 		err = dl.Acceptor.port.Restart()
 		if err != nil {
-			dl.log.Err("Failed restart to port", err)
+			dl.Acceptor.Log.Err("Failed restart to port", err)
+			dl.Acceptor.Close()
 		}
 	}
 }
 
 //
 
-func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
+func (dl *dataObj) ReceiveReply() ([]byte, error) {
 	reply := []byte{}
 
 	timeout := acceptor.Timeout.Transaction
@@ -78,13 +77,13 @@ func (dl *CDataLinkLayer) ReceiveReply() ([]byte, error) {
 		}
 	}
 
-	dl.log.Bytes("SERIAL READ <<< ", reply)
+	dl.Acceptor.Log.SerialRead(command.Parse(reply))
 	return reply, nil
 }
 
 ////
 
-func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
+func (dl *dataObj) ProcessReply(reply []byte) {
 	if len(reply) < 3 {
 		return
 	}
@@ -130,7 +129,7 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 
 	if acceptor.Device.State == enum.StateEscrow && acceptor.AutoStack {
 		dl.EscrowStack()
-		acceptor.ShouldRaise.EscrowEvent = false
+		hook.Escrow = false
 	}
 
 	if acceptor.Device.State != enum.StateEscrow && acceptor.Device.State != enum.StateStacking {

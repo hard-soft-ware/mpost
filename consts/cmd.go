@@ -6,6 +6,7 @@ type CmdType byte
 
 const (
 	CmdOmnibus       CmdType = 0x10
+	CmdRetStatus     CmdType = 0x20
 	CmdCalibrate     CmdType = 0x40
 	CmdFlashDownload CmdType = 0x50
 	CmdAuxiliary     CmdType = 0x60
@@ -14,6 +15,7 @@ const (
 
 const (
 	CmdTextOmnibus       = "Omnibus"
+	CmdTextRetStatus     = "RetStatus"
 	CmdTextCalibrate     = "Calibrate"
 	CmdTextFlashDownload = "FlashDownload"
 	CmdTextAuxiliary     = "Auxiliary"
@@ -22,6 +24,7 @@ const (
 
 var CmdMap = map[CmdType]string{
 	CmdOmnibus:       CmdTextOmnibus,
+	CmdRetStatus:     CmdTextRetStatus,
 	CmdCalibrate:     CmdTextCalibrate,
 	CmdFlashDownload: CmdTextFlashDownload,
 	CmdAuxiliary:     CmdTextAuxiliary,

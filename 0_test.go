@@ -2,58 +2,126 @@ package mpost
 
 import (
 	"fmt"
+	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
+	"go.bug.st/serial"
 	"os"
+	"os/signal"
+	"strings"
+	"syscall"
 	"testing"
 	"time"
 )
 
 func TestConnect(t *testing.T) {
-	return
+	ports, err := serial.GetPortsList()
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
 
-	a := DefAcceptor
-	a.AddLog(
-		log.Output(zerolog.ConsoleWriter{
-			Out:        os.Stdout,
-			NoColor:    false,
-			TimeFormat: "15:04:05",
-		}),
-		"TEST",
-		true,
-	)
+	if len(ports) == 0 {
+		t.Log("no serial ports found")
+		return
+	}
 
-	a.SetEnableAcceptance(true)
-	a.SetEnableBarCodes(true)
-	a.SetEnableBookmarks(true)
+	a := New()
+	printByte := true
+	{
+		a.Log.Event = func(eventType enum.EventType, i int) {
+			if eventType == enum.EventJamCleared {
+				return
+			}
+			t.Log("Event", eventType.String(), i)
+		}
+		a.Log.Msg = func(s string) {
+			t.Log("Msg", s)
+		}
+		a.Log.Err = func(s string, err error) {
+			t.Error("Err", s, err.Error())
+		}
 
-	a.AddHook(enum.EventConnected, func(acceptor *CAcceptor, i int) {
-		fmt.Println("Connect")
+		if printByte { //serial log
+			byteToStr := func(bytes []byte) string {
+				var sb strings.Builder
+				for i, byteVal := range bytes {
+					if i > 0 {
+						sb.WriteString(" ")
+					}
+					fmt.Fprintf(&sb, "%02X", byteVal)
+				}
+				return sb.String()
+			}
 
-		acceptor.SetUpBillTable()
-	})
-	a.AddHook(enum.EventDisconnected, func(acceptor *CAcceptor, i int) {
-		fmt.Println("Disconnect")
-	})
-	a.AddHook(enum.EventRejected, func(acceptor *CAcceptor, i int) {
-		fmt.Println("EventRejected")
-	})
-	a.AddHook(enum.EventReturned, func(acceptor *CAcceptor, i int) {
-		fmt.Println("EventReturned")
-	})
+			a.Log.SerialRead = func(cmdType consts.CmdType, bytes []byte) {
+				fmt.Println("<\t", cmdType.String()+"\t<<<\t", byteToStr(bytes))
+			}
+			a.Log.SerialSend = func(cmdType consts.CmdType, bytes []byte) {
+				fmt.Println(">\t", cmdType.String()+"\t>>>\t", byteToStr(bytes))
+			}
+		}
+	}
 
-	a.Open("/dev/ttyUSB0", enum.PowerUpE)
+	a.Method.Enable.Set.Acceptance(true)
 
-	time.Sleep(2 * time.Second)
-	t.Log(a.GetDeviceSerialNumber())
-	t.Log(a.GetBill())
-	t.Log(a.GetApplicationPN())
-	t.Log(a.GetBootPN())
-	t.Log(a.GetDeviceType())
+	connCh := make(chan bool)
 
-	t.Log(a.GetBNFStatus().String())
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	time.Sleep(100 * time.Second)
+	{
+		a.AddHook(enum.EventConnected, func(i int) {
+			connCh <- true
+			fmt.Println("HOOK\t\tConnect")
+		})
+		a.AddHook(enum.EventDisconnected, func(i int) {
+			connCh <- false
+			fmt.Println("HOOK\t\tDisconnect")
+		})
+		a.AddHook(enum.EventRejected, func(i int) {
+			fmt.Println("HOOK\t\tRejected")
+		})
+		a.AddHook(enum.EventReturned, func(i int) {
+			fmt.Println("HOOK\t\tReturned")
+		})
+	}
+
+	if len(ports[0]) < 11 || ports[0][:11] != "/dev/ttyUSB" {
+		t.Log("Invalid COM-port")
+		return
+	}
+
+	fmt.Println("Connect to:\t\t" + ports[0])
+	a.Open(ports[0], enum.PowerUpE)
+
+	for {
+		select {
+
+		case <-sigChan:
+			t.Log("Sig Close")
+			return
+
+		case <-time.After(time.Second * 100):
+			t.Log("close Timeout")
+			return
+
+		case status := <-connCh:
+			if !status {
+				t.Log("Invalid Connect")
+				return
+			}
+			t.Log(a.Method.Device.Get.SerialNumber())
+			t.Log(a.Method.Bill.Get.Self())
+			t.Log(a.Method.Application.Get.PN())
+			t.Log(a.Method.Other.GetBootPN())
+			t.Log(a.Method.Device.Get.Type())
+
+			t.Log(a.Method.BNF.Get.Status().String())
+
+		default:
+			continue
+		}
+	}
+
 	a.Close()
 }
