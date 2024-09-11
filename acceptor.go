@@ -53,8 +53,8 @@ func init() {
 
 func (a *CAcceptor) AddLog(log zerolog.Logger, root string, printBytes bool) {
 	a.log = NewLog(log, root, printBytes)
-	hook.Raise.Log = func(s string, i int) {
-		a.log.Msg(s)
+	hook.Raise.Log = func(e enum.EventType, i int) {
+		a.log.Msg(e.String())
 	}
 }
 

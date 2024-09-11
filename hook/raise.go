@@ -5,7 +5,7 @@ import "github.com/hard-soft-ware/mpost/enum"
 ////////////////////////////////////
 
 type RaiseObj struct {
-	Log func(string, int)
+	Log func(enum.EventType, int)
 
 	Download  RaiseDownloadObj
 	Calibrate RaiseCalibrateObj
@@ -18,7 +18,7 @@ type RaiseObj struct {
 var Raise RaiseObj
 
 func init() {
-	Raise.Log = func(string, int) {}
+	Raise.Log = func(enum.EventType, int) {}
 
 	Raise.Download.r = &Raise
 	Raise.Calibrate.r = &Raise
@@ -31,7 +31,7 @@ func init() {
 ////
 
 func (r RaiseObj) run(e enum.EventType, b int) {
-	r.Log(e.String(), b)
+	r.Log(e, b)
 
 	if handler, exists := eventHandlers[e]; exists && handler != nil {
 		handler(b)

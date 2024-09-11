@@ -16,6 +16,7 @@ func Cmd() {
 	val := obj.NewVal()
 
 	val.Add(0x10, "Omnibus")
+	val.Add(0x20, "RetStatus")
 	val.Add(0x40, "Calibrate")
 	val.Add(0x50, "FlashDownload")
 	val.Add(0x60, "Auxiliary")
