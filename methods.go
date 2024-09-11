@@ -24,6 +24,9 @@ type MethodsObj struct {
 	Bill        *MethodsBillObj
 	CashBox     *MethodsCashBoxObj
 	Coupon      *MethodsCouponObj
+	Device      *MethodsDeviceObj
+	Orientation *MethodsOrientationObj
+	Variant     *MethodsVariantObj
 }
 
 type MethodsGetObj struct{ a *MpostObj }
@@ -46,6 +49,9 @@ func (a *MpostObj) newMethods() *MethodsObj {
 	obj.Bill = obj.newBill()
 	obj.CashBox = obj.newCashBox()
 	obj.Coupon = obj.newCoupon()
+	obj.Device = obj.newDevice()
+	obj.Orientation = obj.newOrientation()
+	obj.Variant = obj.newVariant()
 
 	return &obj
 }

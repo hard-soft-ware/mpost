@@ -8,37 +8,30 @@ import (
 
 ////////////////////////////////////
 
-func (m *MethodsObj) GetCapDevicePaused() bool {
-	m.a.Log.Method("GetCapDevicePaused", nil)
-	return acceptor.Cap.DevicePaused
+type MethodsDeviceObj struct {
+	a   *MpostObj
+	Get MethodDeviceGetObj
 }
 
-func (m *MethodsObj) GetCapDeviceSoftReset() bool {
-	m.a.Log.Method("GetCapDeviceSoftReset", nil)
-	return acceptor.Cap.DeviceSoftReset
+type MethodDeviceGetObj struct{ a *MpostObj }
+
+func (m *MethodsObj) newDevice() *MethodsDeviceObj {
+	obj := MethodsDeviceObj{}
+
+	obj.a = m.a
+	obj.Get.a = m.a
+
+	return &obj
 }
 
-func (m *MethodsObj) GetCapDeviceType() bool {
-	m.a.Log.Method("GetCapDeviceType", nil)
-	return acceptor.Cap.DeviceType
-}
+////////////////
 
-func (m *MethodsObj) GetCapDeviceResets() bool {
-	m.a.Log.Method("GetCapDeviceResets", nil)
-	return acceptor.Cap.DeviceResets
-}
-
-func (m *MethodsObj) GetCapDeviceSerialNumber() bool {
-	m.a.Log.Method("GetCapDeviceSerialNumber", nil)
-	return acceptor.Cap.DeviceSerialNumber
-}
-
-func (m *MethodsObj) GetDeviceBusy() bool {
+func (m *MethodDeviceGetObj) Busy() bool {
 	m.a.Log.Method("GetDeviceBusy", nil)
 	return acceptor.Device.State != enum.StateIdling
 }
 
-func (m *MethodsObj) GetDeviceCRC() int64 {
+func (m *MethodDeviceGetObj) CRC() int64 {
 	m.a.Log.Method("GetDeviceCRC", nil)
 
 	err := acceptor.Verify(true, "DeviceCRC")
@@ -67,37 +60,37 @@ func (m *MethodsObj) GetDeviceCRC() int64 {
 	return crc
 }
 
-func (m *MethodsObj) GetDeviceFailure() bool {
+func (m *MethodDeviceGetObj) Failure() bool {
 	m.a.Log.Method("GetDeviceFailure", nil)
 	return acceptor.Device.State == enum.StateFailed
 }
 
-func (m *MethodsObj) GetDeviceJammed() bool {
+func (m *MethodDeviceGetObj) Jammed() bool {
 	m.a.Log.Method("GetDeviceJammed", nil)
 	return acceptor.Device.Jammed
 }
 
-func (m *MethodsObj) GetDeviceModel() int {
+func (m *MethodDeviceGetObj) Model() int {
 	m.a.Log.Method("GetDeviceModel", nil)
 	return acceptor.Device.Model
 }
 
-func (m *MethodsObj) GetDevicePaused() bool {
+func (m *MethodDeviceGetObj) Paused() bool {
 	m.a.Log.Method("GetDevicePaused", nil)
 	return acceptor.Device.Paused
 }
 
-func (m *MethodsObj) GetDevicePortName() string {
+func (m *MethodDeviceGetObj) PortName() string {
 	m.a.Log.Method("GetDevicePortName", nil)
 	return m.a.port.PortName
 }
 
-func (m *MethodsObj) GetDevicePowerUp() enum.PowerUpType {
+func (m *MethodDeviceGetObj) PowerUp() enum.PowerUpType {
 	m.a.Log.Method("GetDevicePowerUp", nil)
 	return acceptor.Device.PowerUp
 }
 
-func (m *MethodsObj) GetDeviceResets() int {
+func (m *MethodDeviceGetObj) Resets() int {
 	m.a.Log.Method("GetDeviceResets", nil)
 
 	err := acceptor.Verify(acceptor.Cap.DeviceResets, "DeviceResets")
@@ -128,12 +121,12 @@ func (m *MethodsObj) GetDeviceResets() int {
 	return resets
 }
 
-func (m *MethodsObj) GetDeviceRevision() int {
+func (m *MethodDeviceGetObj) Revision() int {
 	m.a.Log.Method("GetDeviceRevision", nil)
 	return acceptor.Device.Revision
 }
 
-func (m *MethodsObj) GetDeviceSerialNumber() string {
+func (m *MethodDeviceGetObj) SerialNumber() string {
 	m.a.Log.Method("GetDeviceSerialNumber", nil)
 
 	err := acceptor.Verify(acceptor.Cap.DeviceSerialNumber, "DeviceSerialNumber")
@@ -159,17 +152,17 @@ func (m *MethodsObj) GetDeviceSerialNumber() string {
 	return s
 }
 
-func (m *MethodsObj) GetDeviceStalled() bool {
+func (m *MethodDeviceGetObj) Stalled() bool {
 	m.a.Log.Method("GetDeviceStalled", nil)
 	return acceptor.Device.Stalled
 }
 
-func (m *MethodsObj) GetDeviceState() enum.StateType {
+func (m *MethodDeviceGetObj) State() enum.StateType {
 	m.a.Log.Method("GetDeviceState", nil)
 	return acceptor.Device.State
 }
 
-func (m *MethodsObj) GetDeviceType() string {
+func (m *MethodDeviceGetObj) Type() string {
 	m.a.Log.Method("GetDeviceType", nil)
 
 	err := acceptor.Verify(acceptor.Cap.DeviceType, "DeviceType")
@@ -197,4 +190,31 @@ func (m *MethodsObj) GetDeviceType() string {
 	}
 
 	return ""
+}
+
+//
+
+func (m *MethodDeviceGetObj) CapPaused() bool {
+	m.a.Log.Method("GetCapDevicePaused", nil)
+	return acceptor.Cap.DevicePaused
+}
+
+func (m *MethodDeviceGetObj) CapSoftReset() bool {
+	m.a.Log.Method("GetCapDeviceSoftReset", nil)
+	return acceptor.Cap.DeviceSoftReset
+}
+
+func (m *MethodDeviceGetObj) CapType() bool {
+	m.a.Log.Method("GetCapDeviceType", nil)
+	return acceptor.Cap.DeviceType
+}
+
+func (m *MethodDeviceGetObj) CapResets() bool {
+	m.a.Log.Method("GetCapDeviceResets", nil)
+	return acceptor.Cap.DeviceResets
+}
+
+func (m *MethodDeviceGetObj) CapSerialNumber() bool {
+	m.a.Log.Method("GetCapDeviceSerialNumber", nil)
+	return acceptor.Cap.DeviceSerialNumber
 }

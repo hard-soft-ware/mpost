@@ -7,12 +7,28 @@ import (
 
 ////////////////////////////////////
 
-func (m *MethodsObj) GetCapOrientationExt() bool {
-	m.a.Log.Method("GetCapOrientationExt", nil)
-	return acceptor.Cap.OrientationExt
+type MethodsOrientationObj struct {
+	a   *MpostObj
+	Get MethodsOrientationGetObj
+	Set MethodsOrientationSetObj
 }
 
-func (m *MethodsObj) GetEscrowOrientation() enum.OrientationType {
+type MethodsOrientationGetObj struct{ a *MpostObj }
+type MethodsOrientationSetObj struct{ a *MpostObj }
+
+func (m *MethodsObj) newOrientation() *MethodsOrientationObj {
+	obj := MethodsOrientationObj{}
+
+	obj.a = m.a
+	obj.Get.a = m.a
+	obj.Set.a = m.a
+
+	return &obj
+}
+
+////////////////
+
+func (m *MethodsOrientationGetObj) Escrow() enum.OrientationType {
 	m.a.Log.Method("GetEscrowOrientation", nil)
 	if acceptor.Cap.OrientationExt {
 		return acceptor.EscrowOrientation
@@ -20,22 +36,31 @@ func (m *MethodsObj) GetEscrowOrientation() enum.OrientationType {
 	return enum.OrientationUnknownOrientation
 }
 
-func (m *MethodsObj) GetOrientationControl() enum.OrientationControlType {
+func (m *MethodsOrientationGetObj) Control() enum.OrientationControlType {
 	m.a.Log.Method("GetOrientationControl", nil)
 	return acceptor.OrientationCtl
 }
 
-func (m *MethodsObj) SetOrientationControl(v enum.OrientationControlType) {
-	m.a.Log.Method("SetOrientationControl", nil)
-	acceptor.OrientationCtl = v
-}
-
-func (m *MethodsObj) GetOrientationCtlExt() enum.OrientationControlType {
+func (m *MethodsOrientationGetObj) ControlEscrow() enum.OrientationControlType {
 	m.a.Log.Method("GetOrientationCtlExt", nil)
 	return acceptor.OrientationCtlExt
 }
 
-func (m *MethodsObj) SetOrientationCtlExt(v enum.OrientationControlType) {
+//
+
+func (m *MethodsOrientationGetObj) CapEscrow() bool {
+	m.a.Log.Method("GetCapOrientationExt", nil)
+	return acceptor.Cap.OrientationExt
+}
+
+////
+
+func (m *MethodsOrientationSetObj) Control(v enum.OrientationControlType) {
+	m.a.Log.Method("SetOrientationControl", nil)
+	acceptor.OrientationCtl = v
+}
+
+func (m *MethodsOrientationSetObj) ControlEscrow(v enum.OrientationControlType) {
 	m.a.Log.Method("SetOrientationCtlExt", nil)
 	acceptor.OrientationCtlExt = v
 }

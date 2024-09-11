@@ -7,17 +7,25 @@ import (
 
 ////////////////////////////////////
 
-func (m *MethodsObj) GetCapVariantID() bool {
-	m.a.Log.Method("GetCapVariantID", nil)
-	return acceptor.Cap.VariantID
+type MethodsVariantObj struct {
+	a   *MpostObj
+	Get MethodVariantGetObj
 }
 
-func (m *MethodsObj) GetCapVariantPN() bool {
-	m.a.Log.Method("GetCapVariantPN", nil)
-	return acceptor.Cap.VariantPN
+type MethodVariantGetObj struct{ a *MpostObj }
+
+func (m *MethodsObj) newVariant() *MethodsVariantObj {
+	obj := MethodsVariantObj{}
+
+	obj.a = m.a
+	obj.Get.a = m.a
+
+	return &obj
 }
 
-func (m *MethodsObj) GetVariantNames() []string {
+////////////////
+
+func (m *MethodVariantGetObj) Names() []string {
 	m.a.Log.Method("GetVariantNames", nil)
 
 	err := acceptor.Verify(true, "VariantNames")
@@ -49,7 +57,7 @@ func (m *MethodsObj) GetVariantNames() []string {
 	return names
 }
 
-func (m *MethodsObj) GetVariantID() string {
+func (m *MethodVariantGetObj) ID() string {
 	m.a.Log.Method("GetVariantID", nil)
 
 	err := acceptor.Verify(acceptor.Cap.VariantID, "VariantID")
@@ -73,7 +81,7 @@ func (m *MethodsObj) GetVariantID() string {
 	return ""
 }
 
-func (m *MethodsObj) GetVariantPN() string {
+func (m *MethodVariantGetObj) PN() string {
 	m.a.Log.Method("GetVariantPN", nil)
 
 	err := acceptor.Verify(acceptor.Cap.VariantPN, "VariantPN")
@@ -95,4 +103,16 @@ func (m *MethodsObj) GetVariantPN() string {
 	}
 
 	return ""
+}
+
+//
+
+func (m *MethodVariantGetObj) CapID() bool {
+	m.a.Log.Method("GetCapVariantID", nil)
+	return acceptor.Cap.VariantID
+}
+
+func (m *MethodVariantGetObj) CapPN() bool {
+	m.a.Log.Method("GetCapVariantPN", nil)
+	return acceptor.Cap.VariantPN
 }

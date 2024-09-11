@@ -105,11 +105,11 @@ func TestConnect(t *testing.T) {
 				t.Log("Invalid Connect")
 				return
 			}
-			t.Log(a.Method.GetDeviceSerialNumber())
+			t.Log(a.Method.Device.Get.SerialNumber())
 			t.Log(a.Method.Bill.Get.Self())
 			t.Log(a.Method.Application.Get.PN())
 			t.Log(a.Method.Get.BootPN())
-			t.Log(a.Method.GetDeviceType())
+			t.Log(a.Method.Device.Get.Type())
 
 			t.Log(a.Method.Get.BNFStatus().String())
 
