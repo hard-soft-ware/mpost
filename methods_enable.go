@@ -63,8 +63,32 @@ func (m *MethodsEnableGetObj) BarCode() bool {
 	return m.a.Method.BarCode.Get.Enable()
 }
 
+func (m *MethodsEnableGetObj) BillType() []bool {
+	return m.a.Method.Bill.Get.EnablesType()
+}
+
+func (m *MethodsEnableGetObj) BillValue() []bool {
+	return m.a.Method.Bill.Get.EnablesValue()
+}
+
+func (m *MethodsEnableGetObj) Coupon() bool {
+	return m.a.Method.Coupon.Get.Enable()
+}
+
 //
 
 func (m *MethodsEnableSetObj) BarCode(v bool) {
 	m.a.Method.BarCode.Set.Enable(v)
+}
+
+func (m *MethodsBillSetObj) BillType(v []bool) {
+	m.a.Method.Bill.Set.EnablesType(v)
+}
+
+func (m *MethodsBillSetObj) BillValue(v []bool) {
+	m.a.Method.Bill.Set.EnablesValue(v)
+}
+
+func (m *MethodCouponSetObj) Coupon(v bool) {
+	m.a.Method.Coupon.Set.Enable(v)
 }

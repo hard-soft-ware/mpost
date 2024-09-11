@@ -10,22 +10,55 @@ import (
 
 ////////////////////////////////////
 
-func (m *MethodsObj) GetBill() bill.BillStruct {
+type MethodsBillObj struct {
+	a   *MpostObj
+	Get MethodsBillGetObj
+	Set MethodsBillSetObj
+}
+
+type MethodsBillGetObj struct{ a *MpostObj }
+type MethodsBillSetObj struct{ a *MpostObj }
+
+func (m *MethodsObj) newBill() *MethodsBillObj {
+	obj := MethodsBillObj{}
+
+	obj.a = m.a
+	obj.Get.a = m.a
+	obj.Set.a = m.a
+
+	return &obj
+}
+
+////////////////
+
+func (m *MethodsBillGetObj) Self() bill.BillStruct {
 	m.a.Log.Method("GetBill", nil)
 	return bill.Bill
 }
 
-func (m *MethodsObj) GetBillTypes() []bill.BillStruct {
+func (m *MethodsBillGetObj) Types() []bill.BillStruct {
 	m.a.Log.Method("GetBillTypes", nil)
 	return bill.Types
 }
 
-func (m *MethodsObj) GetBillTypeEnables() []bool {
+func (m *MethodsBillGetObj) Values() []bill.BillStruct {
+	m.a.Log.Method("GetBillValues", nil)
+	return bill.Values
+}
+
+func (m *MethodsBillGetObj) EnablesType() []bool {
 	m.a.Log.Method("GetBillTypeEnables", nil)
 	return bill.TypeEnables
 }
 
-func (m *MethodsObj) SetBillTypeEnables(v []bool) {
+func (m *MethodsBillGetObj) EnablesValue() []bool {
+	m.a.Log.Method("GetBillValueEnables", nil)
+	return bill.ValueEnables
+}
+
+//
+
+func (m *MethodsBillSetObj) EnablesType(v []bool) {
 	m.a.Log.Method("SetBillTypeEnables", nil)
 
 	if !acceptor.Connected {
@@ -59,17 +92,7 @@ func (m *MethodsObj) SetBillTypeEnables(v []bool) {
 	}
 }
 
-func (m *MethodsObj) GetBillValues() []bill.BillStruct {
-	m.a.Log.Method("GetBillValues", nil)
-	return bill.Values
-}
-
-func (m *MethodsObj) GetBillValueEnables() []bool {
-	m.a.Log.Method("GetBillValueEnables", nil)
-	return bill.ValueEnables
-}
-
-func (m *MethodsObj) SetBillValueEnables(v []bool) {
+func (m *MethodsBillSetObj) EnablesValue(v []bool) {
 	m.a.Log.Method("SetBillValueEnables", nil)
 	bill.ValueEnables = v
 

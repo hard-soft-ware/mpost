@@ -21,6 +21,9 @@ type MethodsObj struct {
 	Application *MethodsApplicationObj
 	Audit       *MethodsAuditObj
 	BarCode     *MethodsBarCodeObj
+	Bill        *MethodsBillObj
+	CashBox     *MethodsCashBoxObj
+	Coupon      *MethodsCouponObj
 }
 
 type MethodsGetObj struct{ a *MpostObj }
@@ -40,6 +43,9 @@ func (a *MpostObj) newMethods() *MethodsObj {
 	obj.Application = obj.newApplication()
 	obj.Audit = obj.newAudit()
 	obj.BarCode = obj.newBarCode()
+	obj.Bill = obj.newBill()
+	obj.CashBox = obj.newCashBox()
+	obj.Coupon = obj.newCoupon()
 
 	return &obj
 }

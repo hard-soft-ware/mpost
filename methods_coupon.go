@@ -4,22 +4,47 @@ import "github.com/hard-soft-ware/mpost/acceptor"
 
 ////////////////////////////////////
 
-func (m *MethodsObj) GetCapCouponExt() bool {
-	m.a.Log.Method("GetCapCouponExt", nil)
-	return acceptor.Cap.CouponExt
+type MethodsCouponObj struct {
+	a   *MpostObj
+	Get MethodCouponGetObj
+	Set MethodCouponSetObj
 }
 
-func (m *MethodsObj) GetCoupon() *CouponObj {
+type MethodCouponGetObj struct{ a *MpostObj }
+type MethodCouponSetObj struct{ a *MpostObj }
+
+func (m *MethodsObj) newCoupon() *MethodsCouponObj {
+	obj := MethodsCouponObj{}
+
+	obj.a = m.a
+	obj.Get.a = m.a
+	obj.Set.a = m.a
+
+	return &obj
+}
+
+////////////////
+
+func (m *MethodCouponGetObj) Self() *CouponObj {
 	m.a.Log.Method("GetCoupon", nil)
 	return m.a.coupon
 }
 
-func (m *MethodsObj) GetEnableCouponExt() bool {
+func (m *MethodCouponGetObj) Enable() bool {
 	m.a.Log.Method("GetEnableCouponExt", nil)
 	return acceptor.Enable.CouponExt
 }
 
-func (m *MethodsObj) SetEnableCouponExt(v bool) {
+//
+
+func (m *MethodCouponGetObj) Cap() bool {
+	m.a.Log.Method("GetCapCouponExt", nil)
+	return acceptor.Cap.CouponExt
+}
+
+////
+
+func (m *MethodCouponSetObj) Enable(v bool) {
 	m.a.Log.Method("SetEnableCouponExt", nil)
 	acceptor.Enable.CouponExt = v
 }

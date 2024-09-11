@@ -8,22 +8,58 @@ import (
 
 ////////////////////////////////////
 
-func (m *MethodsObj) GetCapCashBoxTotal() bool {
-	m.a.Log.Method("GetCapCashBoxTotal", nil)
-	return acceptor.Cap.CashBoxTotal
+type MethodsCashBoxObj struct {
+	a   *MpostObj
+	Get MethodCashBoxGetObj
 }
 
-func (m *MethodsObj) GetCashBoxAttached() bool {
+type MethodCashBoxGetObj struct{ a *MpostObj }
+
+func (m *MethodsObj) newCashBox() *MethodsCashBoxObj {
+	obj := MethodsCashBoxObj{}
+
+	obj.a = m.a
+	obj.Get.a = m.a
+
+	return &obj
+}
+
+////////////////
+
+func (m *MethodsCashBoxObj) ClearTotal() (err error) {
+	m.a.Log.Method("ClearCashBoxTotal", nil)
+
+	if !acceptor.Connected {
+		err = errors.New("ClearCashBoxTotal called when not connected")
+		m.a.Log.Err("ClearCashBoxTotal", err)
+		return
+	}
+
+	payload := []byte{consts.CmdCalibrate.Byte(), 0x00, 0x00, consts.CmdAuxCashBoxTotal.Byte()}
+
+	reply, err := m.a.SendSynchronousCommand(payload)
+	if err != nil {
+		m.a.Log.Err("ClearCashBoxTotal", err)
+		return
+	}
+
+	m.a.dataLinkLayer.ProcessReply(reply)
+	return
+}
+
+////
+
+func (m *MethodCashBoxGetObj) Attached() bool {
 	m.a.Log.Method("GetCashBoxAttached", nil)
 	return acceptor.Cash.BoxAttached
 }
 
-func (m *MethodsObj) GetCashBoxFull() bool {
+func (m *MethodCashBoxGetObj) Full() bool {
 	m.a.Log.Method("GetCashBoxFull", nil)
 	return acceptor.Cash.BoxFull
 }
 
-func (m *MethodsObj) GetCashBoxTotal() int {
+func (m *MethodCashBoxGetObj) Total() int {
 	m.a.Log.Method("GetCashBoxTotal", nil)
 
 	err := acceptor.Verify(acceptor.Cap.CashBoxTotal, "GetCashBoxTotal")
@@ -54,23 +90,9 @@ func (m *MethodsObj) GetCashBoxTotal() int {
 	return total
 }
 
-func (m *MethodsObj) ClearCashBoxTotal() (err error) {
-	m.a.Log.Method("ClearCashBoxTotal", nil)
+//
 
-	if !acceptor.Connected {
-		err = errors.New("ClearCashBoxTotal called when not connected")
-		m.a.Log.Err("ClearCashBoxTotal", err)
-		return
-	}
-
-	payload := []byte{consts.CmdCalibrate.Byte(), 0x00, 0x00, consts.CmdAuxCashBoxTotal.Byte()}
-
-	reply, err := m.a.SendSynchronousCommand(payload)
-	if err != nil {
-		m.a.Log.Err("ClearCashBoxTotal", err)
-		return
-	}
-
-	m.a.dataLinkLayer.ProcessReply(reply)
-	return
+func (m *MethodCashBoxGetObj) CapTotal() bool {
+	m.a.Log.Method("GetCapCashBoxTotal", nil)
+	return acceptor.Cap.CashBoxTotal
 }
