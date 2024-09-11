@@ -56,11 +56,11 @@ func (m *MethodsOrientationGetObj) CapEscrow() bool {
 ////
 
 func (m *MethodsOrientationSetObj) Control(v enum.OrientationControlType) {
-	m.a.Log.Method("SetOrientationControl", nil)
+	m.a.Log.Method("SetOrientationControl", v)
 	acceptor.OrientationCtl = v
 }
 
 func (m *MethodsOrientationSetObj) ControlEscrow(v enum.OrientationControlType) {
-	m.a.Log.Method("SetOrientationCtlExt", nil)
+	m.a.Log.Method("SetOrientationCtlExt", v)
 	acceptor.OrientationCtlExt = v
 }

@@ -45,6 +45,6 @@ func (m *MethodCouponGetObj) Cap() bool {
 ////
 
 func (m *MethodCouponSetObj) Enable(v bool) {
-	m.a.Log.Method("SetEnableCouponExt", nil)
+	m.a.Log.Method("SetEnableCouponExt", v)
 	acceptor.Enable.CouponExt = v
 }

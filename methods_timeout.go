@@ -41,11 +41,11 @@ func (m *MethodsTimeoutGetObj) Download() time.Duration {
 //
 
 func (m *MethodsTimeoutSetObj) Transaction(v time.Duration) {
-	m.a.Log.Method("SetTransactionTimeout", nil)
+	m.a.Log.Method("SetTransactionTimeout", v)
 	acceptor.Timeout.Transaction = v
 }
 
 func (m *MethodsTimeoutSetObj) Download(v time.Duration) {
-	m.a.Log.Method("SetDownloadTimeout", nil)
+	m.a.Log.Method("SetDownloadTimeout", v)
 	acceptor.Timeout.Download = v
 }

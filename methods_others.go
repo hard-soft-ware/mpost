@@ -166,11 +166,11 @@ func (m *MethodsOtherObj) GetCapBootPN() bool {
 ////
 
 func (m *MethodsOtherObj) SetAutoStack(v bool) {
-	m.a.Log.Method("SetAutoStack", nil)
+	m.a.Log.Method("SetAutoStack", v)
 	acceptor.AutoStack = v
 }
 
 func (m *MethodsOtherObj) SetHighSecurity(v bool) {
-	m.a.Log.Method("SetHighSecurity", nil)
+	m.a.Log.Method("SetHighSecurity", v)
 	acceptor.HighSecurity = v
 }

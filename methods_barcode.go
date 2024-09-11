@@ -51,6 +51,6 @@ func (m *MethodBarCodeGetObj) CapExt() bool {
 ////
 
 func (m *MethodBarCodeSetObj) Enable(v bool) {
-	m.a.Log.Method("SetEnableBarCodes", nil)
+	m.a.Log.Method("SetEnableBarCodes", v)
 	acceptor.Enable.BarCodes = v
 }

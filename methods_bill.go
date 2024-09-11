@@ -59,7 +59,7 @@ func (m *MethodsBillGetObj) EnablesValue() []bool {
 //
 
 func (m *MethodsBillSetObj) EnablesType(v []bool) {
-	m.a.Log.Method("SetBillTypeEnables", nil)
+	m.a.Log.Method("SetBillTypeEnables", v)
 
 	if !acceptor.Connected {
 		m.a.Log.Err("SetBillTypeEnables", errors.New("calling BillTypeEnables not allowed when not connected"))
@@ -93,7 +93,7 @@ func (m *MethodsBillSetObj) EnablesType(v []bool) {
 }
 
 func (m *MethodsBillSetObj) EnablesValue(v []bool) {
-	m.a.Log.Method("SetBillValueEnables", nil)
+	m.a.Log.Method("SetBillValueEnables", v)
 	bill.ValueEnables = v
 
 	for _, enabled := range bill.ValueEnables {

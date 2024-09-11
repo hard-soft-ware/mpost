@@ -43,17 +43,17 @@ func (m *MethodsEnableGetObj) NoPush() bool {
 //
 
 func (m *MethodsEnableSetObj) Acceptance(v bool) {
-	m.a.Log.Method("SetEnableAcceptance", nil)
+	m.a.Log.Method("SetEnableAcceptance", v)
 	acceptor.Enable.Acceptance = v
 }
 
 func (m *MethodsEnableSetObj) Bookmarks(v bool) {
-	m.a.Log.Method("SetEnableBookmarks", nil)
+	m.a.Log.Method("SetEnableBookmarks", v)
 	acceptor.Enable.Bookmarks = v
 }
 
 func (m *MethodsEnableSetObj) NoPush(v bool) {
-	m.a.Log.Method("SetEnableNoPush", nil)
+	m.a.Log.Method("SetEnableNoPush", v)
 	acceptor.Enable.NoPush = v
 }
 
