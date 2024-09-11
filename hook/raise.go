@@ -41,8 +41,8 @@ func (r RaiseObj) run(e enum.EventType, b int) {
 ////////
 
 func (r RaiseObj) InvalidCommand() {
-	r.run(enum.EventInvalidCommand, 0)
 	InvalidCommand = false
+	r.run(enum.EventInvalidCommand, 0)
 }
 
 //
@@ -52,9 +52,9 @@ func (r RaiseObj) Connected() {
 		return
 	}
 
-	r.run(enum.EventConnected, 0)
 	Disconnected = true
 	Connected = false
+	r.run(enum.EventConnected, 0)
 }
 
 func (r RaiseObj) Disconnected() {
@@ -62,51 +62,51 @@ func (r RaiseObj) Disconnected() {
 		return
 	}
 
-	r.run(enum.EventDisconnected, 0)
 	Disconnected = false
 	Connected = true
+	r.run(enum.EventDisconnected, 0)
 }
 
 func (r RaiseObj) PowerUp() {
-	r.run(enum.EventPowerUp, 0)
 	PowerUp = false
+	r.run(enum.EventPowerUp, 0)
 }
 
 func (r RaiseObj) Returned() {
-	r.run(enum.EventReturned, 0)
 	Returned = false
+	r.run(enum.EventReturned, 0)
 }
 
 func (r RaiseObj) Rejected() {
-	r.run(enum.EventRejected, 0)
 	Rejected = false
+	r.run(enum.EventRejected, 0)
 }
 
 func (r RaiseObj) Cheated() {
-	r.run(enum.EventCheated, 0)
 	Cheated = false
+	r.run(enum.EventCheated, 0)
 }
 
 //
 
 func (r RaiseObj) Stacked() {
-	r.run(enum.EventStacked, 0)
 	Stacked = false
+	r.run(enum.EventStacked, 0)
 }
 
 func (r RaiseObj) StackerFull() {
-	r.run(enum.EventStackerFull, 0)
 	StackerFull = false
+	r.run(enum.EventStackerFull, 0)
 }
 
 //
 
 func (r RaiseObj) PUPEscrow() {
-	r.run(enum.EventPUPEscrow, 0)
 	PUPEscrow = false
+	r.run(enum.EventPUPEscrow, 0)
 }
 
 func (r RaiseObj) Escrow() {
-	r.run(enum.EventEscrow, 0)
 	Escrow = false
+	r.run(enum.EventEscrow, 0)
 }
