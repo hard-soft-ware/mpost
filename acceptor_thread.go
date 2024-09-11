@@ -100,6 +100,13 @@ func (a *CAcceptor) MessageLoopThread() {
 				payload := make([]byte, 4)
 				acceptor.ConstructOmnibusCommand(payload, consts.CmdOmnibus, 1, bill.TypeEnables)
 
+				if !a.ss {
+					a.ss = true
+				} else {
+					a.ss = false
+					payload[0] += 1
+				}
+
 				a.dataLinkLayer.SendPacket(payload)
 
 				reply, err := a.dataLinkLayer.ReceiveReply()

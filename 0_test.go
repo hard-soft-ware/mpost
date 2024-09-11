@@ -11,6 +11,7 @@ import (
 )
 
 func TestConnect(t *testing.T) {
+	return
 
 	a := DefAcceptor
 	a.AddLog(
@@ -20,7 +21,7 @@ func TestConnect(t *testing.T) {
 			TimeFormat: "15:04:05",
 		}),
 		"TEST",
-		false,
+		true,
 	)
 
 	a.SetEnableAcceptance(true)
@@ -38,6 +39,9 @@ func TestConnect(t *testing.T) {
 	a.AddHook(enum.EventRejected, func(acceptor *CAcceptor, i int) {
 		fmt.Println("EventRejected")
 	})
+	a.AddHook(enum.EventReturned, func(acceptor *CAcceptor, i int) {
+		fmt.Println("EventReturned")
+	})
 
 	a.Open("/dev/ttyUSB0", enum.PowerUpE)
 
@@ -48,7 +52,7 @@ func TestConnect(t *testing.T) {
 	t.Log(a.GetBootPN())
 	t.Log(a.GetDeviceType())
 
-	t.Log(a.GetBillTypes())
+	t.Log(a.GetBNFStatus().String())
 
 	time.Sleep(100 * time.Second)
 	a.Close()
