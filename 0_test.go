@@ -86,6 +86,11 @@ func TestConnect(t *testing.T) {
 		})
 	}
 
+	if len(ports[0]) < 11 || ports[0][:11] != "/dev/ttyUSB" {
+		t.Log("Invalid COM-port")
+		return
+	}
+
 	fmt.Println("Connect to:\t\t" + ports[0])
 	a.Open(ports[0], enum.PowerUpE)
 
