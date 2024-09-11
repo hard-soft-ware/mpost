@@ -5,6 +5,7 @@ import (
 	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 	"github.com/hard-soft-ware/mpost/serial"
 )
 
@@ -33,7 +34,7 @@ func (a *CAcceptor) Open(portName string, powerUp enum.PowerUpType) error {
 }
 
 func (a *CAcceptor) Close() {
-	a.RaiseDisconnectedEvent()
+	hook.Raise.Disconnected()
 	a.port.Close()
 
 	defer a.CtxCancel()

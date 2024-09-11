@@ -3,6 +3,7 @@ package mpost
 import (
 	"context"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 	"github.com/hard-soft-ware/mpost/serial"
 	"github.com/rs/zerolog"
 )
@@ -52,6 +53,9 @@ func init() {
 
 func (a *CAcceptor) AddLog(log zerolog.Logger, root string, printBytes bool) {
 	a.log = NewLog(log, root, printBytes)
+	hook.Raise.Log = func(s string, i int) {
+		a.log.Msg(s)
+	}
 }
 
 func (a *CAcceptor) AddHook(ev enum.EventType, h EventHandler) {

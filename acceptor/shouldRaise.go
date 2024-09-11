@@ -3,8 +3,6 @@ package acceptor
 ////////////////////////////////////
 
 type ShouldRaiseStruct struct {
-	ConnectedEvent         bool
-	EscrowEvent            bool
 	PUPEscrowEvent         bool
 	StackedEvent           bool
 	ReturnedEvent          bool

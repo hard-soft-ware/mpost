@@ -4,6 +4,7 @@ import (
 	"github.com/hard-soft-ware/mpost/acceptor"
 	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 )
 
 ////////////////////////////////////
@@ -24,10 +25,10 @@ func (a *CAcceptor) processData0(data0 byte) {
 	if (data0 & 0x04) != 0 {
 		acceptor.Device.State = enum.StateEscrow
 		if acceptor.AutoStack {
-			acceptor.ShouldRaise.EscrowEvent = false
+			hook.Escrow = false
 		}
 	} else {
-		acceptor.ShouldRaise.EscrowEvent = true
+		hook.Escrow = true
 	}
 
 	if (data0 & 0x08) != 0 {
@@ -37,7 +38,7 @@ func (a *CAcceptor) processData0(data0 byte) {
 	if (data0 & 0x10) != 0 {
 		acceptor.Device.State = enum.StateStacked
 	} else {
-		acceptor.ShouldRaise.StackedEvent = true
+		hook.Stacked = true
 	}
 
 	if (data0 & 0x20) != 0 {
@@ -48,7 +49,7 @@ func (a *CAcceptor) processData0(data0 byte) {
 		acceptor.Device.State = enum.StateReturned
 		bill.Reset() // Resetting the bill
 	} else {
-		acceptor.ShouldRaise.ReturnedEvent = true
+		hook.Returned = true
 	}
 }
 
@@ -57,28 +58,28 @@ func (a *CAcceptor) processData1(data1 byte) {
 		acceptor.IsCheated = true
 	} else {
 		acceptor.IsCheated = false
-		acceptor.ShouldRaise.CheatedEvent = true
+		hook.Cheated = true
 	}
 
 	if (data1 & 0x02) != 0 {
 		acceptor.Device.State = enum.StateRejected
 	} else {
-		acceptor.ShouldRaise.RejectedEvent = true
+		hook.Rejected = true
 	}
 
 	if (data1 & 0x04) != 0 {
 		acceptor.Device.Jammed = true
-		acceptor.ShouldRaise.JamDetectedEvent = true
+		hook.JamDetected = true
 	} else {
 		acceptor.Device.Jammed = false
-		acceptor.ShouldRaise.JamClearedEvent = true
+		hook.JamCleared = true
 	}
 
 	if (data1 & 0x08) != 0 {
 		acceptor.Cash.BoxFull = true
 	} else {
 		acceptor.Cash.BoxFull = false
-		acceptor.ShouldRaise.StackerFullEvent = true
+		hook.StackerFull = true
 	}
 
 	acceptor.Cash.BoxAttached = (data1 & 0x10) != 0
@@ -90,20 +91,20 @@ func (a *CAcceptor) processData1(data1 byte) {
 
 	if (data1 & 0x20) != 0 {
 		acceptor.Device.Paused = true
-		acceptor.ShouldRaise.PauseClearedEvent = true
+		hook.PauseCleared = true
 	} else {
 		acceptor.Device.Paused = false
-		acceptor.ShouldRaise.PauseDetectedEvent = true
+		hook.PauseDetected = true
 	}
 
 	if (data1 & 0x40) != 0 {
 		acceptor.Device.State = enum.StateCalibrating
-		if acceptor.ShouldRaise.CalibrateProgressEvent {
-			a.RaiseCalibrateProgressEvent()
+		if hook.CalibrateProgress {
+			hook.Raise.Calibrate.Progress()
 		}
 	} else {
 		if acceptor.Device.State == enum.StateCalibrating {
-			acceptor.ShouldRaise.CalibrateFinishEvent = true
+			hook.CalibrateFinish = true
 			acceptor.Device.State = enum.StateIdling
 		}
 	}
@@ -140,7 +141,7 @@ func (a *CAcceptor) processData2(data2 byte) {
 		acceptor.IsPoweredUp = true
 		a.docType = enum.DocumentNoValue
 	} else {
-		acceptor.ShouldRaise.PowerUpEvent = true
+		hook.PowerUp = true
 		if !acceptor.IsVeryFirstPoll {
 			acceptor.IsPoweredUp = false
 		}
@@ -150,7 +151,7 @@ func (a *CAcceptor) processData2(data2 byte) {
 		acceptor.IsInvalidCommand = true
 	} else {
 		acceptor.IsInvalidCommand = false
-		acceptor.ShouldRaise.InvalidCommandEvent = true
+		hook.InvalidCommand = true
 	}
 
 	if (data2 & 0x04) != 0 {
@@ -161,9 +162,9 @@ func (a *CAcceptor) processData2(data2 byte) {
 func (a *CAcceptor) processData3(data3 byte) {
 	if (data3 & 0x01) != 0 {
 		acceptor.Device.State = enum.StateStalled
-		acceptor.ShouldRaise.StallClearedEvent = true
+		hook.StallCleared = true
 	} else {
-		acceptor.ShouldRaise.StallDetectedEvent = true
+		hook.StallDetected = true
 	}
 
 	if (data3 & 0x02) != 0 {

@@ -5,6 +5,7 @@ import (
 	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 	"time"
 )
 
@@ -26,9 +27,9 @@ func (a *CAcceptor) OpenThread() {
 	if acceptor.Device.State != enum.StateDownloadRestart {
 		a.SetUpBillTable()
 		acceptor.Connected = true
-		a.RaiseConnectedEvent()
+		hook.Raise.Connected()
 	} else {
-		a.RaiseDownloadRestartEvent()
+		hook.Raise.Download.Restart()
 	}
 }
 
@@ -82,7 +83,7 @@ func (a *CAcceptor) MessageLoopThread() {
 				timeoutStart = time.Now()
 				if acceptor.WasDisconnected {
 					acceptor.WasDisconnected = false
-					a.RaiseConnectedEvent()
+					hook.Raise.Connected()
 				}
 				if message.IsSynchronous {
 					a.replyQueue <- reply
@@ -124,9 +125,9 @@ func (a *CAcceptor) MessageLoopThread() {
 
 						if reply[2]&0x70 != 0x50 {
 							acceptor.Connected = true
-							a.RaiseConnectedEvent()
+							hook.Raise.Connected()
 						} else {
-							a.RaiseDownloadRestartEvent()
+							hook.Raise.Download.Restart()
 						}
 					}
 

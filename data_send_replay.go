@@ -7,6 +7,7 @@ import (
 	"github.com/hard-soft-ware/mpost/command"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 	"io"
 )
 
@@ -130,7 +131,7 @@ func (dl *CDataLinkLayer) ProcessReply(reply []byte) {
 
 	if acceptor.Device.State == enum.StateEscrow && acceptor.AutoStack {
 		dl.EscrowStack()
-		acceptor.ShouldRaise.EscrowEvent = false
+		hook.Escrow = false
 	}
 
 	if acceptor.Device.State != enum.StateEscrow && acceptor.Device.State != enum.StateStacking {

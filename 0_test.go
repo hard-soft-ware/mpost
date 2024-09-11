@@ -11,7 +11,7 @@ import (
 )
 
 func TestConnect(t *testing.T) {
-	return
+	//return
 
 	a := DefAcceptor
 	a.AddLog(

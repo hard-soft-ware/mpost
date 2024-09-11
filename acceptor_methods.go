@@ -7,6 +7,7 @@ import (
 	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
+	"github.com/hard-soft-ware/mpost/hook"
 	"time"
 )
 
@@ -913,9 +914,9 @@ func (a *CAcceptor) Calibrate() {
 	acceptor.SuppressStandardPoll = true
 	acceptor.Device.State = enum.StateCalibrateStart
 
-	a.RaiseCalibrateStartEvent()
+	hook.Raise.Calibrate.Start()
 
-	acceptor.ShouldRaise.CalibrateProgressEvent = true
+	hook.CalibrateProgress = true
 
 	startTickCount := time.Now()
 
@@ -931,7 +932,7 @@ func (a *CAcceptor) Calibrate() {
 		}
 
 		if time.Since(startTickCount) > CalibrateTimeout {
-			a.RaiseCalibrateFinishEvent()
+			hook.Raise.Calibrate.Finish()
 			return
 		}
 	}
