@@ -3,6 +3,7 @@ package mpost
 import (
 	"errors"
 	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
 	"github.com/hard-soft-ware/mpost/hook"
@@ -193,7 +194,7 @@ func (m *MethodsOtherObj) SetHighSecurity(v bool) {
 }
 
 func (m *MethodsOtherObj) SetBezel(bezel enum.BezelType) {
-	m.a.Log.Method("SetBezel", nil)
+	m.a.Log.Method("SetBezel", bezel)
 
 	if !acceptor.Connected {
 		m.a.Log.Err("SetBezel", errors.New("SetBezel called when not connected"))
@@ -201,5 +202,26 @@ func (m *MethodsOtherObj) SetBezel(bezel enum.BezelType) {
 	}
 
 	payload := []byte{consts.CmdAuxiliary.Byte(), byte(bezel), 0x00, consts.CmdAuxSetBezel.Byte()}
+	m.a.SendAsynchronousCommand(payload)
+}
+
+func (m *MethodsOtherObj) SetAssetNumber(asset string) {
+	m.a.Log.Method("SetAssetNumber", asset)
+
+	if !acceptor.Connected {
+		m.a.Log.Err("SetAssetNumber", errors.New("SetAssetNumber called when not connected"))
+		return
+	}
+
+	payload := make([]byte, 21)
+	acceptor.ConstructOmnibusCommand(payload, consts.CmdExpanded, 2, bill.TypeEnables)
+	payload[1] = 0x05 // Setting the sub command or option byte
+
+	maxLen := len(asset)
+	if maxLen > 16 {
+		maxLen = 16
+	}
+	copy(payload[5:], asset[:maxLen])
+
 	m.a.SendAsynchronousCommand(payload)
 }
