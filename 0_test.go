@@ -111,12 +111,15 @@ func TestConnect(t *testing.T) {
 				return
 			}
 			t.Log(a.Method.Device.Get.SerialNumber())
-			t.Log(a.Method.Bill.Get.Self())
 			t.Log(a.Method.Application.Get.PN())
 			t.Log(a.Method.Other.GetBootPN())
 			t.Log(a.Method.Device.Get.Type())
 
-			t.Log(a.Method.BNF.Get.Status().String())
+			t.Log(a.Method.Device.Get.State().String())
+			val := a.Method.Bill.Get.Values()
+			t.Log(val)
+
+			a.Method.Other.SoftReset()
 
 		default:
 			continue

@@ -64,6 +64,23 @@ func (m *MethodsOtherObj) Calibrate() {
 	}
 }
 
+func (m *MethodsOtherObj) SoftReset() {
+	m.a.Log.Method("SoftReset", nil)
+
+	err := acceptor.Verify(acceptor.Cap.DeviceSoftReset, "SoftReset")
+	if err != nil {
+		m.a.Log.Err("SoftReset", err)
+		return
+	}
+
+	m.a.DocType = enum.DocumentNoValue
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), 0x7F, 0x7F, 0x7F}
+	m.a.SendAsynchronousCommand(payload)
+	acceptor.InSoftResetWaitForReply = true
+	acceptor.InSoftResetOneSecondIgnore = true
+}
+
 ////
 
 func (m *MethodsOtherObj) GetConnected() bool {
