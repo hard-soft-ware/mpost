@@ -82,6 +82,18 @@ func (m *MethodsOtherObj) SoftReset() {
 	acceptor.InSoftResetOneSecondIgnore = true
 }
 
+func (m *MethodsOtherObj) RawTransaction(command []byte) ([]byte, error) {
+	m.a.Log.Method("RawTransaction", command)
+
+	reply, err := m.a.SendSynchronousCommand(command)
+	if err != nil {
+		m.a.Log.Err("RawTransaction", err)
+		return reply, err
+	}
+
+	return reply, nil
+}
+
 ////
 
 func (m *MethodsOtherObj) GetConnected() bool {
