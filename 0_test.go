@@ -26,7 +26,7 @@ func TestConnect(t *testing.T) {
 	}
 
 	a := New()
-	printByte := false
+	printByte := true
 	{
 		a.Log.Event = func(eventType enum.EventType, i int) {
 			if eventType == enum.EventJamCleared {
@@ -115,7 +115,14 @@ func TestConnect(t *testing.T) {
 			t.Log(a.Method.Other.GetBootPN())
 			t.Log(a.Method.Device.Get.Type())
 
+			t.Log(a.Method.Variant.Get.Names())
+
 			t.Log(a.Method.Device.Get.State().String())
+			val2 := a.Method.Bill.Get.Types()
+			for _, v := range val2 {
+				t.Log(v.GetCountry(), v.GetValue(), string(v.GetType()), string(v.GetSeries()), string(v.GetVersion()))
+			}
+
 			val := a.Method.Bill.Get.Values()
 			for _, v := range val {
 				t.Log(v.GetCountry(), v.GetValue(), string(v.GetType()), string(v.GetSeries()), string(v.GetVersion()))
