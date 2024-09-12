@@ -26,7 +26,7 @@ func TestConnect(t *testing.T) {
 	}
 
 	a := New()
-	printByte := true
+	printByte := false
 	{
 		a.Log.Event = func(eventType enum.EventType, i int) {
 			if eventType == enum.EventJamCleared {
@@ -117,9 +117,11 @@ func TestConnect(t *testing.T) {
 
 			t.Log(a.Method.Device.Get.State().String())
 			val := a.Method.Bill.Get.Values()
-			t.Log(val)
+			for _, v := range val {
+				t.Log(v.GetCountry(), v.GetValue(), string(v.GetType()), string(v.GetSeries()), string(v.GetVersion()))
+			}
 
-			a.Method.Other.SoftReset()
+			//a.Method.Other.SoftReset()
 
 		default:
 			continue

@@ -191,3 +191,15 @@ func (m *MethodsOtherObj) SetHighSecurity(v bool) {
 	m.a.Log.Method("SetHighSecurity", v)
 	acceptor.HighSecurity = v
 }
+
+func (m *MethodsOtherObj) SetBezel(bezel enum.BezelType) {
+	m.a.Log.Method("SetBezel", nil)
+
+	if !acceptor.Connected {
+		m.a.Log.Err("SetBezel", errors.New("SetBezel called when not connected"))
+		return
+	}
+
+	payload := []byte{consts.CmdAuxiliary.Byte(), byte(bezel), 0x00, consts.CmdAuxSetBezel.Byte()}
+	m.a.SendAsynchronousCommand(payload)
+}
