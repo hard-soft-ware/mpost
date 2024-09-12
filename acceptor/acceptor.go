@@ -40,6 +40,38 @@ var WasStopped bool
 var OpenThread bool
 var FlashDownloadThread bool
 
+//
+
+func Clean() {
+	Connected = false
+	AutoStack = false
+	HighSecurity = false
+
+	InSoftResetOneSecondIgnore = false
+	InSoftResetWaitForReply = false
+	ExpandedNoteReporting = false
+	IsQueryDeviceCapabilitiesSupported = false
+	IsCheated = false
+	IsPoweredUp = false
+	IsInvalidCommand = false
+	WasDocTypeSetOnEscrow = false
+	WasDisconnected = false
+	IsVeryFirstPoll = false
+	StopWorkerThread = false
+	StopOpenThread = false
+	StopFlashDownloadThread = false
+	SuppressStandardPoll = false
+	WasStopped = false
+	OpenThread = false
+	FlashDownloadThread = false
+
+	Cap = CapStruct{}
+	Cash = CashStruct{}
+	Device = DeviceStruct{}
+	Enable = EnableStruct{}
+	Timeout = TimeoutStruct{}
+}
+
 ////
 
 func ConstructOmnibusCommand(payload []byte, controlCode consts.CmdType, data0Index int, billTypeEnables []bool) {

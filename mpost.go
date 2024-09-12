@@ -2,6 +2,8 @@ package mpost
 
 import (
 	"context"
+	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/command"
 	"github.com/hard-soft-ware/mpost/enum"
 	"github.com/hard-soft-ware/mpost/hook"
 	"github.com/hard-soft-ware/mpost/serial"
@@ -31,6 +33,10 @@ func New() *MpostObj {
 		replyQueue:   make(chan []byte, 1),
 		Log:          newLog(),
 	}
+
+	acceptor.Clean()
+	command.Clean()
+	hook.Clean()
 
 	obj.Method = obj.newMethods()
 	obj.Ctx, obj.CtxCancel = context.WithCancel(context.Background())

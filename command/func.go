@@ -12,3 +12,7 @@ func CRC(command []byte) byte {
 
 	return result
 }
+
+func Clean() {
+	coin = false
+}
