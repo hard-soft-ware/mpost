@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"github.com/hard-soft-ware/mpost/acceptor"
+	"github.com/hard-soft-ware/mpost/bill"
 	"github.com/hard-soft-ware/mpost/command"
 	"github.com/hard-soft-ware/mpost/consts"
 	"github.com/hard-soft-ware/mpost/enum"
@@ -106,6 +107,8 @@ func (dl *dataObj) ProcessReply(reply []byte) {
 		case 0x02:
 			dl.ProcessExtendedOmnibusExpandedNoteReply(reply)
 			if acceptor.Device.State == enum.StateEscrow || (acceptor.Device.State == enum.StateStacked && !acceptor.WasDocTypeSetOnEscrow) {
+				bill.Bill = dl.Acceptor.parseBillData(reply, 10)
+
 				if acceptor.Cap.OrientationExt {
 					switch acceptor.OrientationCtlExt {
 					case enum.OrientationControlOneWay:

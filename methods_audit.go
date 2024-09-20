@@ -7,25 +7,7 @@ import (
 
 ////////////////////////////////////
 
-type MethodsAuditObj struct {
-	a   *MpostObj
-	Get MethodAuditGetObj
-}
-
-type MethodAuditGetObj struct{ a *MpostObj }
-
-func (m *MethodsObj) newAudit() *MethodsAuditObj {
-	obj := MethodsAuditObj{}
-
-	obj.a = m.a
-	obj.Get.a = m.a
-
-	return &obj
-}
-
-////////////////
-
-func (m *MethodAuditGetObj) LifeTimeTotals() []int {
+func (m *MethodsObj) GetAuditLifeTimeTotals() []int {
 	m.a.Log.Method("GetAuditLifeTimeTotals", nil)
 	values := []int{}
 
@@ -65,7 +47,7 @@ func (m *MethodAuditGetObj) LifeTimeTotals() []int {
 	return values
 }
 
-func (m *MethodAuditGetObj) Performance() []int {
+func (m *MethodsObj) GetAuditPerformance() []int {
 	m.a.Log.Method("GetAuditPerformance", nil)
 	values := []int{}
 
@@ -102,7 +84,7 @@ func (m *MethodAuditGetObj) Performance() []int {
 	return values
 }
 
-func (m *MethodAuditGetObj) QP() []int {
+func (m *MethodsObj) GetAuditQP() []int {
 	m.a.Log.Method("GetAuditQP", nil)
 	values := []int{}
 
@@ -141,7 +123,7 @@ func (m *MethodAuditGetObj) QP() []int {
 
 //
 
-func (m *MethodAuditGetObj) Cap() bool {
+func (m *MethodsObj) GetCapAudit() bool {
 	m.a.Log.Method("GetCapAudit", nil)
 	return acceptor.Cap.Audit
 }

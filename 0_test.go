@@ -26,10 +26,11 @@ func TestConnect(t *testing.T) {
 	}
 
 	a := New()
-	printByte := true
+	printByte := false
 	{
 		a.Log.Event = func(eventType enum.EventType, i int) {
 			if eventType == enum.EventJamCleared {
+				fmt.Println(a.Method.GetDeviceState().String(), a.Method.GetDeviceJammed(), a.Method.GetCashBoxAttached())
 				return
 			}
 			t.Log("Event", eventType.String(), i)
@@ -62,7 +63,7 @@ func TestConnect(t *testing.T) {
 		}
 	}
 
-	a.Method.Enable.Set.Acceptance(true)
+	a.Method.SetEnableAcceptance(true)
 
 	connCh := make(chan bool)
 
@@ -72,7 +73,8 @@ func TestConnect(t *testing.T) {
 	{
 		a.AddHook(enum.EventConnected, func(i int) {
 			connCh <- true
-			fmt.Println("HOOK\t\tConnect")
+
+			a.Method.SetAutoStack(true)
 		})
 		a.AddHook(enum.EventDisconnected, func(i int) {
 			connCh <- false
@@ -81,8 +83,11 @@ func TestConnect(t *testing.T) {
 		a.AddHook(enum.EventRejected, func(i int) {
 			fmt.Println("HOOK\t\tRejected")
 		})
-		a.AddHook(enum.EventReturned, func(i int) {
-			fmt.Println("HOOK\t\tReturned")
+		a.AddHook(enum.EventEscrow, func(i int) {
+			fmt.Println("EventEscrow", i)
+		})
+		a.AddHook(enum.EventStacked, func(i int) {
+			fmt.Println("EventStacked", a.Method.GetBill())
 		})
 	}
 
@@ -110,25 +115,18 @@ func TestConnect(t *testing.T) {
 				t.Log("Invalid Connect")
 				return
 			}
-			t.Log(a.Method.Device.Get.SerialNumber())
-			t.Log(a.Method.Application.Get.PN())
-			t.Log(a.Method.Other.GetBootPN())
-			t.Log(a.Method.Device.Get.Type())
+			t.Log(a.Method.GetDeviceSerialNumber())
 
-			t.Log(a.Method.Variant.Get.Names())
-
-			t.Log(a.Method.Device.Get.State().String())
-			val2 := a.Method.Bill.Get.Types()
+			t.Log(a.Method.GetDeviceState().String())
+			val2 := a.Method.GetBillTypes()
 			for _, v := range val2 {
 				t.Log(v.GetCountry(), v.GetValue(), string(v.GetType()), string(v.GetSeries()), string(v.GetVersion()))
 			}
 
-			val := a.Method.Bill.Get.Values()
+			val := a.Method.GetBillValues()
 			for _, v := range val {
 				t.Log(v.GetCountry(), v.GetValue(), string(v.GetType()), string(v.GetSeries()), string(v.GetVersion()))
 			}
-
-			//a.Method.Other.SoftReset()
 
 		default:
 			continue

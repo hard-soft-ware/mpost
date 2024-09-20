@@ -12,19 +12,7 @@ import (
 
 ////////////////////////////////////
 
-type MethodsOtherObj struct {
-	a *MpostObj
-}
-
-func (m *MethodsObj) newOther() *MethodsOtherObj {
-	obj := MethodsOtherObj{}
-	obj.a = m.a
-	return &obj
-}
-
-////////////////
-
-func (m *MethodsOtherObj) Calibrate() {
+func (m *MethodsObj) Calibrate() {
 	m.a.Log.Method("Calibrate", nil)
 	if !acceptor.Connected {
 		m.a.Log.Err("Calibrate", errors.New("Calibrate called when not connected"))
@@ -65,7 +53,7 @@ func (m *MethodsOtherObj) Calibrate() {
 	}
 }
 
-func (m *MethodsOtherObj) SoftReset() {
+func (m *MethodsObj) SoftReset() {
 	m.a.Log.Method("SoftReset", nil)
 
 	err := acceptor.Verify(acceptor.Cap.DeviceSoftReset, "SoftReset")
@@ -82,7 +70,7 @@ func (m *MethodsOtherObj) SoftReset() {
 	acceptor.InSoftResetOneSecondIgnore = true
 }
 
-func (m *MethodsOtherObj) RawTransaction(command []byte) ([]byte, error) {
+func (m *MethodsObj) RawTransaction(command []byte) ([]byte, error) {
 	m.a.Log.Method("RawTransaction", command)
 
 	reply, err := m.a.SendSynchronousCommand(command)
@@ -96,32 +84,32 @@ func (m *MethodsOtherObj) RawTransaction(command []byte) ([]byte, error) {
 
 ////
 
-func (m *MethodsOtherObj) GetConnected() bool {
+func (m *MethodsObj) GetConnected() bool {
 	m.a.Log.Method("GetConnected", nil)
 	return acceptor.Connected
 }
 
-func (m *MethodsOtherObj) GetDocType() enum.DocumentType {
+func (m *MethodsObj) GetDocType() enum.DocumentType {
 	m.a.Log.Method("GetDocType", nil)
 	return m.a.DocType
 }
 
-func (m *MethodsOtherObj) GetVersion() string {
+func (m *MethodsObj) GetVersion() string {
 	m.a.Log.Method("GetVersion", nil)
 	return acceptor.Version
 }
 
-func (m *MethodsOtherObj) GetAutoStack() bool {
+func (m *MethodsObj) GetAutoStack() bool {
 	m.a.Log.Method("GetAutoStack", nil)
 	return acceptor.AutoStack
 }
 
-func (m *MethodsOtherObj) GetHighSecurity() bool {
+func (m *MethodsObj) GetHighSecurity() bool {
 	m.a.Log.Method("GetHighSecurity", nil)
 	return acceptor.HighSecurity
 }
 
-func (m *MethodsOtherObj) GetBootPN() string {
+func (m *MethodsObj) GetBootPN() string {
 	m.a.Log.Method("GetBootPN", nil)
 
 	err := acceptor.Verify(acceptor.Cap.BootPN, "GetBootPN")
@@ -148,64 +136,64 @@ func (m *MethodsOtherObj) GetBootPN() string {
 
 //
 
-func (m *MethodsOtherObj) GetCapAssetNumber() bool {
+func (m *MethodsObj) GetCapAssetNumber() bool {
 	m.a.Log.Method("GetCapAssetNumber", nil)
 	return acceptor.Cap.AssetNumber
 }
 
-func (m *MethodsOtherObj) GetCapEscrowTimeout() bool {
+func (m *MethodsObj) GetCapEscrowTimeout() bool {
 	m.a.Log.Method("GetCapEscrowTimeout", nil)
 	return acceptor.Cap.EscrowTimeout
 }
 
-func (m *MethodsOtherObj) GetCapFlashDownload() bool {
+func (m *MethodsObj) GetCapFlashDownload() bool {
 	m.a.Log.Method("GetCapFlashDownload", nil)
 	return acceptor.Cap.FlashDownload
 }
 
-func (m *MethodsOtherObj) GetCapPupExt() bool {
+func (m *MethodsObj) GetCapPupExt() bool {
 	m.a.Log.Method("GetCapPupExt", nil)
 	return acceptor.Cap.PupExt
 }
 
-func (m *MethodsOtherObj) GetCapTestDoc() bool {
+func (m *MethodsObj) GetCapTestDoc() bool {
 	m.a.Log.Method("GetCapTestDoc", nil)
 	return acceptor.Cap.TestDoc
 }
 
-func (m *MethodsOtherObj) GetCapCalibrate() bool {
+func (m *MethodsObj) GetCapCalibrate() bool {
 	m.a.Log.Method("GetCapCalibrate", nil)
 	return acceptor.Cap.Calibrate
 }
 
-func (m *MethodsOtherObj) GetCapBookmark() bool {
+func (m *MethodsObj) GetCapBookmark() bool {
 	m.a.Log.Method("GetCapBookmark", nil)
 	return acceptor.Cap.Bookmark
 }
 
-func (m *MethodsOtherObj) GetCapNoPush() bool {
+func (m *MethodsObj) GetCapNoPush() bool {
 	m.a.Log.Method("GetCapNoPush", nil)
 	return acceptor.Cap.NoPush
 }
 
-func (m *MethodsOtherObj) GetCapBootPN() bool {
+func (m *MethodsObj) GetCapBootPN() bool {
 	m.a.Log.Method("GetCapBootPN", nil)
 	return acceptor.Cap.BootPN
 }
 
 ////
 
-func (m *MethodsOtherObj) SetAutoStack(v bool) {
+func (m *MethodsObj) SetAutoStack(v bool) {
 	m.a.Log.Method("SetAutoStack", v)
 	acceptor.AutoStack = v
 }
 
-func (m *MethodsOtherObj) SetHighSecurity(v bool) {
+func (m *MethodsObj) SetHighSecurity(v bool) {
 	m.a.Log.Method("SetHighSecurity", v)
 	acceptor.HighSecurity = v
 }
 
-func (m *MethodsOtherObj) SetBezel(bezel enum.BezelType) {
+func (m *MethodsObj) SetBezel(bezel enum.BezelType) {
 	m.a.Log.Method("SetBezel", bezel)
 
 	if !acceptor.Connected {
@@ -217,7 +205,7 @@ func (m *MethodsOtherObj) SetBezel(bezel enum.BezelType) {
 	m.a.SendAsynchronousCommand(payload)
 }
 
-func (m *MethodsOtherObj) SetAssetNumber(asset string) {
+func (m *MethodsObj) SetAssetNumber(asset string) {
 	m.a.Log.Method("SetAssetNumber", asset)
 
 	if !acceptor.Connected {

@@ -8,25 +8,7 @@ import (
 
 ////////////////////////////////////
 
-type MethodsBNFObj struct {
-	a   *MpostObj
-	Get MethodsBNFGetObj
-}
-
-type MethodsBNFGetObj struct{ a *MpostObj }
-
-func (m *MethodsObj) newBNF() *MethodsBNFObj {
-	obj := MethodsBNFObj{}
-
-	obj.a = m.a
-	obj.Get.a = m.a
-
-	return &obj
-}
-
-////////////////
-
-func (m *MethodsBNFGetObj) Status() enum.BNFStatusType {
+func (m *MethodsObj) GetBNFStatus() enum.BNFStatusType {
 	m.a.Log.Method("Getting BNF status", nil)
 	err := acceptor.Verify(acceptor.Cap.BNFStatus, "BNFStatus")
 
@@ -60,7 +42,7 @@ func (m *MethodsBNFGetObj) Status() enum.BNFStatusType {
 
 //
 
-func (m *MethodsBNFGetObj) CapStatus() bool {
+func (m *MethodsObj) GetCapBNFStatus() bool {
 	m.a.Log.Method("GetCapBNFStatus", nil)
 	return acceptor.Cap.BNFStatus
 }

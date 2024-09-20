@@ -8,25 +8,7 @@ import (
 
 ////////////////////////////////////
 
-type MethodsCashBoxObj struct {
-	a   *MpostObj
-	Get MethodCashBoxGetObj
-}
-
-type MethodCashBoxGetObj struct{ a *MpostObj }
-
-func (m *MethodsObj) newCashBox() *MethodsCashBoxObj {
-	obj := MethodsCashBoxObj{}
-
-	obj.a = m.a
-	obj.Get.a = m.a
-
-	return &obj
-}
-
-////////////////
-
-func (m *MethodsCashBoxObj) ClearTotal() (err error) {
+func (m *MethodsObj) ClearCashBoxTotal() (err error) {
 	m.a.Log.Method("ClearCashBoxTotal", nil)
 
 	if !acceptor.Connected {
@@ -49,17 +31,17 @@ func (m *MethodsCashBoxObj) ClearTotal() (err error) {
 
 ////
 
-func (m *MethodCashBoxGetObj) Attached() bool {
+func (m *MethodsObj) GetCashBoxAttached() bool {
 	m.a.Log.Method("GetCashBoxAttached", nil)
 	return acceptor.Cash.BoxAttached
 }
 
-func (m *MethodCashBoxGetObj) Full() bool {
+func (m *MethodsObj) GetCashBoxFull() bool {
 	m.a.Log.Method("GetCashBoxFull", nil)
 	return acceptor.Cash.BoxFull
 }
 
-func (m *MethodCashBoxGetObj) Total() int {
+func (m *MethodsObj) GetCashBoxTotal() int {
 	m.a.Log.Method("GetCashBoxTotal", nil)
 
 	err := acceptor.Verify(acceptor.Cap.CashBoxTotal, "GetCashBoxTotal")
@@ -92,7 +74,7 @@ func (m *MethodCashBoxGetObj) Total() int {
 
 //
 
-func (m *MethodCashBoxGetObj) CapTotal() bool {
+func (m *MethodsObj) GetCapCashBoxTotal() bool {
 	m.a.Log.Method("GetCapCashBoxTotal", nil)
 	return acceptor.Cap.CashBoxTotal
 }
